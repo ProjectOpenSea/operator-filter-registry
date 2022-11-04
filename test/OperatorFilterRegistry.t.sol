@@ -24,6 +24,12 @@ contract OwnableReverter {
     }
 }
 
+contract ConstructorCaller {
+    constructor(OperatorFilterRegistry registry, address registrant) {
+        registry.isOperatorAllowed(registrant, address(this));
+    }
+}
+
 contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEvents {
     OperatorFilterRegistry registry;
     Filterer filterer;
@@ -52,8 +58,6 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         emit RegistrationUpdated(address(this), true);
         registry.register(address(this));
 
-        // vm.expectEmit(true, false, false, false, address(registry));
-        // emit RegistrationUpdated(address(filterer));
         assertTrue(registry.isRegistered(address(filterer)));
     }
 
@@ -138,10 +142,16 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         registry.registerAndCopyEntries(address(filterer), address(this));
     }
 
+    function testRegisterAndCopyEntries_CannotCopyFromSelf() public {
+        registry.register(address(this));
+        vm.expectRevert(abi.encodeWithSelector(CannotCopyFromSelf.selector));
+        registry.registerAndCopyEntries(address(this), address(this));
+    }
+
     function testRegisterAndCopyEntries_AlreadyRegistered() public {
         registry.register(address(this));
         vm.expectRevert(abi.encodeWithSelector(AlreadyRegistered.selector));
-        registry.registerAndCopyEntries(address(this), address(this));
+        registry.registerAndCopyEntries(address(this), makeAddr("not registered but fail fast"));
     }
 
     function testRegisterAndCopyEntries_NotRegistered() public {
@@ -589,6 +599,12 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         assertEq(registry.filteredCodeHashAt(address(this), 0), codeHash);
     }
 
+    function testCopyEntriesOf_cannotCopySelf() public {
+        registry.register(address(this));
+        vm.expectRevert(CannotCopyFromSelf.selector);
+        registry.copyEntriesOf(address(this), address(this));
+    }
+
     function testCopyEntriesOf_OnlyAddressOrOwner() public {
         address subscription = makeAddr("subscription");
         vm.startPrank(subscription);
@@ -791,6 +807,24 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         registry.isOperatorAllowed(address(this), operator);
         vm.expectRevert(abi.encodeWithSelector(CodeHashFiltered.selector, toCheck, codeHash));
         registry.isOperatorAllowed(address(this), toCheck);
+    }
+
+    function testIsOperatorAllowed_constructorCodeHash() public {
+        bytes32 codeHash = keccak256("");
+        registry.register(address(this));
+        registry.updateCodeHash(address(this), codeHash, true);
+        vm.expectRevert(
+            abi.encodeWithSelector(CodeHashFiltered.selector, 0x42997aC9251E5BB0A61F4Ff790E5B991ea07Fd9B, codeHash)
+        );
+        new ConstructorCaller(registry,address(this));
+    }
+
+    function testIsOperatorAllowed_allowEOAs() public {
+        bytes32 codeHash = keccak256("");
+        registry.register(address(this));
+        registry.updateCodeHash(address(this), codeHash, true);
+        address eoa = makeAddr("eoa");
+        assertTrue(registry.isOperatorAllowed(address(this), eoa));
     }
 
     function testUnregister() public {

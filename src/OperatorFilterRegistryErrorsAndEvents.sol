@@ -19,6 +19,7 @@ contract OperatorFilterRegistryErrorsAndEvents {
     error AddressFiltered(address filtered);
     error CodeHashFiltered(address account, bytes32 codeHash);
     error CannotSubscribeToRegistrantWithSubscription(address registrant);
+    error CannotCopyFromSelf();
 
     event RegistrationUpdated(address indexed addr, bool indexed registered);
     event OperatorUpdated(address indexed addr, address indexed operator, bool filtered);
