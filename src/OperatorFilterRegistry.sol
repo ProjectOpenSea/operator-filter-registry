@@ -253,11 +253,10 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
             if (!filtered) {
                 for (uint256 i = 0; i < operatorsLength; ++i) {
                     address operator = operators[i];
-                    bool removed = filteredOperatorsRef.remove(operators[i]);
+                    bool removed = filteredOperatorsRef.remove(operator);
                     if (!removed) {
-                        revert AddressNotFiltered(operators[i]);
+                        revert AddressNotFiltered(operator);
                     }
-                    emit OperatorUpdated(registrant, operator, false);
                 }
             } else {
                 for (uint256 i = 0; i < operatorsLength; ++i) {
@@ -266,10 +265,10 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
                     if (!added) {
                         revert AddressAlreadyFiltered(operator);
                     }
-                    emit OperatorUpdated(registrant, operator, true);
                 }
             }
         }
+        emit OperatorsUpdated(registrant, operators, filtered);
     }
 
     /**
@@ -296,7 +295,6 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
                     if (!removed) {
                         revert CodeHashNotFiltered(codeHash);
                     }
-                    emit CodeHashUpdated(registrant, codeHash, false);
                 }
             } else {
                 for (uint256 i = 0; i < codeHashesLength; ++i) {
@@ -308,10 +306,10 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
                     if (!added) {
                         revert CodeHashAlreadyFiltered(codeHash);
                     }
-                    emit CodeHashUpdated(registrant, codeHash, true);
                 }
             }
         }
+        emit CodeHashesUpdated(registrant, codeHashes, filtered);
     }
 
     /**

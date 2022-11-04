@@ -259,13 +259,12 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
 
     function testUpdateOperators() public {
         registry.register(address(this));
-        vm.expectEmit(true, true, true, false, address(registry));
-        emit OperatorUpdated(address(this), makeAddr("operator1"), true);
-        vm.expectEmit(true, true, true, false, address(registry));
-        emit OperatorUpdated(address(this), makeAddr("operator2"), true);
+
         address[] memory operator = new address[](2);
         operator[0] = makeAddr("operator1");
         operator[1] = makeAddr("operator2");
+        vm.expectEmit(true, true, false, false, address(registry));
+        emit OperatorsUpdated(address(this), operator, true);
         registry.updateOperators(address(this), operator, true);
     }
 
@@ -301,13 +300,12 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         registry.register(address(this));
         registry.updateOperator(address(this), makeAddr("operator1"), true);
         registry.updateOperator(address(this), makeAddr("operator2"), true);
-        vm.expectEmit(true, true, true, false, address(registry));
-        emit OperatorUpdated(address(this), makeAddr("operator1"), false);
-        vm.expectEmit(true, true, true, false, address(registry));
-        emit OperatorUpdated(address(this), makeAddr("operator2"), false);
+
         address[] memory operator = new address[](2);
         operator[0] = makeAddr("operator1");
         operator[1] = makeAddr("operator2");
+        vm.expectEmit(true, true, true, false, address(registry));
+        emit OperatorsUpdated(address(this), operator, false);
         registry.updateOperators(address(this), operator, false);
     }
 
@@ -333,13 +331,11 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
 
     function testUpdateCodeHashes() public {
         registry.register(address(this));
-        vm.expectEmit(true, true, true, false, address(registry));
-        emit CodeHashUpdated(address(this), bytes32(bytes4(0xdeadbeef)), true);
-        vm.expectEmit(true, true, true, false, address(registry));
-        emit CodeHashUpdated(address(this), bytes32(bytes4(0xdeafbeef)), true);
         bytes32[] memory codeHash = new bytes32[](2);
         codeHash[0] = bytes32(bytes4(0xdeadbeef));
         codeHash[1] = bytes32(bytes4(0xdeafbeef));
+        vm.expectEmit(true, true, false, false, address(registry));
+        emit CodeHashesUpdated(address(this), codeHash, true);
         registry.updateCodeHashes(address(this), codeHash, true);
     }
 
@@ -375,13 +371,12 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         registry.register(address(this));
         registry.updateCodeHash(address(this), bytes32(bytes4(0xdeadbeef)), true);
         registry.updateCodeHash(address(this), bytes32(bytes4(0xdeafbeef)), true);
-        vm.expectEmit(true, true, true, false, address(registry));
-        emit CodeHashUpdated(address(this), bytes32(bytes4(0xdeadbeef)), false);
-        vm.expectEmit(true, true, true, false, address(registry));
-        emit CodeHashUpdated(address(this), bytes32(bytes4(0xdeafbeef)), false);
+
         bytes32[] memory codeHash = new bytes32[](2);
         codeHash[0] = bytes32(bytes4(0xdeadbeef));
         codeHash[1] = bytes32(bytes4(0xdeafbeef));
+        vm.expectEmit(true, true, false, false, address(registry));
+        emit CodeHashesUpdated(address(this), codeHash, false);
         registry.updateCodeHashes(address(this), codeHash, false);
     }
 
