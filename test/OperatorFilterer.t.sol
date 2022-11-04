@@ -77,4 +77,9 @@ contract OperatorFiltererTest is Test, OperatorFilterRegistryErrorsAndEvents {
         new OperatorFilterer(address(registry), address(filterer), true);
         assertEq(vm.getRecordedLogs().length, 2);
     }
+
+    function testRegistryNotDeployedDoesNotRevert() public {
+        Filterer filterer2 = new Filterer(makeAddr('no code'));
+        assertTrue(filterer2.testFilter(address(this)));
+    }
 }

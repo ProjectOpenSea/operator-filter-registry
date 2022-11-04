@@ -8,21 +8,25 @@ contract OperatorFilterer {
 
     IOperatorFilterRegistry immutable operatorFilterRegistry;
 
-    constructor(address registry, address subscriptionOrRegistantToCopy, bool subscribe) {
+    constructor(address registry, address subscriptionOrRegistrantToCopy, bool subscribe) {
         operatorFilterRegistry = IOperatorFilterRegistry(registry);
-        if (subscribe) {
-            operatorFilterRegistry.registerAndSubscribe(address(this), subscriptionOrRegistantToCopy);
-        } else {
-            if (subscriptionOrRegistantToCopy != address(0)) {
-                operatorFilterRegistry.registerAndCopyEntries(address(this), subscriptionOrRegistantToCopy);
+        if (registry.code.length > 0) {
+            if (subscribe) {
+                operatorFilterRegistry.registerAndSubscribe(address(this), subscriptionOrRegistrantToCopy);
             } else {
-                operatorFilterRegistry.register(address(this));
+                if (subscriptionOrRegistrantToCopy != address(0)) {
+                    operatorFilterRegistry.registerAndCopyEntries(address(this), subscriptionOrRegistrantToCopy);
+                } else {
+                    operatorFilterRegistry.register(address(this));
+                }
             }
         }
     }
 
     modifier onlyAllowedOperator(address addr) virtual {
-        if (!operatorFilterRegistry.isOperatorAllowed(address(this), addr)) {
+        IOperatorFilterRegistry registry = operatorFilterRegistry;
+        // to facilitate testing in environments without a filter registry
+        if (address(registry).code.length > 0 && !registry.isOperatorAllowed(address(this), addr)) {
             revert OperatorNotAllowed(msg.sender);
         }
         _;
