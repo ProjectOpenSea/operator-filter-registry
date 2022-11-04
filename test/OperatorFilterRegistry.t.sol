@@ -24,12 +24,6 @@ contract OwnableReverter {
     }
 }
 
-contract ConstructorCaller {
-    constructor(OperatorFilterRegistry registry, address registrant) {
-        registry.isOperatorAllowed(registrant, address(this));
-    }
-}
-
 contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEvents {
     OperatorFilterRegistry registry;
     Filterer filterer;
@@ -222,10 +216,10 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         registry.updateCodeHash(address(owned), bytes32(bytes4(0xdeadbeef)), true);
     }
 
-    function testUpdateCodeHash_CannotFilterZeroCodeHash() public {
+    function testUpdateCodeHash_CannotFilterEOAs() public {
         registry.register(address(this));
-        vm.expectRevert(abi.encodeWithSelector(CannotFilterZeroCodeHash.selector));
-        registry.updateCodeHash(address(this), bytes32(0), true);
+        vm.expectRevert(abi.encodeWithSelector(CannotFilterEOAs.selector));
+        registry.updateCodeHash(address(this), keccak256(""), true);
     }
 
     function testUpdateCodeHash_NotRegistered() public {
@@ -398,6 +392,15 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         codeHash[1] = bytes32(bytes4(0xdeafbeef));
         vm.expectRevert(abi.encodeWithSelector(CodeHashNotFiltered.selector, bytes32(bytes4(0xdeadbeef))));
         registry.updateCodeHashes(address(this), codeHash, false);
+    }
+
+    function testUpdateCodeHashes_CannotFilterEOAs() public {
+        registry.register(address(this));
+        bytes32[] memory codeHash = new bytes32[](2);
+        codeHash[0] = bytes32(bytes4(0xdeadbeef));
+        codeHash[1] = keccak256("");
+        vm.expectRevert(CannotFilterEOAs.selector);
+        registry.updateCodeHashes(address(this), codeHash, true);
     }
 
     function testUpdateCodeHashes_CodeHashAlreadyFiltered() public {
@@ -807,24 +810,6 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         registry.isOperatorAllowed(address(this), operator);
         vm.expectRevert(abi.encodeWithSelector(CodeHashFiltered.selector, toCheck, codeHash));
         registry.isOperatorAllowed(address(this), toCheck);
-    }
-
-    function testIsOperatorAllowed_constructorCodeHash() public {
-        bytes32 codeHash = keccak256("");
-        registry.register(address(this));
-        registry.updateCodeHash(address(this), codeHash, true);
-        vm.expectRevert(
-            abi.encodeWithSelector(CodeHashFiltered.selector, 0x42997aC9251E5BB0A61F4Ff790E5B991ea07Fd9B, codeHash)
-        );
-        new ConstructorCaller(registry,address(this));
-    }
-
-    function testIsOperatorAllowed_allowEOAs() public {
-        bytes32 codeHash = keccak256("");
-        registry.register(address(this));
-        registry.updateCodeHash(address(this), codeHash, true);
-        address eoa = makeAddr("eoa");
-        assertTrue(registry.isOperatorAllowed(address(this), eoa));
     }
 
     function testUnregister() public {

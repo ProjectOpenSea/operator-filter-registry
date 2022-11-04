@@ -22,6 +22,10 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
         address subscription;
     }
 
+    /// @dev initialized accounts have a nonzero codehash (see https://eips.ethereum.org/EIPS/eip-1052)
+    /// Note that this will also be a smart contract's codehash when making calls from its constructor.
+    bytes32 constant EOA_CODEHASH = keccak256("");
+
     mapping(address => EnumerableSet.AddressSet) private _filteredOperators;
     mapping(address => EnumerableSet.Bytes32Set) private _filteredCodeHashes;
     mapping(address => Registration) private _registrations;
@@ -71,9 +75,11 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
             if (filteredOperatorsRef.contains(operator)) {
                 revert AddressFiltered(operator);
             }
-            bytes32 codeHash = operator.codehash;
-            if (filteredCodeHashesRef.contains(codeHash)) {
-                revert CodeHashFiltered(operator, codeHash);
+            if (operator.code.length > 0) {
+                bytes32 codeHash = operator.codehash;
+                if (filteredCodeHashesRef.contains(codeHash)) {
+                    revert CodeHashFiltered(operator, codeHash);
+                }
             }
         }
         return true;
@@ -201,8 +207,8 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
         external
         onlyAddressOrOwner(registrant)
     {
-        if (codeHash == bytes32(0)) {
-            revert CannotFilterZeroCodeHash();
+        if (codeHash == EOA_CODEHASH) {
+            revert CannotFilterEOAs();
         }
         Registration memory registration = _registrations[registrant];
         if (!registration.isRegistered) {
@@ -295,6 +301,9 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
             } else {
                 for (uint256 i = 0; i < codeHashesLength; ++i) {
                     bytes32 codeHash = codeHashes[i];
+                    if (codeHash == EOA_CODEHASH) {
+                        revert CannotFilterEOAs();
+                    }
                     bool added = filteredCodeHashesRef.add(codeHash);
                     if (!added) {
                         revert CodeHashAlreadyFiltered(codeHash);

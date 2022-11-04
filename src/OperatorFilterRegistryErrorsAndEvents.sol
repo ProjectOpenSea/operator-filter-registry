@@ -2,7 +2,7 @@
 pragma solidity ^0.8.17;
 
 contract OperatorFilterRegistryErrorsAndEvents {
-    error CannotFilterZeroCodeHash();
+    error CannotFilterEOAs();
     error AddressAlreadyFiltered(address operator);
     error AddressNotFiltered(address operator);
     error CodeHashAlreadyFiltered(bytes32 codeHash);
@@ -21,8 +21,8 @@ contract OperatorFilterRegistryErrorsAndEvents {
     error CannotSubscribeToRegistrantWithSubscription(address registrant);
     error CannotCopyFromSelf();
 
-    event RegistrationUpdated(address indexed addr, bool indexed registered);
-    event OperatorUpdated(address indexed addr, address indexed operator, bool filtered);
-    event CodeHashUpdated(address indexed addr, bytes32 indexed codeHash, bool filtered);
-    event SubscriptionUpdated(address indexed addr, address indexed registrant, bool indexed subscribed);
+    event RegistrationUpdated(address indexed registrant, bool indexed registered);
+    event OperatorUpdated(address indexed registrant, address indexed operator, bool filtered);
+    event CodeHashUpdated(address indexed registrant, bytes32 indexed codeHash, bool filtered);
+    event SubscriptionUpdated(address indexed registrant, address indexed subscription, bool indexed subscribed);
 }
