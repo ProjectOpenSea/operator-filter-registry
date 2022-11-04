@@ -2,7 +2,7 @@
 
 This repository contains a number of tools to help token contracts manage the operators allowed to transfer tokens on the behalf of users - including the smart contracts and delegates of marketplaces that do not respect creator royalties.
 
-This is not a foolproof approach - but it significantly increases 
+This is not a foolproof approach - but it makes it especially difficult to bypass royalties at scale.
 
 
 ## `OperatorFilterRegistry`

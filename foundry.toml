@@ -5,6 +5,4 @@ libs = ['lib']
 optimizer_runs = 4_294_967_295
 etherscan_api_key = '${ETHERSCAN_API_KEY}'
 
-[rpc_endpoints]
-mainnet = '${ETH_RPC_URL}'
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
