@@ -11,7 +11,7 @@ OpenSea will enforce creator fees for smart contracts that make best efforts to 
 Use of this registry is not required, nor is it required for a token contract to "subscribe"" to OpenSea's list within this registry. Subscriptions can be changed or removed at any time. Filtered operators and codehashes may likewise be added or removed at any time.
 
 
-There are certain contracts that are filtered by the default subscription, and must be filtered in order to be eligible for creator fee enforcement on OpenSea. Contract owners may implement their own filtering outside of this registry, or they may use this registry to curate their own lists of filtered operators.
+Contract owners may implement their own filtering outside of this registry, or they may use this registry to curate their own lists of filtered operators. However, there are certain contracts that are filtered by the default subscription, and must be filtered in order to be eligible for creator fee enforcement on OpenSea. 
 
 
 ## Filtered addresses
