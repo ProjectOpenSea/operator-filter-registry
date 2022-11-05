@@ -9,18 +9,15 @@ import {ScriptBase, console2} from "./ScriptBase.sol";
 contract DeployRegistryAndConfigureOwnedRegistrant is ScriptBase {
     function run() public {
         setUp();
-        (new DeployRegistry()).run();
         address registryAddress = vm.envAddress("REGISTRY_ADDRESS");
         IOperatorFilterRegistry registry = IOperatorFilterRegistry(registryAddress);
         address[] memory addressesToFilter = vm.envAddress("FILTERED_ADDRESSES", ",");
 
         bytes memory creationCode = abi.encodePacked(type(OwnedRegistrant).creationCode, abi.encode(deployer));
         bytes32 salt = bytes32(uint256(uint160(deployer)) << 96);
-        console2.logBytes32(salt);
         vm.startBroadcast(deployer);
         OwnedRegistrant registrant = OwnedRegistrant(CREATE2_FACTORY.safeCreate2(salt, creationCode));
         registrant.acceptOwnership();
         registry.updateOperators(address(registrant), addressesToFilter, true);
-        console2.logUint(address(registrant).code.length);
     }
 }

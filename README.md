@@ -69,16 +69,16 @@ Ethereum Mainnet
 <tr>
 <th>Network</th>
 <th>OperatorFilterRegistry</th>
-<th>OpenSea Curated Subscription</th>
+<th>OpenSea Curated Subscription Address</th>
 </tr>
 
 <tr><td>Ethereum</td><td rowspan="14">
 
-[0x80375A0344834520f3d0b2BAEA9ECb0A1b313188](https://etherscan.io/address/0x80375A0344834520f3d0b2BAEA9ECb0A1b313188#code)
+[0x000000000000AAeB6D7670E522A718067333cd4E::register](https://etherscan.io/address/0x000000000000AAeB6D7670E522A718067333cd4E#code)
 
 </td><td rowspan="14">
 
-[0x38DD5db8A74Ca1bd2059C19CAb8610ad25FC9Be0](https://etherscan.io/address/0x38DD5db8A74Ca1bd2059C19CAb8610ad25FC9Be0#code)
+0x3cc6CddA760b79bAfa08dF41ECFA224f810dCeB6
 
 </td></tr>
 
