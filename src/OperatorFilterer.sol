@@ -6,14 +6,14 @@ import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
 contract OperatorFilterer {
     error OperatorNotAllowed(address operator);
 
-    IOperatorFilterRegistry immutable operatorFilterRegistry;
+    IOperatorFilterRegistry constant operatorFilterRegistry =
+        IOperatorFilterRegistry(0x000000000000AAeB6D7670E522A718067333cd4E);
 
-    constructor(address registry, address subscriptionOrRegistrantToCopy, bool subscribe) {
-        operatorFilterRegistry = IOperatorFilterRegistry(registry);
+    constructor(address subscriptionOrRegistrantToCopy, bool subscribe) {
         // If an inheriting token contract is deployed to a network without the registry deployed, the modifier
         // will not revert, but the contract will need to be registered with the registry once it is deployed in
         // order for the modifier to filter addresses.
-        if (registry.code.length > 0) {
+        if (address(operatorFilterRegistry).code.length > 0) {
             if (subscribe) {
                 operatorFilterRegistry.registerAndSubscribe(address(this), subscriptionOrRegistrantToCopy);
             } else {
@@ -27,10 +27,9 @@ contract OperatorFilterer {
     }
 
     modifier onlyAllowedOperator() virtual {
-        IOperatorFilterRegistry registry = operatorFilterRegistry;
         // Check registry code length to facilitate testing in environments without a deployed registry.
-        if (address(registry).code.length > 0) {
-            if (!registry.isOperatorAllowed(address(this), msg.sender)) {
+        if (address(operatorFilterRegistry).code.length > 0) {
+            if (!operatorFilterRegistry.isOperatorAllowed(address(this), msg.sender)) {
                 revert OperatorNotAllowed(msg.sender);
             }
         }

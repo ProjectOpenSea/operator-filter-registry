@@ -4,9 +4,7 @@ pragma solidity ^0.8.13;
 import {OperatorFilterer} from "./OperatorFilterer.sol";
 
 contract DefaultOperatorFilterer is OperatorFilterer {
-    // todo: update with correct addresses
-    address constant DEFAULT_OPERATOR_FILTER_REGISTRY = address(0xdeadbeef);
-    address constant DEFAULT_SUBSCRIPTION = address(0xdadb0d);
+    address constant DEFAULT_SUBSCRIPTION = address(0x3cc6CddA760b79bAfa08dF41ECFA224f810dCeB6);
 
-    constructor() OperatorFilterer(DEFAULT_OPERATOR_FILTER_REGISTRY, DEFAULT_SUBSCRIPTION, true) {}
+    constructor() OperatorFilterer(DEFAULT_SUBSCRIPTION, true) {}
 }

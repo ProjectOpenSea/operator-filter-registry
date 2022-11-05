@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import {DefaultOperatorFilterer} from "../src/DefaultOperatorFilterer.sol";
 import {OperatorFilterer} from "../src/OperatorFilterer.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
-import {Test} from "forge-std/Test.sol";
+import {BaseRegistryTest} from "./BaseRegistryTest.sol";
 import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../src/OperatorFilterRegistry.sol";
 
 contract DefaultFilterer is DefaultOperatorFilterer, Ownable {
@@ -15,18 +15,15 @@ contract DefaultFilterer is DefaultOperatorFilterer, Ownable {
     }
 }
 
-contract DefaultOperatorFiltererTest is Test, OperatorFilterRegistryErrorsAndEvents {
+contract DefaultOperatorFiltererTest is BaseRegistryTest {
     DefaultFilterer filterer;
-    OperatorFilterRegistry registry;
     address filteredAddress;
     address filteredCodeHashAddress;
     bytes32 filteredCodeHash;
-    address constant DEFAULT_OPERATOR_FILTER_REGISTRY = address(0xdeadbeef);
-    address constant DEFAULT_SUBSCRIPTION = address(0xdadb0d);
+    address constant DEFAULT_SUBSCRIPTION = address(0x3cc6CddA760b79bAfa08dF41ECFA224f810dCeB6);
 
-    function setUp() public {
-        vm.etch(DEFAULT_OPERATOR_FILTER_REGISTRY, address(new OperatorFilterRegistry()).code);
-        registry = OperatorFilterRegistry(DEFAULT_OPERATOR_FILTER_REGISTRY);
+    function setUp() public override {
+        super.setUp();
 
         vm.startPrank(DEFAULT_SUBSCRIPTION);
         registry.register(DEFAULT_SUBSCRIPTION);

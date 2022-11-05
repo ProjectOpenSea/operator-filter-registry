@@ -3,28 +3,27 @@ pragma solidity ^0.8.13;
 
 import {OperatorFilterer} from "../src/OperatorFilterer.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
-import {Test, Vm} from "forge-std/Test.sol";
+import {BaseRegistryTest} from "./BaseRegistryTest.sol";
+import {Vm} from "forge-std/Vm.sol";
 import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../src/OperatorFilterRegistry.sol";
 
 contract Filterer is OperatorFilterer, Ownable {
-    constructor(address registry) OperatorFilterer(registry, address(0), false) {}
+    constructor() OperatorFilterer(address(0), false) {}
 
     function testFilter() public onlyAllowedOperator returns (bool) {
         return true;
     }
 }
 
-contract OperatorFiltererTest is Test, OperatorFilterRegistryErrorsAndEvents {
+contract OperatorFiltererTest is BaseRegistryTest {
     Filterer filterer;
-    OperatorFilterRegistry registry;
     address filteredAddress;
     address filteredCodeHashAddress;
     bytes32 filteredCodeHash;
 
-    function setUp() public {
-        registry = new OperatorFilterRegistry();
-
-        filterer = new Filterer(address(registry));
+    function setUp() public override {
+        super.setUp();
+        filterer = new Filterer();
         // registry.register(address(filterer));
         filteredAddress = makeAddr("filtered address");
         registry.updateOperator(address(filterer), filteredAddress, true);
@@ -50,13 +49,13 @@ contract OperatorFiltererTest is Test, OperatorFilterRegistryErrorsAndEvents {
 
     function testConstructory_noSubscribeOrCopy() public {
         vm.recordLogs();
-        Filterer filterer2 = new Filterer(address(registry));
+        Filterer filterer2 = new Filterer();
         Vm.Log[] memory logs = vm.getRecordedLogs();
 
         assertEq(logs.length, 2);
-        assertEq(logs[0].topics[0], RegistrationUpdated.selector);
+        assertEq(logs[0].topics[0], keccak256("RegistrationUpdated(address,bool)"));
         assertEq(address(uint160(uint256(logs[0].topics[1]))), address(filterer2));
-        assertEq(logs[1].topics[0], OwnershipTransferred.selector);
+        assertEq(logs[1].topics[0], keccak256("OwnershipTransferred(address,address)"));
     }
 
     function testConstructor_copy() public {
@@ -67,7 +66,7 @@ contract OperatorFiltererTest is Test, OperatorFilterRegistryErrorsAndEvents {
         emit OperatorUpdated(deployed, filteredAddress, true);
         vm.expectEmit(true, true, true, false, address(registry));
         emit CodeHashUpdated(deployed, filteredCodeHash, true);
-        new OperatorFilterer(address(registry), address(filterer), false);
+        new OperatorFilterer(address(filterer), false);
     }
 
     function testConstructor_subscribe() public {
@@ -77,12 +76,13 @@ contract OperatorFiltererTest is Test, OperatorFilterRegistryErrorsAndEvents {
         vm.expectEmit(true, true, true, false, address(registry));
         emit SubscriptionUpdated(deployed, address(filterer), true);
         vm.recordLogs();
-        new OperatorFilterer(address(registry), address(filterer), true);
+        new OperatorFilterer(address(filterer), true);
         assertEq(vm.getRecordedLogs().length, 2);
     }
 
     function testRegistryNotDeployedDoesNotRevert() public {
-        Filterer filterer2 = new Filterer(makeAddr('no code'));
+        vm.etch(address(registry), "");
+        Filterer filterer2 = new Filterer();
         assertTrue(filterer2.testFilter());
     }
 }

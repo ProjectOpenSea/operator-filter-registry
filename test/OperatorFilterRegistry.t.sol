@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import "forge-std/Test.sol";
+import {BaseRegistryTest} from "./BaseRegistryTest.sol";
 import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../src/OperatorFilterRegistry.sol";
 import {OperatorFilterer} from "../src/OperatorFilterer.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 
 contract Filterer is OperatorFilterer, Ownable {
-    constructor(address registry) OperatorFilterer(registry, address(0), false) {}
+    constructor(address registry) OperatorFilterer(address(0), false) {}
 
     function testFilter() public onlyAllowedOperator returns (bool) {
         return true;
@@ -24,14 +24,13 @@ contract OwnableReverter {
     }
 }
 
-contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEvents {
-    OperatorFilterRegistry registry;
+contract OperatorFilterRegistryTest is BaseRegistryTest {
     Filterer filterer;
     Ownable owned;
     OwnableReverter reverter;
 
-    function setUp() public {
-        registry = new OperatorFilterRegistry();
+    function setUp() public override {
+        super.setUp();
         filterer = new Filterer(address(registry));
         owned = new Owned();
         reverter = new OwnableReverter();

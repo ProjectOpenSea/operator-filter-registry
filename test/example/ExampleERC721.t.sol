@@ -7,26 +7,16 @@ import {OperatorFilterer} from "../../src/OperatorFilterer.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {Test} from "forge-std/Test.sol";
 import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../../src/OperatorFilterRegistry.sol";
+import {BaseRegistryTest} from "../BaseRegistryTest.sol";
 
-contract DefaultFilterer is DefaultOperatorFilterer, Ownable {
-    constructor() DefaultOperatorFilterer() {}
-
-    function filterTest(address addr) public onlyAllowedOperator returns (bool) {
-        return true;
-    }
-}
-
-contract ExampleERC721Test is Test, OperatorFilterRegistryErrorsAndEvents {
+contract ExampleERC721Test is BaseRegistryTest {
     ExampleERC721 example;
-    OperatorFilterRegistry registry;
     address filteredAddress;
 
-    address constant DEFAULT_OPERATOR_FILTER_REGISTRY = address(0xdeadbeef);
-    address constant DEFAULT_SUBSCRIPTION = address(0xdadb0d);
+    address constant DEFAULT_SUBSCRIPTION = address(0x3cc6CddA760b79bAfa08dF41ECFA224f810dCeB6);
 
-    function setUp() public {
-        vm.etch(DEFAULT_OPERATOR_FILTER_REGISTRY, address(new OperatorFilterRegistry()).code);
-        registry = OperatorFilterRegistry(DEFAULT_OPERATOR_FILTER_REGISTRY);
+    function setUp() public override {
+        super.setUp();
 
         vm.startPrank(DEFAULT_SUBSCRIPTION);
         registry.register(DEFAULT_SUBSCRIPTION);

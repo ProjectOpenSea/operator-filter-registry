@@ -3,20 +3,19 @@ pragma solidity ^0.8.13;
 
 import {OwnedRegistrant} from "../src/OwnedRegistrant.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
-import {Test, Vm} from "forge-std/Test.sol";
+import {BaseRegistryTest} from "./BaseRegistryTest.sol";
 import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../src/OperatorFilterRegistry.sol";
 
-contract OperatorFiltererTest is Test, OperatorFilterRegistryErrorsAndEvents {
+contract OperatorFiltererTest is BaseRegistryTest {
     OwnedRegistrant registrant;
-    OperatorFilterRegistry registry;
     address filteredAddress;
     address filteredCodeHashAddress;
     bytes32 filteredCodeHash;
 
-    function setUp() public {
-        registry = new OperatorFilterRegistry();
+    function setUp() public override {
+        super.setUp();
 
-        registrant = new OwnedRegistrant(address(registry),address(this));
+        registrant = new OwnedRegistrant(address(this));
         filteredAddress = makeAddr("filtered address");
         filteredCodeHashAddress = makeAddr("filtered code hash");
         bytes memory code = hex"deadbeef";

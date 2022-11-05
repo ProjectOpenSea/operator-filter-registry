@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {ERC721} from "solmate/tokens/ERC721.sol";
+import {ERC721} from "openzeppelin-contracts/token/ERC721/ERC721.sol";
 import {DefaultOperatorFilterer} from "../DefaultOperatorFilterer.sol";
 
 /**
@@ -20,7 +20,7 @@ contract ExampleERC721 is ERC721("Example", "EXAMPLE"), DefaultOperatorFilterer 
         super.safeTransferFrom(from, to, tokenId);
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes calldata data)
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data)
         public
         override
         onlyAllowedOperator
