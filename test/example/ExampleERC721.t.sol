@@ -16,7 +16,7 @@ contract DefaultFilterer is DefaultOperatorFilterer, Ownable {
     }
 }
 
-contract DefaultOperatorFiltererTest is Test, OperatorFilterRegistryErrorsAndEvents {
+contract ExampleERC721Test is Test, OperatorFilterRegistryErrorsAndEvents {
     ExampleERC721 example;
     OperatorFilterRegistry registry;
     address filteredAddress;
