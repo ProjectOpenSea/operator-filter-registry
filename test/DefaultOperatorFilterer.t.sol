@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.13;
 
 import {DefaultOperatorFilterer} from "../src/DefaultOperatorFilterer.sol";
 import {OperatorFilterer} from "../src/OperatorFilterer.sol";

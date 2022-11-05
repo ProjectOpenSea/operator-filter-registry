@@ -1,32 +1,14 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.13;
 
 import {OperatorFilterRegistry} from "../src/OperatorFilterRegistry.sol";
-import {ScriptBase} from "./ScriptBase.sol";
-
-interface ImmutableCreate2Factory {
-    function findCreate2Address(bytes32 salt, bytes memory initCode)
-        external
-        view
-        returns (address deploymentAddress);
-    function findCreate2AddressViaHash(bytes32 salt, bytes32 initCodeHash)
-        external
-        view
-        returns (address deploymentAddress);
-    function hasBeenDeployed(address deploymentAddress) external view returns (bool);
-    function safeCreate2(bytes32 salt, bytes memory initializationCode)
-        external
-        payable
-        returns (address deploymentAddress);
-}
+import {ScriptBase, console2} from "./ScriptBase.sol";
 
 contract DeployRegistry is ScriptBase {
-    ImmutableCreate2Factory constant CREATE2_FACTORY =
-        ImmutableCreate2Factory(0x0000000000FFe8B47B3e2130213B802212439497);
-
     function run() public {
         setUp();
         bytes memory creationCode = type(OperatorFilterRegistry).creationCode;
+        console2.logBytes32(keccak256(creationCode));
         bytes32 salt = bytes32(0x0000000000000000000000000000000000000000c76c1f6a0c82cd2527010000);
 
         vm.broadcast(deployer);

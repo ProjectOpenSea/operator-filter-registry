@@ -53,6 +53,7 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         registry.register(address(this));
 
         assertTrue(registry.isRegistered(address(filterer)));
+        assertEq(registry.subscriptionOf(address(filterer)), address(0));
     }
 
     function testRegister_onlyAddressOrOwner() public {
@@ -129,6 +130,8 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
 
         assertEq(registry.subscribers(address(this)).length, 0);
         assertTrue(registry.isRegistered(address(filterer)));
+        assertEq(registry.filteredOperatorAt(address(filterer), 0), makeAddr("operator"));
+        assertEq(registry.filteredCodeHashAt(address(filterer), 0), bytes32(bytes4(0xdeadbeef)));
     }
 
     function testRegisterAndCopyEntries_OnlyAddressOrOwner() public {
@@ -160,6 +163,7 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         emit OperatorUpdated(address(this), makeAddr("operator"), true);
         registry.updateOperator(address(this), makeAddr("operator"), true);
         assertTrue(registry.isOperatorFiltered(address(this), makeAddr("operator")));
+        assertEq(registry.filteredOperatorAt(address(this), 0), makeAddr("operator"));
     }
 
     function testUpdateOperator_OnlyAddressOrOwner() public {
@@ -188,6 +192,9 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         vm.expectEmit(true, true, true, false, address(registry));
         emit OperatorUpdated(address(this), makeAddr("operator"), false);
         registry.updateOperator(address(this), makeAddr("operator"), false);
+        assertFalse(registry.isOperatorFiltered(address(this), makeAddr("operator")));
+        vm.expectRevert();
+        registry.filteredOperatorAt(address(this), 0);
     }
 
     function testUpdateOperator_AddressNotFiltered() public {
@@ -209,6 +216,7 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         emit CodeHashUpdated(address(this), bytes32(bytes4(0xdeadbeef)), true);
         registry.updateCodeHash(address(this), bytes32(bytes4(0xdeadbeef)), true);
         assertTrue(registry.isCodeHashFiltered(address(this), bytes32(bytes4(0xdeadbeef))));
+        assertEq(registry.filteredCodeHashAt(address(this), 0), bytes32(bytes4(0xdeadbeef)));
     }
 
     function testUpdateCodeHash_OnlyAddressOrOwner() public {
@@ -243,6 +251,9 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         vm.expectEmit(true, true, true, false, address(registry));
         emit CodeHashUpdated(address(this), bytes32(bytes4(0xdeadbeef)), false);
         registry.updateCodeHash(address(this), bytes32(bytes4(0xdeadbeef)), false);
+        assertFalse(registry.isCodeHashFiltered(address(this), bytes32(bytes4(0xdeadbeef))));
+        vm.expectRevert();
+        registry.filteredCodeHashAt(address(this), 0);
     }
 
     function testUpdateCodeHash_CodeHashNotFiltered() public {
@@ -267,6 +278,10 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         vm.expectEmit(true, true, false, false, address(registry));
         emit OperatorsUpdated(address(this), operator, true);
         registry.updateOperators(address(this), operator, true);
+        assertTrue(registry.isOperatorFiltered(address(this), operator[0]));
+        assertTrue(registry.isOperatorFiltered(address(this), operator[1]));
+        assertEq(registry.filteredOperatorAt(address(this), 0), operator[0]);
+        assertEq(registry.filteredOperatorAt(address(this), 1), operator[1]);
     }
 
     function testUpdateOperators_OnlyAddressOrOwner() public {
@@ -308,6 +323,10 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         vm.expectEmit(true, true, true, false, address(registry));
         emit OperatorsUpdated(address(this), operator, false);
         registry.updateOperators(address(this), operator, false);
+        assertFalse(registry.isOperatorFiltered(address(this), operator[0]));
+        assertFalse(registry.isOperatorFiltered(address(this), operator[1]));
+        vm.expectRevert();
+        registry.filteredOperatorAt(address(this), 0);
     }
 
     function testUpdateOperators_AddressNotFiltered() public {
@@ -379,6 +398,10 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         vm.expectEmit(true, true, false, false, address(registry));
         emit CodeHashesUpdated(address(this), codeHash, false);
         registry.updateCodeHashes(address(this), codeHash, false);
+        assertFalse(registry.isCodeHashFiltered(address(this), codeHash[0]));
+        assertFalse(registry.isCodeHashFiltered(address(this), codeHash[1]));
+        vm.expectRevert();
+        registry.filteredCodeHashAt(address(this), 0);
     }
 
     function testUpdateCodeHashes_CodeHashNotFiltered() public {
@@ -519,6 +542,7 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
 
         assertEq(registry.subscriptionOf(address(this)), address(0));
         assertEq(registry.subscribers(subscription).length, 0);
+        assertEq(registry.subscriptionOf(address(this)), address(0));
     }
 
     function testUnsubscribe_notRegistered() public {
@@ -575,13 +599,21 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
     function testCopyEntriesOf() public {
         address subscription = makeAddr("subscription");
         address operator = makeAddr("operator");
+        address duplicateOperator = makeAddr("duplicateOperator");
         bytes32 codeHash = bytes32(bytes4(0xdeadbeef));
+        bytes32 duplicateCodeHash = bytes32(bytes5(0xdeadbeef22));
         vm.startPrank(subscription);
         registry.register(subscription);
         registry.updateOperator(subscription, operator, true);
+        registry.updateOperator(subscription, duplicateOperator, true);
         registry.updateCodeHash(subscription, codeHash, true);
+        registry.updateCodeHash(subscription, duplicateCodeHash, true);
         vm.stopPrank();
+        // test that it does not throw errors for duplicate entries
+        // and that events are not emitted for them
         registry.register(address(this));
+        registry.updateOperator(address(this), duplicateOperator, true);
+        registry.updateCodeHash(address(this), duplicateCodeHash, true);
 
         vm.expectEmit(true, true, true, false, address(registry));
         emit OperatorUpdated(address(this), operator, true);
@@ -589,13 +621,17 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         emit CodeHashUpdated(address(this), codeHash, true);
         registry.copyEntriesOf(address(this), subscription);
 
-        assertEq(registry.filteredOperators(address(this)).length, 1);
-        assertEq(registry.filteredOperators(address(this))[0], operator);
-        assertEq(registry.filteredOperatorAt(address(this), 0), operator);
+        assertEq(registry.filteredOperators(address(this)).length, 2);
+        assertEq(registry.filteredOperators(address(this))[0], duplicateOperator);
+        assertEq(registry.filteredOperatorAt(address(this), 0), duplicateOperator);
+        assertEq(registry.filteredOperators(address(this))[1], operator);
+        assertEq(registry.filteredOperatorAt(address(this), 1), operator);
 
-        assertEq(registry.filteredCodeHashes(address(this)).length, 1);
-        assertEq(registry.filteredCodeHashes(address(this))[0], codeHash);
-        assertEq(registry.filteredCodeHashAt(address(this), 0), codeHash);
+        assertEq(registry.filteredCodeHashes(address(this)).length, 2);
+        assertEq(registry.filteredCodeHashes(address(this))[0], duplicateCodeHash);
+        assertEq(registry.filteredCodeHashAt(address(this), 0), duplicateCodeHash);
+        assertEq(registry.filteredCodeHashes(address(this))[1], codeHash);
+        assertEq(registry.filteredCodeHashAt(address(this), 1), codeHash);
     }
 
     function testCopyEntriesOf_cannotCopySelf() public {
@@ -821,5 +857,10 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         registry.unregister(address(this));
         assertFalse(registry.isRegistered(address(this)));
         assertEq(registry.subscribers(subscription).length, 0);
+    }
+
+    function testSubscriptionOf_notRegistered() public {
+        vm.expectRevert(abi.encodeWithSelector(NotRegistered.selector, address(this)));
+        registry.subscriptionOf(address(this));
     }
 }
