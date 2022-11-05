@@ -27,7 +27,7 @@ contract DeployRegistry is ScriptBase {
     function run() public {
         setUp();
         bytes memory creationCode = type(OperatorFilterRegistry).creationCode;
-        bytes32 salt = bytes32(0);
+        bytes32 salt = bytes32(0x0000000000000000000000000000000000000000c76c1f6a0c82cd2527010000);
 
         vm.broadcast(deployer);
         CREATE2_FACTORY.safeCreate2(salt, creationCode);

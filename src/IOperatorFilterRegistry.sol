@@ -13,7 +13,7 @@ interface IOperatorFilterRegistry {
     function updateCodeHash(address registrant, bytes32 codehash, bool filtered) external;
     function updateCodeHashes(address registrant, bytes32[] calldata codeHashes, bool filtered) external;
     function subscribe(address registrant, address registrantToSubscribe) external;
-    function unsubscribe(address registrant, bool copyExistingEntries) external returns (address formerSubscription);
+    function unsubscribe(address registrant, bool copyExistingEntries) external;
     function subscriptionOf(address addr) external returns (address registrant);
     function subscribers(address registrant) external returns (address[] memory);
     function subscriberAt(address registrant, uint256 index) external returns (address);

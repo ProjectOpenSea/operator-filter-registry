@@ -2,6 +2,7 @@
 pragma solidity ^0.8.17;
 
 import {DefaultOperatorFilterer} from "../src/DefaultOperatorFilterer.sol";
+import {OperatorFilterer} from "../src/OperatorFilterer.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {Test} from "forge-std/Test.sol";
 import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../src/OperatorFilterRegistry.sol";
@@ -43,9 +44,9 @@ contract DefaultOperatorFiltererTest is Test, OperatorFilterRegistryErrorsAndEve
 
     function testFilter() public {
         assertTrue(filterer.filterTest(address(this)));
-        vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
+        vm.expectRevert(abi.encodeWithSelector(OperatorFilterer.OperatorNotAllowed.selector, filteredAddress));
         filterer.filterTest(filteredAddress);
-        vm.expectRevert(abi.encodeWithSelector(CodeHashFiltered.selector, filteredCodeHashAddress, filteredCodeHash));
+        vm.expectRevert(abi.encodeWithSelector(OperatorFilterer.OperatorNotAllowed.selector, filteredCodeHashAddress));
         filterer.filterTest(filteredCodeHashAddress);
     }
 }

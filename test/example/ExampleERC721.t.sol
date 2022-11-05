@@ -3,6 +3,7 @@ pragma solidity ^0.8.17;
 
 import {ExampleERC721} from "../../src/example/ExampleERC721.sol";
 import {DefaultOperatorFilterer} from "../../src/DefaultOperatorFilterer.sol";
+import {OperatorFilterer} from "../../src/OperatorFilterer.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {Test} from "forge-std/Test.sol";
 import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../../src/OperatorFilterRegistry.sol";
@@ -39,11 +40,11 @@ contract DefaultOperatorFiltererTest is Test, OperatorFilterRegistryErrorsAndEve
 
     function testFilter() public {
         vm.startPrank(address(filteredAddress));
-        vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
+        vm.expectRevert(abi.encodeWithSelector(OperatorFilterer.OperatorNotAllowed.selector, filteredAddress));
         example.transferFrom(makeAddr("from"), makeAddr("to"), 1);
-        vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
+        vm.expectRevert(abi.encodeWithSelector(OperatorFilterer.OperatorNotAllowed.selector, filteredAddress));
         example.safeTransferFrom(makeAddr("from"), makeAddr("to"), 1);
-        vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
+        vm.expectRevert(abi.encodeWithSelector(OperatorFilterer.OperatorNotAllowed.selector, filteredAddress));
         example.safeTransferFrom(makeAddr("from"), makeAddr("to"), 1, "");
     }
 }
