@@ -2,14 +2,19 @@
 
 This repository contains a number of tools to help token contracts manage the operators allowed to transfer tokens on behalf of users - including the smart contracts and delegates of marketplaces that do not respect creator fees.
 
-This is not a foolproof approach - but it makes it especially difficult to bypass creator fees at scale.
+This is not a foolproof approach - but it makes it difficult to bypass creator fees at scale.
+
+## How it works
+
+Token smart contracts may register themselves (or be registered by their "owner") with the `OperatorFilterRegistry`. Token contracts or their "owner"s may then curate lists of operators (specific account addresses) and codehashes (smart contracts deployed with the same code) that should not be allowed to transfer tokens on behalf of users. 
 
 ## Creator Fee Enforcement
 
-OpenSea will enforce creator fees for smart contracts that make best efforts to filter transfers from operators known to not respect creator fees. This registry facilitates that process by providing smart contracts that interface with the registry automatically, including automatically subscribing to OpenSea's list of filtered operators. 
+OpenSea will enforce creator fees for smart contracts that make best efforts to filter transfers from operators known to not respect creator fees.
 
-Use of this registry is not required, nor is it required for a token contract to "subscribe"" to OpenSea's list within this registry. Subscriptions can be changed or removed at any time. Filtered operators and codehashes may likewise be added or removed at any time.
+This repository facilitates that process by providing smart contracts that interface with the registry automatically, including automatically subscribing to OpenSea's list of filtered operators. 
 
+When filtering operators, use of this registry is not required, nor is it required for a token contract to "subscribe" to OpenSea's list within this registry. Subscriptions can be changed or removed at any time. Filtered operators and codehashes may likewise be added or removed at any time.
 
 Contract owners may implement their own filtering outside of this registry, or they may use this registry to curate their own lists of filtered operators. However, there are certain contracts that are filtered by the default subscription, and must be filtered in order to be eligible for creator fee enforcement on OpenSea. 
 
@@ -82,7 +87,7 @@ Ethereum Mainnet
 
 ## Usage
 
-Token contracts that wish to manage lists of filtered operators and restrict transfers from them may integrate with the registry easily using the [`OperatorFilterer`](src/OperatorFilterer.sol) and [`DefaultOperatorFilterer.sol`](src/DefaultOperatorFilterer.sol) contracts. These contracts provide a modifier (`isAllowedOperator`) which can be used on the token's transfer methods to restrict transfers from filtered operators.
+Token contracts that wish to manage lists of filtered operators and restrict transfers from them may integrate with the registry easily using the [`OperatorFilterer`](src/OperatorFilterer.sol) and [`DefaultOperatorFilterer`](src/DefaultOperatorFilterer.sol) contracts. These contracts provide a modifier (`isAllowedOperator`) which can be used on the token's transfer methods to restrict transfers from filtered operators.
 
 See the [ExampleERC721](src/example/ExampleERC721.sol) contract for a basic implementation that inherits the `DefaultOperatorFilterer`.
 
