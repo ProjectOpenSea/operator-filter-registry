@@ -16,7 +16,7 @@ contract OperatorFiltererTest is Test, OperatorFilterRegistryErrorsAndEvents {
     function setUp() public {
         registry = new OperatorFilterRegistry();
 
-        registrant = new OwnedRegistrant(address(registry));
+        registrant = new OwnedRegistrant(address(registry),address(this));
         filteredAddress = makeAddr("filtered address");
         filteredCodeHashAddress = makeAddr("filtered code hash");
         bytes memory code = hex"deadbeef";

@@ -74,11 +74,11 @@ Ethereum Mainnet
 
 <tr><td>Ethereum</td><td rowspan="14">
 
-[0x00000000006c3852cbEf3e08E8dF289169EdE581](https://etherscan.io/address/0x00000000006c3852cbEf3e08E8dF289169EdE581#code)
+[0x80375A0344834520f3d0b2BAEA9ECb0A1b313188](https://etherscan.io/address/0x80375A0344834520f3d0b2BAEA9ECb0A1b313188#code)
 
 </td><td rowspan="14">
 
-[0x00000000F9490004C11Cef243f5400493c00Ad63](https://etherscan.io/address/0x00000000F9490004C11Cef243f5400493c00Ad63#code)
+[0x38DD5db8A74Ca1bd2059C19CAb8610ad25FC9Be0](https://etherscan.io/address/0x38DD5db8A74Ca1bd2059C19CAb8610ad25FC9Be0#code)
 
 </td></tr>
 
