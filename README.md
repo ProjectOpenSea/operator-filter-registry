@@ -2,7 +2,7 @@
 
 This repository contains a number of tools to help token contracts manage the operators allowed to transfer tokens on behalf of users - including the smart contracts and delegates of marketplaces that do not respect creator fees.
 
-This is not a foolproof approach - but it makes it difficult to bypass creator fees at scale.
+This is not a foolproof approach - but it makes bypassing creator fees less liquid and easy at scale.
 
 ## How it works
 
@@ -21,9 +21,9 @@ Contract owners may implement their own filtering outside of this registry, or t
 
 ## Filtered addresses
 
-Entries in this list are added according to specific criteria.
-
-\<criteria goes here\>
+Entries in this list are added according to the following criteria:
+* If the application most commonly used to interface with the contract gives buyers and sellers the ability to bypass creator fees when a similar transaction for the same item would require creator fee payment on OpenSea.io
+* If the contract in some way aids and abets creator fee evasion — for example, wrapper contracts
 
 <table>
 <tr>
