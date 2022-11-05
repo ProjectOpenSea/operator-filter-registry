@@ -58,18 +58,17 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
         if (registration != address(0)) {
             EnumerableSet.AddressSet storage filteredOperatorsRef;
             EnumerableSet.Bytes32Set storage filteredCodeHashesRef;
-            // address subscription = registration.subscription;
 
             filteredOperatorsRef = _filteredOperators[registration];
             filteredCodeHashesRef = _filteredCodeHashes[registration];
 
             if (filteredOperatorsRef.contains(operator)) {
-                return false;
+                revert AddressFiltered(operator);
             }
             if (operator.code.length > 0) {
                 bytes32 codeHash = operator.codehash;
                 if (filteredCodeHashesRef.contains(codeHash)) {
-                    return false;
+                    revert CodeHashFiltered(operator, codeHash);
                 }
             }
         }

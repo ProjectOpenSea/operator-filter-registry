@@ -37,9 +37,9 @@ contract OperatorFiltererTest is Test, OperatorFilterRegistryErrorsAndEvents {
 
     function testFilter() public {
         assertTrue(filterer.testFilter(address(this)));
-        vm.expectRevert(abi.encodeWithSelector(OperatorFilterer.OperatorNotAllowed.selector, filteredAddress));
+        vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
         filterer.testFilter(filteredAddress);
-        vm.expectRevert(abi.encodeWithSelector(OperatorFilterer.OperatorNotAllowed.selector, filteredCodeHashAddress));
+        vm.expectRevert(abi.encodeWithSelector(CodeHashFiltered.selector, filteredCodeHashAddress, filteredCodeHash));
         filterer.testFilter(filteredCodeHashAddress);
     }
 

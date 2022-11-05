@@ -781,8 +781,10 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         registry.updateCodeHash(address(this), codeHash, true);
 
         assertTrue(registry.isOperatorAllowed(address(this), makeAddr("allowed")));
-        assertFalse(registry.isOperatorAllowed(address(this), operator));
-        assertFalse(registry.isOperatorAllowed(address(this), toCheck));
+        vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, address(operator)));
+        registry.isOperatorAllowed(address(this), operator);
+        vm.expectRevert(abi.encodeWithSelector(CodeHashFiltered.selector, address(toCheck), codeHash));
+        registry.isOperatorAllowed(address(this), toCheck);
     }
 
     function testIsOperatorAllowed_subscription() public {
@@ -800,8 +802,10 @@ contract OperatorFilterRegistryTest is Test, OperatorFilterRegistryErrorsAndEven
         registry.registerAndSubscribe(address(this), subscription);
 
         assertTrue(registry.isOperatorAllowed(address(this), makeAddr("allowed")));
-        assertFalse(registry.isOperatorAllowed(address(this), operator));
-        assertFalse(registry.isOperatorAllowed(address(this), toCheck));
+        vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, address(operator)));
+        registry.isOperatorAllowed(address(this), operator);
+        vm.expectRevert(abi.encodeWithSelector(CodeHashFiltered.selector, address(toCheck), codeHash));
+        registry.isOperatorAllowed(address(this), toCheck);
     }
 
     function testUnregister() public {

@@ -44,9 +44,9 @@ contract DefaultOperatorFiltererTest is Test, OperatorFilterRegistryErrorsAndEve
 
     function testFilter() public {
         assertTrue(filterer.filterTest(address(this)));
-        vm.expectRevert(abi.encodeWithSelector(OperatorFilterer.OperatorNotAllowed.selector, filteredAddress));
+        vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
         filterer.filterTest(filteredAddress);
-        vm.expectRevert(abi.encodeWithSelector(OperatorFilterer.OperatorNotAllowed.selector, filteredCodeHashAddress));
+        vm.expectRevert(abi.encodeWithSelector(CodeHashFiltered.selector, filteredCodeHashAddress, filteredCodeHash));
         filterer.filterTest(filteredCodeHashAddress);
     }
 }

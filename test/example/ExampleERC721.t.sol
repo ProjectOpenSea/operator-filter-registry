@@ -40,11 +40,11 @@ contract ExampleERC721Test is Test, OperatorFilterRegistryErrorsAndEvents {
 
     function testFilter() public {
         vm.startPrank(address(filteredAddress));
-        vm.expectRevert(abi.encodeWithSelector(OperatorFilterer.OperatorNotAllowed.selector, filteredAddress));
+        vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
         example.transferFrom(makeAddr("from"), makeAddr("to"), 1);
-        vm.expectRevert(abi.encodeWithSelector(OperatorFilterer.OperatorNotAllowed.selector, filteredAddress));
+        vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
         example.safeTransferFrom(makeAddr("from"), makeAddr("to"), 1);
-        vm.expectRevert(abi.encodeWithSelector(OperatorFilterer.OperatorNotAllowed.selector, filteredAddress));
+        vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
         example.safeTransferFrom(makeAddr("from"), makeAddr("to"), 1, "");
     }
 }
