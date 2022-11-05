@@ -85,5 +85,4 @@ OperatorFiltererTest:testConstructory_noSubscribeOrCopy() (gas: 312736)
 OperatorFiltererTest:testFilter() (gas: 40514)
 OperatorFiltererTest:testRegistryNotDeployedDoesNotRevert() (gas: 283993)
 OperatorFiltererTest:testConstructor() (gas: 89345)
-ExampleERC721Test:testFilter() (gas: 49430)
-
+ExampleERC721Test:testFilter() (gas: 48554)
