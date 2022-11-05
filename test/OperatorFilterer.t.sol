@@ -9,7 +9,7 @@ import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../
 contract Filterer is OperatorFilterer, Ownable {
     constructor(address registry) OperatorFilterer(registry, address(0), false) {}
 
-    function testFilter(address addr) public onlyAllowedOperator(addr) returns (bool) {
+    function testFilter() public onlyAllowedOperator returns (bool) {
         return true;
     }
 }
@@ -36,11 +36,14 @@ contract OperatorFiltererTest is Test, OperatorFilterRegistryErrorsAndEvents {
     }
 
     function testFilter() public {
-        assertTrue(filterer.testFilter(address(this)));
+        assertTrue(filterer.testFilter());
+        vm.startPrank(filteredAddress);
         vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
-        filterer.testFilter(filteredAddress);
+        filterer.testFilter();
+        vm.stopPrank();
+        vm.startPrank(filteredCodeHashAddress);
         vm.expectRevert(abi.encodeWithSelector(CodeHashFiltered.selector, filteredCodeHashAddress, filteredCodeHash));
-        filterer.testFilter(filteredCodeHashAddress);
+        filterer.testFilter();
     }
 
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
@@ -80,6 +83,6 @@ contract OperatorFiltererTest is Test, OperatorFilterRegistryErrorsAndEvents {
 
     function testRegistryNotDeployedDoesNotRevert() public {
         Filterer filterer2 = new Filterer(makeAddr('no code'));
-        assertTrue(filterer2.testFilter(address(this)));
+        assertTrue(filterer2.testFilter());
     }
 }

@@ -12,22 +12,18 @@ import {DefaultOperatorFilterer} from "../DefaultOperatorFilterer.sol";
  *         the msg.sender (operator) is allowed by the OperatorFilterRegistry.
  */
 contract ExampleERC721 is ERC721("Example", "EXAMPLE"), DefaultOperatorFilterer {
-    function transferFrom(address from, address to, uint256 tokenId) public override onlyAllowedOperator(msg.sender) {
+    function transferFrom(address from, address to, uint256 tokenId) public override onlyAllowedOperator {
         super.transferFrom(from, to, tokenId);
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId)
-        public
-        override
-        onlyAllowedOperator(msg.sender)
-    {
+    function safeTransferFrom(address from, address to, uint256 tokenId) public override onlyAllowedOperator {
         super.safeTransferFrom(from, to, tokenId);
     }
 
     function safeTransferFrom(address from, address to, uint256 tokenId, bytes calldata data)
         public
         override
-        onlyAllowedOperator(msg.sender)
+        onlyAllowedOperator
     {
         super.safeTransferFrom(from, to, tokenId, data);
     }

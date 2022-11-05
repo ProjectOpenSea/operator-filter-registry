@@ -11,7 +11,7 @@ import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../
 contract DefaultFilterer is DefaultOperatorFilterer, Ownable {
     constructor() DefaultOperatorFilterer() {}
 
-    function filterTest(address addr) public onlyAllowedOperator(addr) returns (bool) {
+    function filterTest(address addr) public onlyAllowedOperator returns (bool) {
         return true;
     }
 }

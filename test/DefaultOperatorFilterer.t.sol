@@ -10,7 +10,7 @@ import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../
 contract DefaultFilterer is DefaultOperatorFilterer, Ownable {
     constructor() DefaultOperatorFilterer() {}
 
-    function filterTest(address addr) public onlyAllowedOperator(addr) returns (bool) {
+    function filterTest() public onlyAllowedOperator returns (bool) {
         return true;
     }
 }
@@ -40,13 +40,17 @@ contract DefaultOperatorFiltererTest is Test, OperatorFilterRegistryErrorsAndEve
         vm.etch(filteredCodeHashAddress, code);
 
         filterer = new DefaultFilterer();
+        vm.stopPrank();
     }
 
     function testFilter() public {
-        assertTrue(filterer.filterTest(address(this)));
+        assertTrue(filterer.filterTest());
+        vm.startPrank(filteredAddress);
         vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
-        filterer.filterTest(filteredAddress);
+        filterer.filterTest();
+        vm.stopPrank();
+        vm.startPrank(filteredCodeHashAddress);
         vm.expectRevert(abi.encodeWithSelector(CodeHashFiltered.selector, filteredCodeHashAddress, filteredCodeHash));
-        filterer.filterTest(filteredCodeHashAddress);
+        filterer.filterTest();
     }
 }

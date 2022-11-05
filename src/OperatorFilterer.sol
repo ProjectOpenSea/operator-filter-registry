@@ -26,12 +26,12 @@ contract OperatorFilterer {
         }
     }
 
-    modifier onlyAllowedOperator(address addr) virtual {
+    modifier onlyAllowedOperator() virtual {
         IOperatorFilterRegistry registry = operatorFilterRegistry;
         // Check registry code length to facilitate testing in environments without a deployed registry.
         if (address(registry).code.length > 0) {
-            if (!registry.isOperatorAllowed(address(this), addr)) {
-                revert OperatorNotAllowed(addr);
+            if (!registry.isOperatorAllowed(address(this), msg.sender)) {
+                revert OperatorNotAllowed(msg.sender);
             }
         }
         _;

@@ -9,7 +9,7 @@ import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 contract Filterer is OperatorFilterer, Ownable {
     constructor(address registry) OperatorFilterer(registry, address(0), false) {}
 
-    function testFilter(address addr) public onlyAllowedOperator(addr) returns (bool) {
+    function testFilter() public onlyAllowedOperator returns (bool) {
         return true;
     }
 }
