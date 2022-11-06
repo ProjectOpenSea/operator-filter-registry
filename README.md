@@ -1,23 +1,99 @@
 # Operator Filter Registry
 
+## Introduction
+
 This repository contains a number of tools to help token contracts manage the operators allowed to transfer tokens on behalf of users - including the smart contracts and delegates of marketplaces that do not respect creator fees.
 
 This is not a foolproof approach - but it makes bypassing creator fees less liquid and easy at scale.
 
+## Getting started
+
+This version of `operator-filter-registry` packaged by [0xflick](https://twitter.com/0xflick) to work with NPM.
+
+### Installing
+
+with npm
+
+```bash
+npm i operator-filter-registry
+```
+
+with yarn
+
+```bash
+yarn add operator-filter-registry
+```
+
+### Default usage
+
+Add to your smart contract in the import section:
+
+```
+import "operator-filter-registry/src/DefaultOperatorFilterer.sol";
+```
+
+Next extend from `DefaultOperatorFilterer`
+
+```
+contract MyNft is
+  DefaultOperatorFilterer,
+  // remaining inheritance here
+{
+```
+
+Finally, override the ERC721 transfer methods... (add override modifiers as needed)
+
+```
+    /**
+     * @dev implements operator-filter-registry blocklist filtering because https://opensea.io/blog/announcements/on-creator-fees/
+     */
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public payable override(ERC721A, IERC721A) onlyAllowedOperator {
+        super.transferFrom(from, to, tokenId);
+    }
+
+    /**
+     * @dev implements operator-filter-registry blocklist filtering because https://opensea.io/blog/announcements/on-creator-fees/
+     */
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public payable override(ERC721A, IERC721A) onlyAllowedOperator {
+        super.safeTransferFrom(from, to, tokenId);
+    }
+
+    /**
+     * @dev implements operator-filter-registry blocklist filtering because https://opensea.io/blog/announcements/on-creator-fees/
+     */
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) public payable override(ERC721A, IERC721A) onlyAllowedOperator {
+        super.safeTransferFrom(from, to, tokenId, data);
+    }
+```
+
+Congratulations! Your NFT can now only be sold on OpenSea and other unpopular marketplaces like Coinbase NFT!
+
 ## How it works
 
-Token smart contracts may register themselves (or be registered by their "owner") with the `OperatorFilterRegistry`. Token contracts or their "owner"s may then curate lists of operators (specific account addresses) and codehashes (smart contracts deployed with the same code) that should not be allowed to transfer tokens on behalf of users. 
+Token smart contracts may register themselves (or be registered by their "owner") with the `OperatorFilterRegistry`. Token contracts or their "owner"s may then curate lists of operators (specific account addresses) and codehashes (smart contracts deployed with the same code) that should not be allowed to transfer tokens on behalf of users.
 
 ## Creator Fee Enforcement
 
 OpenSea will enforce creator fees for smart contracts that make best efforts to filter transfers from operators known to not respect creator fees.
 
-This repository facilitates that process by providing smart contracts that interface with the registry automatically, including automatically subscribing to OpenSea's list of filtered operators. 
+This repository facilitates that process by providing smart contracts that interface with the registry automatically, including automatically subscribing to OpenSea's list of filtered operators.
 
 When filtering operators, use of this registry is not required, nor is it required for a token contract to "subscribe" to OpenSea's list within this registry. Subscriptions can be changed or removed at any time. Filtered operators and codehashes may likewise be added or removed at any time.
 
-Contract owners may implement their own filtering outside of this registry, or they may use this registry to curate their own lists of filtered operators. However, there are certain contracts that are filtered by the default subscription, and must be filtered in order to be eligible for creator fee enforcement on OpenSea. 
-
+Contract owners may implement their own filtering outside of this registry, or they may use this registry to curate their own lists of filtered operators. However, there are certain contracts that are filtered by the default subscription, and must be filtered in order to be eligible for creator fee enforcement on OpenSea.
 
 ## Filtered addresses
 
@@ -76,7 +152,6 @@ Ethereum Mainnet
 
 ## Deployments
 
-
 <table>
 <tr>
 <th>Network</th>
@@ -103,40 +178,43 @@ Token contracts that wish to manage lists of filtered operators and restrict tra
 
 See the [ExampleERC721](src/example/ExampleERC721.sol) and [ExampleERC1155](src/example/ExampleERC1155.sol) contracts for basic implementations that inherit the `DefaultOperatorFilterer`.
 
-
 # Smart Contracts
+
 ## `OperatorFilterRegistry`
 
 `OperatorFilterRegistry` lets a smart contract or its [EIP-173 `Owner`](https://eips.ethereum.org/EIPS/eip-173) register a list of addresses and code hashes to deny when `isOperatorBlocked` is called.
 
 It also supports "subscriptions," which allow a contract to delegate its operator filtering to another contract. This is useful for contracts that want to allow users to delegate their operator filtering to a trusted third party, who can continuously update the list of filtered operators and code hashes. Subscriptions may be cancelled at any time by the subscriber or its `Owner`.
 
-
 ### updateOperatorAddress(address registrant, address operator, bool filter)
-This method will toggle filtering for an operator for a given registrant. If `filter` is `true`,  `isOperatorAllowed` will return `false`. If `filter` is `false`, `isOperatorAllowed` will return `true`. This can filter known addresses.
+
+This method will toggle filtering for an operator for a given registrant. If `filter` is `true`, `isOperatorAllowed` will return `false`. If `filter` is `false`, `isOperatorAllowed` will return `true`. This can filter known addresses.
 
 ### updateOperatorCodeHash(address registrant, bytes32 codeHash, bool filter)
-This method will toggle filtering on code hashes of operators given registrant. If an operator's `EXTCODEHASH` matches a filtered code hash, `isOperatorAllowed` will return `true`. Otherwise, `isOperatorAllowed` will return `false`. This can filter smart contract operators with different addresess but the same code.
 
+This method will toggle filtering on code hashes of operators given registrant. If an operator's `EXTCODEHASH` matches a filtered code hash, `isOperatorAllowed` will return `true`. Otherwise, `isOperatorAllowed` will return `false`. This can filter smart contract operators with different addresess but the same code.
 
 ## `OperatorFilterer`
 
 This smart contract is meant to be inherited by token contracts so they can use the `onlyAllowedOperator` modifier on the `transferFrom` and `safeTransferFrom` methods.
 
 On construction, it takes three parameters:
+
 - `address registry`: the address of the `OperatorFilterRegistry` contract
 - `address subscriptionOrRegistrantToCopy`: the address of the registrant the contract will either subscribe to, or do a one-time copy of that registrant's filters. If the zero address is provided, no subscription or copies will be made.
 - `bool subscribe`: if true, subscribes to the previous address if it was not the zero address. If false, copies existing filtered addresses and codeHashes without subscribing to future updates.
 
 ### `onlyAllowedOperator(address operator)`
+
 This modifier will revert if the `operator` or its code hash is filtered by the `OperatorFilterRegistry` contract.
+
 ## `DefaultOperatorFilterer`
 
 This smart contract extends `OperatorFilterer` and automatically configures the token contract that inherits it to subscribe to OpenSea's list of filtered operators and code hashes. This subscription can be updated at any time by the owner by calling `updateSubscription` on the `OperatorFilterRegistry` contract.
 
 ## `OwnedRegistrant`
 
-This `Ownable` smart contract is meant as a simple utility to enable subscription addresses that can easily be transferred to a new owner for administration. For example: an EOA curates a list of filtered operators and code hashes, and then transfers ownership of the `OwnedRegistrant` to a multisig wallet. 
+This `Ownable` smart contract is meant as a simple utility to enable subscription addresses that can easily be transferred to a new owner for administration. For example: an EOA curates a list of filtered operators and code hashes, and then transfers ownership of the `OwnedRegistrant` to a multisig wallet.
 
 # License
 
