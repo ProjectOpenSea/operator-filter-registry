@@ -125,3 +125,7 @@ This smart contract extends `OperatorFilterer` and automatically configures the 
 ## `OwnedRegistrant`
 
 This `Ownable` smart contract is meant as a simple utility to enable subscription addresses that can easily be transferred to a new owner for administration. For example: an EOA curates a list of filtered operators and code hashes, and then transfers ownership of the `OwnedRegistrant` to a multisig wallet. 
+
+# License
+
+[MIT](LICENSE) Copyright 2022 Ozone Networks, Inc.
