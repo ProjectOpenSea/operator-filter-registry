@@ -1,0 +1,5 @@
+/lib
+/.github
+/test
+/.gas-snapshot
+/foundry.toml
