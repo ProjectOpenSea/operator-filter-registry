@@ -74,7 +74,7 @@ Ethereum Mainnet
 
 <tr><td>Ethereum</td><td rowspan="14">
 
-[0x000000000000AAeB6D7670E522A718067333cd4E::register](https://etherscan.io/address/0x000000000000AAeB6D7670E522A718067333cd4E#code)
+[0x000000000000AAeB6D7670E522A718067333cd4E](https://etherscan.io/address/0x000000000000AAeB6D7670E522A718067333cd4E#code)
 
 </td><td rowspan="14">
 
