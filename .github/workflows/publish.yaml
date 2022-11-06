@@ -7,12 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          submodules: recursive
       - uses: actions/setup-node@v2
         with:
           node-version: "16.x"
           registry-url: "https://registry.npmjs.org"
+      - run: grep -RiIln 'openzeppelin-contracts' src | xargs sed -i 's/openzeppelin\-contracts/@openzeppelin\/contracts/g'
       - run: yarn
       - run: npm publish --access public
         env:

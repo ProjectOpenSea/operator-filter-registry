@@ -5,5 +5,7 @@
   "repository": "git@github.com:0xFlicker/operator-filter-registry.git",
   "author": "0xflick <cmdrnft@protonmail.com>",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.7.3"
+  }
 }
