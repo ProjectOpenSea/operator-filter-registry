@@ -23,7 +23,7 @@ Contract owners may implement their own filtering outside of this registry, or t
 
 Entries in this list are added according to the following criteria:
 * If the application most commonly used to interface with the contract gives buyers and sellers the ability to bypass creator fees when a similar transaction for the same item would require creator fee payment on OpenSea.io
-* If the contract in some way aids and abets creator fee evasion — for example, wrapper contracts
+* If the contract is facilitating the evasion of on-chain creator fee enforcement measures. For example, the contract uses a wrapper contact to bypass fee enforcement.
 
 <table>
 <tr>
