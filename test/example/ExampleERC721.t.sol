@@ -9,8 +9,14 @@ import {Test} from "forge-std/Test.sol";
 import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../../src/OperatorFilterRegistry.sol";
 import {BaseRegistryTest} from "../BaseRegistryTest.sol";
 
+contract TestableExampleERC721 is ExampleERC721 {
+    function mint(address to, uint256 tokenId) external {
+        _mint(to, tokenId);
+    }
+}
+
 contract ExampleERC721Test is BaseRegistryTest {
-    ExampleERC721 example;
+    TestableExampleERC721 example;
     address filteredAddress;
 
     address constant DEFAULT_SUBSCRIPTION = address(0x3cc6CddA760b79bAfa08dF41ECFA224f810dCeB6);
@@ -24,7 +30,7 @@ contract ExampleERC721Test is BaseRegistryTest {
         filteredAddress = makeAddr("filtered address");
         registry.updateOperator(address(DEFAULT_SUBSCRIPTION), filteredAddress, true);
 
-        example = new ExampleERC721();
+        example = new TestableExampleERC721();
         vm.stopPrank();
     }
 
@@ -36,5 +42,15 @@ contract ExampleERC721Test is BaseRegistryTest {
         example.safeTransferFrom(makeAddr("from"), makeAddr("to"), 1);
         vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
         example.safeTransferFrom(makeAddr("from"), makeAddr("to"), 1, "");
+    }
+
+    function testOwnerExclusion() public {
+        address alice = address(0xA11CE);
+        example.mint(alice, 1);
+
+        registry.updateOperator(address(DEFAULT_SUBSCRIPTION), alice, true);
+
+        vm.prank(alice);
+        example.transferFrom(alice, makeAddr("to"), 1);
     }
 }
