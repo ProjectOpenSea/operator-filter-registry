@@ -1,9 +1,8 @@
 {
   "name": "operator-filter-registry",
   "version": "1.0.6",
-  "main": "index.js",
-  "repository": "git@github.com:0xFlicker/operator-filter-registry.git",
-  "author": "0xflick <cmdrnft@protonmail.com>",
+  "repository": "git@github.com:ProjectOpenSea/operator-filter-registry.git",
+  "author": "Operator Filterer <operatorfilterer@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.3"
