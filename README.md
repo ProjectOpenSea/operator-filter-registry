@@ -6,81 +6,6 @@ This repository contains a number of tools to help token contracts manage the op
 
 This is not a foolproof approach - but it makes bypassing creator fees less liquid and easy at scale.
 
-## Getting started
-
-This version of `operator-filter-registry` packaged by [0xflick](https://twitter.com/0xflick) to work with NPM.
-
-### Installing
-
-with npm
-
-```bash
-npm i operator-filter-registry
-```
-
-with yarn
-
-```bash
-yarn add operator-filter-registry
-```
-
-### Default usage
-
-Add to your smart contract in the import section:
-
-```
-import "operator-filter-registry/src/DefaultOperatorFilterer.sol";
-```
-
-Next extend from `DefaultOperatorFilterer`
-
-```
-contract MyNft is
-  DefaultOperatorFilterer,
-  // remaining inheritance here
-{
-```
-
-Finally, override the ERC721 transfer methods... (add override modifiers as needed)
-
-```
-    /**
-     * @dev implements operator-filter-registry blocklist filtering because https://opensea.io/blog/announcements/on-creator-fees/
-     */
-    function transferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) public payable override(ERC721A, IERC721A) onlyAllowedOperator {
-        super.transferFrom(from, to, tokenId);
-    }
-
-    /**
-     * @dev implements operator-filter-registry blocklist filtering because https://opensea.io/blog/announcements/on-creator-fees/
-     */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) public payable override(ERC721A, IERC721A) onlyAllowedOperator {
-        super.safeTransferFrom(from, to, tokenId);
-    }
-
-    /**
-     * @dev implements operator-filter-registry blocklist filtering because https://opensea.io/blog/announcements/on-creator-fees/
-     */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) public payable override(ERC721A, IERC721A) onlyAllowedOperator {
-        super.safeTransferFrom(from, to, tokenId, data);
-    }
-```
-
-Congratulations! Your NFT can now only be sold on OpenSea and other unpopular marketplaces like Coinbase NFT!
-
 ## How it works
 
 Token smart contracts may register themselves (or be registered by their "owner") with the `OperatorFilterRegistry`. Token contracts or their "owner"s may then curate lists of operators (specific account addresses) and codehashes (smart contracts deployed with the same code) that should not be allowed to transfer tokens on behalf of users.
@@ -177,6 +102,79 @@ Ethereum Mainnet
 Token contracts that wish to manage lists of filtered operators and restrict transfers from them may integrate with the registry easily with tokens using the [`OperatorFilterer`](src/example/OperatorFilterer.sol) and [`DefaultOperatorFilterer`](src/example/DefaultOperatorFilterer.sol) contracts. These contracts provide a modifier (`isAllowedOperator`) which can be used on the token's transfer methods to restrict transfers from filtered operators.
 
 See the [ExampleERC721](src/example/ExampleERC721.sol) and [ExampleERC1155](src/example/ExampleERC1155.sol) contracts for basic implementations that inherit the `DefaultOperatorFilterer`.
+
+## Getting started with NPM
+
+This package can be found on NPM to integrate with tools like hardhat.
+
+### Installing
+
+with npm
+
+```bash
+npm i operator-filter-registry
+```
+
+with yarn
+
+```bash
+yarn add operator-filter-registry
+```
+
+### Default usage
+
+Add to your smart contract in the import section:
+
+```
+import "operator-filter-registry/src/DefaultOperatorFilterer.sol";
+```
+
+Next extend from `DefaultOperatorFilterer`
+
+```
+contract MyNft is
+  DefaultOperatorFilterer,
+  // remaining inheritance here
+{
+```
+
+Finally, override the ERC721 transfer methods... (add override modifiers as needed)
+
+```
+    /**
+     * @dev implements operator-filter-registry blocklist filtering because https://opensea.io/blog/announcements/on-creator-fees/
+     */
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public payable override(ERC721A, IERC721A) onlyAllowedOperator {
+        super.transferFrom(from, to, tokenId);
+    }
+
+    /**
+     * @dev implements operator-filter-registry blocklist filtering because https://opensea.io/blog/announcements/on-creator-fees/
+     */
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public payable override(ERC721A, IERC721A) onlyAllowedOperator {
+        super.safeTransferFrom(from, to, tokenId);
+    }
+
+    /**
+     * @dev implements operator-filter-registry blocklist filtering because https://opensea.io/blog/announcements/on-creator-fees/
+     */
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) public payable override(ERC721A, IERC721A) onlyAllowedOperator {
+        super.safeTransferFrom(from, to, tokenId, data);
+    }
+```
 
 # Smart Contracts
 
