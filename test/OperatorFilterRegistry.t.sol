@@ -2,7 +2,6 @@
 pragma solidity ^0.8.13;
 
 import {BaseRegistryTest} from "./BaseRegistryTest.sol";
-import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../src/OperatorFilterRegistry.sol";
 import {OperatorFilterer721} from "../src/example/OperatorFilterer721.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 

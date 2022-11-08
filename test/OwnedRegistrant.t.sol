@@ -2,9 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {OwnedRegistrant} from "../src/OwnedRegistrant.sol";
-import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {BaseRegistryTest} from "./BaseRegistryTest.sol";
-import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../src/OperatorFilterRegistry.sol";
 
 contract OperatorFiltererTest is BaseRegistryTest {
     OwnedRegistrant registrant;
