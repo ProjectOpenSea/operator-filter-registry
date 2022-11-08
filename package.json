@@ -1,6 +1,6 @@
 {
   "name": "operator-filter-registry",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "repository": "git@github.com:ProjectOpenSea/operator-filter-registry.git",
   "author": "Operator Filterer <operatorfilterer@gmail.com>",
   "license": "MIT",
