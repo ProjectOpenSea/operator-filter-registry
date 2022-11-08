@@ -43,14 +43,26 @@ Ethereum Mainnet
 </tr>
 
 <tr>
-<td>LooksRareExchange</td>
-<td>0x59728544b08ab483533076417fbbb2fd0b17ce3a</td>
+<td>LooksRare TransferManagerERC721</td>
+<td>0xf42aa99F011A1fA7CDA90E5E98b277E306BcA83e</td>
+<td>Ethereum Mainnet</td>
+</tr>
+
+<tr>
+<td>LooksRare TransferManagerERC1155</td>
+<td>0xFED24eC7E22f573c2e08AEF55aA6797Ca2b3A051</td>
 <td>Ethereum Mainnet</td>
 </tr>
 
 <tr>
 <td>X2Y2 ERC721Delegate</td>
 <td>0xf849de01b080adc3a814fabe1e2087475cf2e354</td>
+<td>Ethereum Mainnet</td>
+</tr>
+
+<tr>
+<td>X2Y2 ERC1155Delegate</td>
+<td>0x024ac22acdb367a3ae52a3d94ac6649fdc1f0779</td>
 <td>Ethereum Mainnet</td>
 </tr>
 
