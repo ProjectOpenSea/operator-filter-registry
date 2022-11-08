@@ -1,19 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {OperatorFilterer} from "../src/OperatorFilterer.sol";
+import {OperatorFilterer721} from "../src/OperatorFilterer721.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {BaseRegistryTest} from "./BaseRegistryTest.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../src/OperatorFilterRegistry.sol";
-
-contract Filterer is OperatorFilterer, Ownable {
-    constructor() OperatorFilterer(address(0), false) {}
-
-    function testFilter() public onlyAllowedOperator returns (bool) {
-        return true;
-    }
-}
 
 contract OperatorFiltererTest is BaseRegistryTest {
     Filterer filterer;

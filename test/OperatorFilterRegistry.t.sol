@@ -3,14 +3,24 @@ pragma solidity ^0.8.13;
 
 import {BaseRegistryTest} from "./BaseRegistryTest.sol";
 import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../src/OperatorFilterRegistry.sol";
-import {OperatorFilterer} from "../src/OperatorFilterer.sol";
+import {OperatorFilterer721} from "../src/OperatorFilterer721.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 
-contract Filterer is OperatorFilterer, Ownable {
-    constructor(address registry) OperatorFilterer(address(0), false) {}
+contract Filterer is OperatorFilterer721, Ownable {
+    uint256 bal;
 
-    function testFilter() public onlyAllowedOperator returns (bool) {
+    constructor(address registry) OperatorFilterer721(address(0), false) {}
+
+    function testFilter(address from) public onlyAllowedOperator(from) returns (bool) {
         return true;
+    }
+
+    function balanceOf(address) public view virtual override returns (uint256) {
+        return bal;
+    }
+
+    function setBalance(uint256 amount) public {
+        bal = amount;
     }
 }
 

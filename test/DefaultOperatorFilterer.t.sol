@@ -1,22 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {DefaultOperatorFilterer} from "../src/DefaultOperatorFilterer.sol";
-import {OperatorFilterer} from "../src/OperatorFilterer.sol";
+import {DefaultOperatorFilterer721} from "../src/DefaultOperatorFilterer721.sol";
+import {OperatorFilterer721} from "../src/OperatorFilterer721.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {BaseRegistryTest} from "./BaseRegistryTest.sol";
 import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../src/OperatorFilterRegistry.sol";
-
-contract DefaultFilterer is DefaultOperatorFilterer, Ownable {
-    constructor() DefaultOperatorFilterer() {}
-
-    function filterTest() public onlyAllowedOperator returns (bool) {
-        return true;
-    }
-}
+import {DefaultFilterer721} from "./helpers/DefaultFilterer721.sol";
 
 contract DefaultOperatorFiltererTest is BaseRegistryTest {
-    DefaultFilterer filterer;
+    DefaultFilterer721 filterer;
     address filteredAddress;
     address filteredCodeHashAddress;
     bytes32 filteredCodeHash;
@@ -36,7 +29,7 @@ contract DefaultOperatorFiltererTest is BaseRegistryTest {
         registry.updateCodeHash(address(DEFAULT_SUBSCRIPTION), filteredCodeHash, true);
         vm.etch(filteredCodeHashAddress, code);
 
-        filterer = new DefaultFilterer();
+        filterer = new DefaultFilterer721();
         vm.stopPrank();
     }
 
