@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {EnumerableSet} from "openzeppelin-contracts/utils/structs/EnumerableSet.sol";
-
 interface IOperatorFilterRegistry {
     function isOperatorAllowed(address registrant, address operator) external view returns (bool);
     function register(address registrant) external;
