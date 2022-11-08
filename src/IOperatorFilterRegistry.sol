@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import {EnumerableSet} from "openzeppelin-contracts/utils/structs/EnumerableSet.sol";
 
 interface IOperatorFilterRegistry {
-    function isOperatorAllowed(address registrant, address operator) external returns (bool);
+    function isOperatorAllowed(address registrant, address operator) external view returns (bool);
     function register(address registrant) external;
     function registerAndSubscribe(address registrant, address subscription) external;
     function registerAndCopyEntries(address registrant, address registrantToCopy) external;

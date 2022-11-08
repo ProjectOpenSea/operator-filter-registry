@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
+import {IOperatorFilterRegistry} from "../IOperatorFilterRegistry.sol";
 
-contract OperatorFilterer {
+abstract contract OperatorFilterer721 {
     error OperatorNotAllowed(address operator);
 
     IOperatorFilterRegistry constant operatorFilterRegistry =
@@ -26,13 +26,29 @@ contract OperatorFilterer {
         }
     }
 
-    modifier onlyAllowedOperator() virtual {
+    modifier onlyAllowedOperator(address from) virtual {
         // Check registry code length to facilitate testing in environments without a deployed registry.
         if (address(operatorFilterRegistry).code.length > 0) {
-            if (!operatorFilterRegistry.isOperatorAllowed(address(this), msg.sender)) {
+            // Allow spending tokens from addresses with balance
+            // Note that this still allows listings and marketplaces with escrow to transfer tokens if transferred
+            // from an EOA.
+            if (from == msg.sender) {
+                if (balanceOf(msg.sender) > 0) {
+                    _;
+                    return;
+                }
+            }
+            if (
+                !(
+                    operatorFilterRegistry.isOperatorAllowed(address(this), msg.sender)
+                        && operatorFilterRegistry.isOperatorAllowed(address(this), from)
+                )
+            ) {
                 revert OperatorNotAllowed(msg.sender);
             }
         }
         _;
     }
+
+    function balanceOf(address owner) public view virtual returns (uint256 balance);
 }
