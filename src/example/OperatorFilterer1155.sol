@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
+import {IOperatorFilterRegistry} from "../IOperatorFilterRegistry.sol";
 
 abstract contract OperatorFilterer1155 {
     error OperatorNotAllowed(address operator);
@@ -29,25 +29,41 @@ abstract contract OperatorFilterer1155 {
     modifier onlyAllowedOperator(address from, uint256 id) virtual {
         // Check registry code length to facilitate testing in environments without a deployed registry.
         if (address(operatorFilterRegistry).code.length > 0) {
-            // Allow spending tokens from addresses with balance
-            // Note that this still allows listings and marketplaces with escrow to transfer tokens if transferred
-            // from an EOA.
-            if (from == msg.sender) {
-                if (balanceOf(msg.sender, id) > 0) {
-                    _;
-                    return;
+            _checkOperator(from, id);
+        }
+        _;
+    }
+
+    modifier onlyAllowedOperatorBatch(address from, uint256[] memory ids) virtual {
+        // Check registry code length to facilitate testing in environments without a deployed registry.
+        if (address(operatorFilterRegistry).code.length > 0) {
+            uint256 idsLength = ids.length;
+            unchecked {
+                for (uint256 i = 0; i < idsLength; ++i) {
+                    _checkOperator(from, ids[i]);
                 }
-            }
-            if (
-                !(
-                    operatorFilterRegistry.isOperatorAllowed(address(this), msg.sender)
-                        && operatorFilterRegistry.isOperatorAllowed(address(this), from)
-                )
-            ) {
-                revert OperatorNotAllowed(msg.sender);
             }
         }
         _;
+    }
+
+    function _checkOperator(address from, uint256 id) internal view {
+        // Allow spending tokens from addresses with balance
+        // Note that this still allows listings and marketplaces with escrow to transfer tokens if transferred
+        // from an EOA.
+        if (from == msg.sender) {
+            if (balanceOf(msg.sender, id) > 0) {
+                return;
+            }
+        }
+        if (
+            !(
+                operatorFilterRegistry.isOperatorAllowed(address(this), msg.sender)
+                    && operatorFilterRegistry.isOperatorAllowed(address(this), from)
+            )
+        ) {
+            revert OperatorNotAllowed(msg.sender);
+        }
     }
 
     function balanceOf(address owner, uint256 id) public view virtual returns (uint256 balance);

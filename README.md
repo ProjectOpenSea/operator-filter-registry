@@ -87,7 +87,7 @@ Ethereum Mainnet
 
 ## Usage
 
-Token contracts that wish to manage lists of filtered operators and restrict transfers from them may integrate with the registry easily using the [`OperatorFilterer721`](src/OperatorFilterer721.sol) and [`DefaultOperatorFilterer721`](src/DefaultOperatorFilterer721.sol) contracts. These contracts provide a modifier (`isAllowedOperator`) which can be used on the token's transfer methods to restrict transfers from filtered operators.
+Token contracts that wish to manage lists of filtered operators and restrict transfers from them may integrate with the registry easily with ERC721 tokens using the [`OperatorFilterer721`](src/example/OperatorFilterer721.sol) and [`DefaultOperatorFilterer721`](src/example/DefaultOperatorFilterer721.sol) contracts. For ERC1155 tokens, [`OperatorFilterer1155`](src/example/OperatorFilterer1155.sol) and [`DefaultOperatorFilterer1155`](src/example/DefaultOperatorFilterer1155.sol) are also provided. These contracts provide a modifier (`isAllowedOperator`) which can be used on the token's transfer methods to restrict transfers from filtered operators.
 
 See the [ExampleERC721](src/example/ExampleERC721.sol) contract for a basic implementation that inherits the `DefaultOperatorFilterer`.
 

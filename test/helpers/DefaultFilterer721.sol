@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {DefaultOperatorFilterer721} from "../../src/DefaultOperatorFilterer721.sol";
+import {DefaultOperatorFilterer721} from "../../src/example/DefaultOperatorFilterer721.sol";
 
 contract DefaultFilterer721 is DefaultOperatorFilterer721 {
     uint256 bal;

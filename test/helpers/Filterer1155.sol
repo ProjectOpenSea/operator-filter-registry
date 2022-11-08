@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {OperatorFilterer1155} from "../../src/OperatorFilterer1155.sol";
+import {OperatorFilterer1155} from "../../src/example/OperatorFilterer1155.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 
 contract Filterer1155 is OperatorFilterer1155, Ownable {

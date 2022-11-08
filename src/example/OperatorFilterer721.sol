@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
+import {IOperatorFilterRegistry} from "../IOperatorFilterRegistry.sol";
 
 abstract contract OperatorFilterer721 {
     error OperatorNotAllowed(address operator);

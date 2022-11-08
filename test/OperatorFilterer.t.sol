@@ -1,21 +1,32 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {OperatorFilterer721} from "../src/OperatorFilterer721.sol";
+import {OperatorFilterer721} from "../src/example/OperatorFilterer721.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {BaseRegistryTest} from "./BaseRegistryTest.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../src/OperatorFilterRegistry.sol";
+import {Filterer721} from "./helpers/Filterer721.sol";
 
-contract OperatorFiltererTest is BaseRegistryTest {
-    Filterer filterer;
+contract ConcreteOperatorFilterer721 is OperatorFilterer721 {
+    constructor(address registrant, bool sub) OperatorFilterer721(registrant, sub) {}
+
+    function balanceOf(address) public view override returns (uint256) {
+        return 0;
+    }
+}
+
+contract OperatorFilterer721Test is BaseRegistryTest {
+    Filterer721 filterer;
     address filteredAddress;
     address filteredCodeHashAddress;
     bytes32 filteredCodeHash;
+    address notFiltered;
 
     function setUp() public override {
         super.setUp();
-        filterer = new Filterer();
+        notFiltered = makeAddr("not filtered");
+        filterer = new Filterer721();
         // registry.register(address(filterer));
         filteredAddress = makeAddr("filtered address");
         registry.updateOperator(address(filterer), filteredAddress, true);
@@ -27,21 +38,20 @@ contract OperatorFiltererTest is BaseRegistryTest {
     }
 
     function testFilter() public {
-        assertTrue(filterer.testFilter());
-        vm.startPrank(filteredAddress);
+        assertTrue(filterer.testFilter(notFiltered));
+        // vm.startPrank();
         vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
-        filterer.testFilter();
-        vm.stopPrank();
+        filterer.testFilter(filteredAddress);
         vm.startPrank(filteredCodeHashAddress);
         vm.expectRevert(abi.encodeWithSelector(CodeHashFiltered.selector, filteredCodeHashAddress, filteredCodeHash));
-        filterer.testFilter();
+        filterer.testFilter(filteredCodeHashAddress);
     }
 
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
     function testConstructory_noSubscribeOrCopy() public {
         vm.recordLogs();
-        Filterer filterer2 = new Filterer();
+        Filterer721 filterer2 = new Filterer721();
         Vm.Log[] memory logs = vm.getRecordedLogs();
 
         assertEq(logs.length, 2);
@@ -58,7 +68,7 @@ contract OperatorFiltererTest is BaseRegistryTest {
         emit OperatorUpdated(deployed, filteredAddress, true);
         vm.expectEmit(true, true, true, false, address(registry));
         emit CodeHashUpdated(deployed, filteredCodeHash, true);
-        new OperatorFilterer(address(filterer), false);
+        new ConcreteOperatorFilterer721(address(filterer), false);
     }
 
     function testConstructor_subscribe() public {
@@ -68,13 +78,13 @@ contract OperatorFiltererTest is BaseRegistryTest {
         vm.expectEmit(true, true, true, false, address(registry));
         emit SubscriptionUpdated(deployed, address(filterer), true);
         vm.recordLogs();
-        new OperatorFilterer(address(filterer), true);
+        new ConcreteOperatorFilterer721(address(filterer), true);
         assertEq(vm.getRecordedLogs().length, 2);
     }
 
     function testRegistryNotDeployedDoesNotRevert() public {
         vm.etch(address(registry), "");
-        Filterer filterer2 = new Filterer();
-        assertTrue(filterer2.testFilter());
+        Filterer721 filterer2 = new Filterer721();
+        assertTrue(filterer2.testFilter(notFiltered));
     }
 }

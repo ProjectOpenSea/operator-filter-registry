@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {DefaultOperatorFilterer721} from "../src/DefaultOperatorFilterer721.sol";
-import {OperatorFilterer721} from "../src/OperatorFilterer721.sol";
+import {DefaultOperatorFilterer721} from "../src/example/DefaultOperatorFilterer721.sol";
+import {OperatorFilterer721} from "../src/example/OperatorFilterer721.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {BaseRegistryTest} from "./BaseRegistryTest.sol";
 import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../src/OperatorFilterRegistry.sol";
@@ -13,11 +13,12 @@ contract DefaultOperatorFiltererTest is BaseRegistryTest {
     address filteredAddress;
     address filteredCodeHashAddress;
     bytes32 filteredCodeHash;
+    address notFiltered;
     address constant DEFAULT_SUBSCRIPTION = address(0x3cc6CddA760b79bAfa08dF41ECFA224f810dCeB6);
 
     function setUp() public override {
         super.setUp();
-
+        notFiltered = makeAddr("not filtered");
         vm.startPrank(DEFAULT_SUBSCRIPTION);
         registry.register(DEFAULT_SUBSCRIPTION);
 
@@ -34,13 +35,10 @@ contract DefaultOperatorFiltererTest is BaseRegistryTest {
     }
 
     function testFilter() public {
-        assertTrue(filterer.filterTest());
-        vm.startPrank(filteredAddress);
+        assertTrue(filterer.filterTest(notFiltered));
         vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
-        filterer.filterTest();
-        vm.stopPrank();
-        vm.startPrank(filteredCodeHashAddress);
+        filterer.filterTest(filteredAddress);
         vm.expectRevert(abi.encodeWithSelector(CodeHashFiltered.selector, filteredCodeHashAddress, filteredCodeHash));
-        filterer.filterTest();
+        filterer.filterTest(filteredCodeHashAddress);
     }
 }
