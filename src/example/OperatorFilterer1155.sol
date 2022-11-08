@@ -52,9 +52,7 @@ abstract contract OperatorFilterer1155 {
         // Note that this still allows listings and marketplaces with escrow to transfer tokens if transferred
         // from an EOA.
         if (from == msg.sender) {
-            if (balanceOf(msg.sender, id) > 0) {
-                return;
-            }
+            return;
         }
         if (
             !(
@@ -65,6 +63,4 @@ abstract contract OperatorFilterer1155 {
             revert OperatorNotAllowed(msg.sender);
         }
     }
-
-    function balanceOf(address owner, uint256 id) public view virtual returns (uint256 balance);
 }

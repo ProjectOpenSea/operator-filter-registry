@@ -10,10 +10,6 @@ import {Filterer721} from "./helpers/Filterer721.sol";
 
 contract ConcreteOperatorFilterer721 is OperatorFilterer721 {
     constructor(address registrant, bool sub) OperatorFilterer721(registrant, sub) {}
-
-    function balanceOf(address) public view override returns (uint256) {
-        return 0;
-    }
 }
 
 contract OperatorFilterer721Test is BaseRegistryTest {
@@ -27,7 +23,6 @@ contract OperatorFilterer721Test is BaseRegistryTest {
         super.setUp();
         notFiltered = makeAddr("not filtered");
         filterer = new Filterer721();
-        // registry.register(address(filterer));
         filteredAddress = makeAddr("filtered address");
         registry.updateOperator(address(filterer), filteredAddress, true);
         filteredCodeHashAddress = makeAddr("filtered code hash");
@@ -39,10 +34,8 @@ contract OperatorFilterer721Test is BaseRegistryTest {
 
     function testFilter() public {
         assertTrue(filterer.testFilter(notFiltered));
-        // vm.startPrank();
         vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
         filterer.testFilter(filteredAddress);
-        vm.startPrank(filteredCodeHashAddress);
         vm.expectRevert(abi.encodeWithSelector(CodeHashFiltered.selector, filteredCodeHashAddress, filteredCodeHash));
         filterer.testFilter(filteredCodeHashAddress);
     }

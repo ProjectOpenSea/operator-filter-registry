@@ -30,13 +30,4 @@ abstract contract ExampleERC1155 is ERC1155(""), DefaultOperatorFilterer1155, Ow
     ) public virtual override onlyAllowedOperatorBatch(from, ids) {
         super.safeBatchTransferFrom(from, to, ids, amounts, data);
     }
-
-    function balanceOf(address owner, uint256 id)
-        public
-        view
-        override (ERC1155, OperatorFilterer1155)
-        returns (uint256)
-    {
-        return ERC1155.balanceOf(owner, id);
-    }
 }

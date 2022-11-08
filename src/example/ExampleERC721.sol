@@ -32,8 +32,4 @@ abstract contract ExampleERC721 is ERC721("Example", "EXAMPLE"), DefaultOperator
     function tokenURI(uint256) public pure override returns (string memory) {
         return "";
     }
-
-    function balanceOf(address owner) public view override (ERC721, OperatorFilterer721) returns (uint256) {
-        return ERC721.balanceOf(owner);
-    }
 }
