@@ -6,7 +6,7 @@ import {DefaultOperatorFilterer721} from "../../src/example/DefaultOperatorFilte
 contract DefaultFilterer721 is DefaultOperatorFilterer721 {
     constructor() DefaultOperatorFilterer721() {}
 
-    function filterTest(address from) public onlyAllowedOperator(from) returns (bool) {
+    function filterTest(address from) public view onlyAllowedOperator(from) returns (bool) {
         return true;
     }
 }

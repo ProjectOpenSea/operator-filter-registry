@@ -29,7 +29,7 @@ abstract contract OperatorFilterer1155 {
     modifier onlyAllowedOperator(address from, uint256 id) virtual {
         // Check registry code length to facilitate testing in environments without a deployed registry.
         if (address(operatorFilterRegistry).code.length > 0) {
-            _checkOperator(from, id);
+            _checkOperator(from);
         }
         _;
     }
@@ -40,14 +40,14 @@ abstract contract OperatorFilterer1155 {
             uint256 idsLength = ids.length;
             unchecked {
                 for (uint256 i = 0; i < idsLength; ++i) {
-                    _checkOperator(from, ids[i]);
+                    _checkOperator(from);
                 }
             }
         }
         _;
     }
 
-    function _checkOperator(address from, uint256 id) internal view {
+    function _checkOperator(address from) internal view {
         // Allow spending tokens from addresses with balance
         // Note that this still allows listings and marketplaces with escrow to transfer tokens if transferred
         // from an EOA.

@@ -11,10 +11,7 @@ contract ConfigureOwnedRegistrant is ScriptBase {
         setUp();
         address registryAddress = vm.envAddress("REGISTRY_ADDRESS");
         IOperatorFilterRegistry registry = IOperatorFilterRegistry(registryAddress);
-        address[] memory addressesToFilter = vm.envAddress("FILTERED_ADDRESSES", ",");
 
-        bytes memory creationCode = abi.encodePacked(type(OwnedRegistrant).creationCode, abi.encode(deployer));
-        bytes32 salt = bytes32(uint256(uint160(deployer)) << 96);
         vm.startBroadcast(deployer);
         OwnedRegistrant registrant = OwnedRegistrant(vm.envAddress("REGISTRANT_ADDRESS"));
         address add = vm.envAddress("NEW_FILTERED_ADDRESSES");
