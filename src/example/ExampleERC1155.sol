@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {ERC1155} from "openzeppelin-contracts/token/ERC1155/ERC1155.sol";
-import {DefaultOperatorFilterer} from "./DefaultOperatorFilterer.sol";
+import {DefaultOperatorFilterer} from "../DefaultOperatorFilterer.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 
 /**

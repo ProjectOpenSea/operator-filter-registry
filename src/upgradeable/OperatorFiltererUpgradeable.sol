@@ -2,25 +2,28 @@
 pragma solidity ^0.8.13;
 
 import {IOperatorFilterRegistry} from "../IOperatorFilterRegistry.sol";
+import {Initializable} from "openzeppelin-contracts-upgradeable/proxy/utils/Initializable.sol";
 
-abstract contract OperatorFilterer {
+abstract contract OperatorFiltererUpgradeable is Initializable {
     error OperatorNotAllowed(address operator);
 
     IOperatorFilterRegistry constant operatorFilterRegistry =
         IOperatorFilterRegistry(0x000000000000AAeB6D7670E522A718067333cd4E);
 
-    constructor(address subscriptionOrRegistrantToCopy, bool subscribe) {
+    function __OperatorFilterer_init(address subscriptionOrRegistrantToCopy, bool subscribe) public onlyInitializing {
         // If an inheriting token contract is deployed to a network without the registry deployed, the modifier
         // will not revert, but the contract will need to be registered with the registry once it is deployed in
         // order for the modifier to filter addresses.
         if (address(operatorFilterRegistry).code.length > 0) {
-            if (subscribe) {
-                operatorFilterRegistry.registerAndSubscribe(address(this), subscriptionOrRegistrantToCopy);
-            } else {
-                if (subscriptionOrRegistrantToCopy != address(0)) {
-                    operatorFilterRegistry.registerAndCopyEntries(address(this), subscriptionOrRegistrantToCopy);
+            if (!operatorFilterRegistry.isRegistered(address(this))) {
+                if (subscribe) {
+                    operatorFilterRegistry.registerAndSubscribe(address(this), subscriptionOrRegistrantToCopy);
                 } else {
-                    operatorFilterRegistry.register(address(this));
+                    if (subscriptionOrRegistrantToCopy != address(0)) {
+                        operatorFilterRegistry.registerAndCopyEntries(address(this), subscriptionOrRegistrantToCopy);
+                    } else {
+                        operatorFilterRegistry.register(address(this));
+                    }
                 }
             }
         }
