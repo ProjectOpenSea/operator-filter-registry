@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {ExampleERC721} from "../../src/example/ExampleERC721.sol";
-import {BaseRegistryTest} from "../BaseRegistryTest.sol";
+import {ExampleERC721Upgradeable} from "../../../src/example/upgradeable/ExampleERC721Upgradeable.sol";
+import {BaseRegistryTest} from "../../BaseRegistryTest.sol";
+import {Initializable} from "openzeppelin-contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract TestableExampleERC721 is ExampleERC721 {
+contract TestableExampleERC721 is ExampleERC721Upgradeable {
     function mint(address to, uint256 tokenId) external {
         _mint(to, tokenId);
     }
 }
 
-contract ExampleERC721Test is BaseRegistryTest {
+contract ExampleERC721UpgradeableTest is BaseRegistryTest, Initializable {
     TestableExampleERC721 example;
     address filteredAddress;
 
@@ -27,6 +28,16 @@ contract ExampleERC721Test is BaseRegistryTest {
         vm.stopPrank();
 
         example = new TestableExampleERC721();
+        example.initialize();
+    }
+
+    function testUpgradeable() public {
+        TestableExampleERC721 example2 = new TestableExampleERC721();
+        vm.expectEmit(true, true, false, true, address(example2));
+        emit Initialized(1);
+        example2.initialize();
+        vm.expectRevert(bytes("Initializable: contract is already initialized"));
+        example2.initialize();
     }
 
     function testFilter() public {

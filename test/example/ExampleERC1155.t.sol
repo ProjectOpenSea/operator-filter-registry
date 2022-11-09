@@ -2,11 +2,6 @@
 pragma solidity ^0.8.13;
 
 import {ExampleERC1155} from "../../src/example/ExampleERC1155.sol";
-import {DefaultOperatorFilterer721} from "../../src/example/DefaultOperatorFilterer721.sol";
-import {OperatorFilterer721} from "../../src/example/OperatorFilterer721.sol";
-import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
-import {Test} from "forge-std/Test.sol";
-import {OperatorFilterRegistry, OperatorFilterRegistryErrorsAndEvents} from "../../src/OperatorFilterRegistry.sol";
 import {BaseRegistryTest} from "../BaseRegistryTest.sol";
 
 contract TestableExampleERC1155 is ExampleERC1155 {
