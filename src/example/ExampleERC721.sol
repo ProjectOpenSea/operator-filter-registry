@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {ERC721} from "openzeppelin-contracts/token/ERC721/ERC721.sol";
-import {DefaultOperatorFilterer721} from "./DefaultOperatorFilterer721.sol";
+import {DefaultOperatorFilterer} from "./DefaultOperatorFilterer.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 
 /**
@@ -12,7 +12,7 @@ import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
  *         Adding the onlyAllowedOperator modifier to the transferFrom and both safeTransferFrom methods ensures that
  *         the msg.sender (operator) is allowed by the OperatorFilterRegistry.
  */
-abstract contract ExampleERC721 is ERC721("Example", "EXAMPLE"), DefaultOperatorFilterer721, Ownable {
+abstract contract ExampleERC721 is ERC721("Example", "EXAMPLE"), DefaultOperatorFilterer, Ownable {
     function transferFrom(address from, address to, uint256 tokenId) public override onlyAllowedOperator(from) {
         super.transferFrom(from, to, tokenId);
     }

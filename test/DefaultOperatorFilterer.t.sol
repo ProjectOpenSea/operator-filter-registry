@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {DefaultOperatorFilterer721} from "../src/example/DefaultOperatorFilterer721.sol";
+import {DefaultOperatorFilterer} from "../src/example/DefaultOperatorFilterer.sol";
 import {BaseRegistryTest} from "./BaseRegistryTest.sol";
-import {DefaultFilterer721} from "./helpers/DefaultFilterer721.sol";
+import {DefaultFilterer} from "./helpers/DefaultFilterer.sol";
 
 contract DefaultOperatorFiltererTest is BaseRegistryTest {
-    DefaultFilterer721 filterer;
+    DefaultFilterer filterer;
     address filteredAddress;
     address filteredCodeHashAddress;
     bytes32 filteredCodeHash;
@@ -27,7 +27,7 @@ contract DefaultOperatorFiltererTest is BaseRegistryTest {
         registry.updateCodeHash(address(DEFAULT_SUBSCRIPTION), filteredCodeHash, true);
         vm.etch(filteredCodeHashAddress, code);
 
-        filterer = new DefaultFilterer721();
+        filterer = new DefaultFilterer();
         vm.stopPrank();
     }
 
