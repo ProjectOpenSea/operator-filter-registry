@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {ERC1155Upgradeable} from "openzeppelin-contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
-import {DefaultOperatorFilterer1155Upgradeable} from "./DefaultOperatorFilterer1155Upgradeable.sol";
+import {DefaultOperatorFiltererUpgradeable} from "./DefaultOperatorFiltererUpgradeable.sol";
 import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 /**
@@ -14,19 +14,19 @@ import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/access/Owna
  */
 abstract contract ExampleERC1155Upgradeable is
     ERC1155Upgradeable,
-    DefaultOperatorFilterer1155Upgradeable,
+    DefaultOperatorFiltererUpgradeable,
     OwnableUpgradeable
 {
     function initialize() public initializer {
         __ERC1155_init("");
         __Ownable_init();
-        __DefaultOperatorFilterer1155_init();
+        __DefaultOperatorFilterer_init();
     }
 
     function safeTransferFrom(address from, address to, uint256 tokenId, uint256 amount, bytes memory data)
         public
         override
-        onlyAllowedOperator(from, tokenId)
+        onlyAllowedOperator(from)
     {
         super.safeTransferFrom(from, to, tokenId, amount, data);
     }
@@ -37,7 +37,7 @@ abstract contract ExampleERC1155Upgradeable is
         uint256[] memory ids,
         uint256[] memory amounts,
         bytes memory data
-    ) public virtual override onlyAllowedOperatorBatch(from, ids) {
+    ) public virtual override onlyAllowedOperator(from) {
         super.safeBatchTransferFrom(from, to, ids, amounts, data);
     }
 }

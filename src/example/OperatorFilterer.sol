@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 
 import {IOperatorFilterRegistry} from "../IOperatorFilterRegistry.sol";
 
-abstract contract OperatorFilterer721 {
+abstract contract OperatorFilterer {
     error OperatorNotAllowed(address operator);
 
     IOperatorFilterRegistry constant operatorFilterRegistry =

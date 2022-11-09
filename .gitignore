@@ -10,3 +10,4 @@ out/
 # Dotenv file
 .env
 remappings.txt
+broadcast/
