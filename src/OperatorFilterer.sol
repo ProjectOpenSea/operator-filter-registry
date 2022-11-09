@@ -1,29 +1,26 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {IOperatorFilterRegistry} from "../../IOperatorFilterRegistry.sol";
-import {Initializable} from "openzeppelin-contracts-upgradeable/proxy/utils/Initializable.sol";
+import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
 
-abstract contract OperatorFiltererUpgradeable is Initializable {
+abstract contract OperatorFilterer {
     error OperatorNotAllowed(address operator);
 
     IOperatorFilterRegistry constant operatorFilterRegistry =
         IOperatorFilterRegistry(0x000000000000AAeB6D7670E522A718067333cd4E);
 
-    function __OperatorFilterer_init(address subscriptionOrRegistrantToCopy, bool subscribe) public onlyInitializing {
+    constructor(address subscriptionOrRegistrantToCopy, bool subscribe) {
         // If an inheriting token contract is deployed to a network without the registry deployed, the modifier
         // will not revert, but the contract will need to be registered with the registry once it is deployed in
         // order for the modifier to filter addresses.
         if (address(operatorFilterRegistry).code.length > 0) {
-            if (!operatorFilterRegistry.isRegistered(address(this))) {
-                if (subscribe) {
-                    operatorFilterRegistry.registerAndSubscribe(address(this), subscriptionOrRegistrantToCopy);
+            if (subscribe) {
+                operatorFilterRegistry.registerAndSubscribe(address(this), subscriptionOrRegistrantToCopy);
+            } else {
+                if (subscriptionOrRegistrantToCopy != address(0)) {
+                    operatorFilterRegistry.registerAndCopyEntries(address(this), subscriptionOrRegistrantToCopy);
                 } else {
-                    if (subscriptionOrRegistrantToCopy != address(0)) {
-                        operatorFilterRegistry.registerAndCopyEntries(address(this), subscriptionOrRegistrantToCopy);
-                    } else {
-                        operatorFilterRegistry.register(address(this));
-                    }
+                    operatorFilterRegistry.register(address(this));
                 }
             }
         }
