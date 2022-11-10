@@ -30,6 +30,9 @@ contract ExampleER1155Test is BaseRegistryTest {
     }
 
     function testFilter() public {
+        example.mint(makeAddr("from"), 1);
+        vm.prank(makeAddr("from"));
+        example.setApprovalForAll(filteredAddress, true);
         vm.startPrank(address(filteredAddress));
         vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
         example.safeTransferFrom(makeAddr("from"), makeAddr("to"), 1, 1, "");

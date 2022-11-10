@@ -23,23 +23,16 @@ abstract contract ExampleERC721Upgradeable is
         __DefaultOperatorFilterer_init();
     }
 
-    function transferFrom(address from, address to, uint256 tokenId) public override onlyAllowedOperator(from) {
-        super.transferFrom(from, to, tokenId);
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 firstTokenId,
+        uint256 batchSize
+    ) internal override onlyAllowedOperator(from) {
+        super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId) public override onlyAllowedOperator(from) {
-        super.safeTransferFrom(from, to, tokenId);
-    }
-
-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data)
-        public
-        override
-        onlyAllowedOperator(from)
-    {
-        super.safeTransferFrom(from, to, tokenId, data);
-    }
-
-    function tokenURI(uint256) public pure override returns (string memory) {
-        return "";
+    function tokenURI(uint256) public virtual view override returns (string memory) {
+        return "ipfs://bafybeih2nhapbsjyic4ilfy35w7o5gwyk3wvhabwt2jfa4l3fqdq3i6g3i/1";
     }
 }

@@ -12,24 +12,22 @@ import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
  *         Adding the onlyAllowedOperator modifier to the transferFrom and both safeTransferFrom methods ensures that
  *         the msg.sender (operator) is allowed by the OperatorFilterRegistry.
  */
-abstract contract ExampleERC721 is ERC721("Example", "EXAMPLE"), DefaultOperatorFilterer, Ownable {
-    function transferFrom(address from, address to, uint256 tokenId) public override onlyAllowedOperator(from) {
-        super.transferFrom(from, to, tokenId);
+abstract contract ExampleERC721 is
+    ERC721("Example", "EXAMPLE"),
+    DefaultOperatorFilterer,
+    Ownable
+{
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 firstTokenId,
+        uint256 batchSize
+    ) internal override onlyAllowedOperator(from) {
+        super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId) public override onlyAllowedOperator(from) {
-        super.safeTransferFrom(from, to, tokenId);
-    }
-
-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data)
-        public
-        override
-        onlyAllowedOperator(from)
-    {
-        super.safeTransferFrom(from, to, tokenId, data);
-    }
-
-    function tokenURI(uint256) public pure override returns (string memory) {
-        return "";
+    function tokenURI(uint256) public view virtual override returns (string memory) {
+        return
+            "ipfs://bafybeih2nhapbsjyic4ilfy35w7o5gwyk3wvhabwt2jfa4l3fqdq3i6g3i/1";
     }
 }

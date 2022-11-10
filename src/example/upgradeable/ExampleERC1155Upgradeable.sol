@@ -18,26 +18,21 @@ abstract contract ExampleERC1155Upgradeable is
     OwnableUpgradeable
 {
     function initialize() public initializer {
-        __ERC1155_init("");
+        __ERC1155_init(
+            "ipfs://bafybeih2nhapbsjyic4ilfy35w7o5gwyk3wvhabwt2jfa4l3fqdq3i6g3i/1"
+        );
         __Ownable_init();
         __DefaultOperatorFilterer_init();
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId, uint256 amount, bytes memory data)
-        public
-        override
-        onlyAllowedOperator(from)
-    {
-        super.safeTransferFrom(from, to, tokenId, amount, data);
-    }
-
-    function safeBatchTransferFrom(
+    function _beforeTokenTransfer(
+        address operator,
         address from,
         address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
+        uint256[] memory id,
+        uint256[] memory amount,
         bytes memory data
-    ) public virtual override onlyAllowedOperator(from) {
-        super.safeBatchTransferFrom(from, to, ids, amounts, data);
+    ) internal override virtual onlyAllowedOperator(from) {
+        super._beforeTokenTransfer(operator, from, to, id, amount, data);
     }
 }
