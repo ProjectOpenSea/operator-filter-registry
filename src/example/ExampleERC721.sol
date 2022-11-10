@@ -29,6 +29,10 @@ abstract contract ExampleERC721 is ERC721("Example", "EXAMPLE"), DefaultOperator
         super.safeTransferFrom(from, to, tokenId, data);
     }
 
+    function toggleOperatorFilter() external onlyOwner {
+        isOperatorFilterEnabled = !isOperatorFilterEnabled;
+    }
+
     function tokenURI(uint256) public pure override returns (string memory) {
         return "";
     }

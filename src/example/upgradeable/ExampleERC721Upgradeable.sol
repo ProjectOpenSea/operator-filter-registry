@@ -39,6 +39,10 @@ abstract contract ExampleERC721Upgradeable is
         super.safeTransferFrom(from, to, tokenId, data);
     }
 
+    function toggleOperatorFilter() external onlyOwner {
+        isOperatorFilterEnabled = !isOperatorFilterEnabled;
+    }
+
     function tokenURI(uint256) public pure override returns (string memory) {
         return "";
     }

@@ -40,4 +40,8 @@ abstract contract ExampleERC1155Upgradeable is
     ) public virtual override onlyAllowedOperator(from) {
         super.safeBatchTransferFrom(from, to, ids, amounts, data);
     }
+
+    function toggleOperatorFilter() external onlyOwner {
+        isOperatorFilterEnabled = !isOperatorFilterEnabled;
+    }
 }

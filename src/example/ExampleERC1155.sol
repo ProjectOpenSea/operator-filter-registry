@@ -30,4 +30,8 @@ abstract contract ExampleERC1155 is ERC1155(""), DefaultOperatorFilterer, Ownabl
     ) public virtual override onlyAllowedOperator(from) {
         super.safeBatchTransferFrom(from, to, ids, amounts, data);
     }
+
+    function toggleOperatorFilter() external onlyOwner {
+        isOperatorFilterEnabled = !isOperatorFilterEnabled;
+    }
 }
