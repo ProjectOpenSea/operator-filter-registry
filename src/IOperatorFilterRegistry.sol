@@ -25,4 +25,5 @@ interface IOperatorFilterRegistry {
     function filteredCodeHashAt(address registrant, uint256 index) external returns (bytes32);
     function isRegistered(address addr) external returns (bool);
     function codeHashOf(address addr) external returns (bytes32);
+    function unregister(address addr) external;
 }
