@@ -6,6 +6,7 @@ interface IOperatorFilterRegistry {
     function register(address registrant) external;
     function registerAndSubscribe(address registrant, address subscription) external;
     function registerAndCopyEntries(address registrant, address registrantToCopy) external;
+    function unregister(address addr) external;
     function updateOperator(address registrant, address operator, bool filtered) external;
     function updateOperators(address registrant, address[] calldata operators, bool filtered) external;
     function updateCodeHash(address registrant, bytes32 codehash, bool filtered) external;
@@ -25,5 +26,4 @@ interface IOperatorFilterRegistry {
     function filteredCodeHashAt(address registrant, uint256 index) external returns (bytes32);
     function isRegistered(address addr) external returns (bool);
     function codeHashOf(address addr) external returns (bytes32);
-    function unregister(address addr) external;
 }
