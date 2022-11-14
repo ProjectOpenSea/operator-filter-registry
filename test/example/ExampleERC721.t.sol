@@ -67,15 +67,30 @@ contract ExampleERC721Test is BaseRegistryTest {
         address alice = address(0xA11CE);
         address bob = address(0xB0B);
         example.mint(bob, 1);
+        vm.prank(bob);
+        example.setApprovalForAll(alice, true);
 
         vm.prank(DEFAULT_SUBSCRIPTION);
         registry.updateOperator(address(DEFAULT_SUBSCRIPTION), alice, true);
 
-        vm.prank(bob);
-        example.setApprovalForAll(alice, true);
-
         vm.startPrank(alice);
         vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, alice));
         example.transferFrom(bob, makeAddr("to"), 1);
+    }
+
+    function testExcludeApprovals() public {
+        address alice = address(0xA11CE);
+        address bob = address(0xB0B);
+        example.mint(bob, 1);
+
+        vm.prank(DEFAULT_SUBSCRIPTION);
+        registry.updateOperator(address(DEFAULT_SUBSCRIPTION), alice, true);
+
+        vm.startPrank(bob);
+        vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, alice));
+        example.setApprovalForAll(alice, true);
+
+        vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, alice));
+        example.approve(alice, 1);
     }
 }

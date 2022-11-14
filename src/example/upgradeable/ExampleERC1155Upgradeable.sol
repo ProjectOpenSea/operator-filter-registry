@@ -23,6 +23,10 @@ abstract contract ExampleERC1155Upgradeable is
         __DefaultOperatorFilterer_init();
     }
 
+    function setApprovalForAll(address operator, bool approved) public override onlyAllowedOperatorApproval(operator) {
+        super.setApprovalForAll(operator, approved);
+    }
+
     function safeTransferFrom(address from, address to, uint256 tokenId, uint256 amount, bytes memory data)
         public
         override

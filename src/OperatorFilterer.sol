@@ -36,13 +36,18 @@ abstract contract OperatorFilterer {
                 _;
                 return;
             }
-            if (
-                !(
-                    OPERATOR_FILTER_REGISTRY.isOperatorAllowed(address(this), msg.sender)
-                        && OPERATOR_FILTER_REGISTRY.isOperatorAllowed(address(this), from)
-                )
-            ) {
+            if (!OPERATOR_FILTER_REGISTRY.isOperatorAllowed(address(this), msg.sender)) {
                 revert OperatorNotAllowed(msg.sender);
+            }
+        }
+        _;
+    }
+
+    modifier onlyAllowedOperatorApproval(address operator) virtual {
+        // Check registry code length to facilitate testing in environments without a deployed registry.
+        if (address(OPERATOR_FILTER_REGISTRY).code.length > 0) {
+            if (!OPERATOR_FILTER_REGISTRY.isOperatorAllowed(address(this), operator)) {
+                revert OperatorNotAllowed(operator);
             }
         }
         _;
