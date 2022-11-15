@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {OperatorFilterer} from "../src/example/OperatorFilterer.sol";
+import {OperatorFilterer} from "../src/OperatorFilterer.sol";
 import {BaseRegistryTest} from "./BaseRegistryTest.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {Filterer} from "./helpers/Filterer.sol";
