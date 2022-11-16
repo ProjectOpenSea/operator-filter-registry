@@ -42,13 +42,18 @@ abstract contract OperatorFiltererUpgradeable is Initializable {
                 _;
                 return;
             }
-            if (
-                !(
-                    operatorFilterRegistry.isOperatorAllowed(address(this), msg.sender)
-                        && operatorFilterRegistry.isOperatorAllowed(address(this), from)
-                )
-            ) {
+            if (!operatorFilterRegistry.isOperatorAllowed(address(this), msg.sender)) {
                 revert OperatorNotAllowed(msg.sender);
+            }
+        }
+        _;
+    }
+
+    modifier onlyAllowedOperatorApproval(address operator) virtual {
+        // Check registry code length to facilitate testing in environments without a deployed registry.
+        if (address(operatorFilterRegistry).code.length > 0) {
+            if (!operatorFilterRegistry.isOperatorAllowed(address(this), operator)) {
+                revert OperatorNotAllowed(operator);
             }
         }
         _;
