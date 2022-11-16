@@ -2,7 +2,9 @@
 pragma solidity ^0.8.13;
 
 import {ERC721Upgradeable} from "openzeppelin-contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
-import {DefaultOperatorFiltererUpgradeable} from "../../upgradeable/DefaultOperatorFiltererUpgradeable.sol";
+import {RevokableDefaultOperatorFiltererUpgradeable} from
+    "../../upgradeable/RevokableDefaultOperatorFiltererUpgradeable.sol";
+import {RevokableOperatorFiltererUpgradeable} from "../../upgradeable/RevokableOperatorFiltererUpgradeable.sol";
 import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 /**
@@ -12,15 +14,15 @@ import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/access/Owna
  *         Adding the onlyAllowedOperator modifier to the transferFrom and both safeTransferFrom methods ensures that
  *         the msg.sender (operator) is allowed by the OperatorFilterRegistry.
  */
-abstract contract ExampleERC721Upgradeable is
+abstract contract RevokableExampleERC721Upgradeable is
     ERC721Upgradeable,
-    DefaultOperatorFiltererUpgradeable,
+    RevokableDefaultOperatorFiltererUpgradeable,
     OwnableUpgradeable
 {
     function initialize() public initializer {
         __ERC721_init("Example", "EXAMPLE");
         __Ownable_init();
-        __DefaultOperatorFilterer_init();
+        __RevokableDefaultOperatorFilterer_init();
     }
 
     function setApprovalForAll(address operator, bool approved) public override onlyAllowedOperatorApproval(operator) {
@@ -45,5 +47,15 @@ abstract contract ExampleERC721Upgradeable is
         onlyAllowedOperator(from)
     {
         super.safeTransferFrom(from, to, tokenId, data);
+    }
+
+    function owner()
+        public
+        view
+        virtual
+        override (OwnableUpgradeable, RevokableOperatorFiltererUpgradeable)
+        returns (address)
+    {
+        return OwnableUpgradeable.owner();
     }
 }

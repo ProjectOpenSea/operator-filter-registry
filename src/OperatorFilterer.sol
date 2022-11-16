@@ -3,6 +3,11 @@ pragma solidity ^0.8.13;
 
 import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
 
+/**
+ * @title  OperatorFilterer
+ * @notice Abstract contract whose constructor automatically registers and optionally subscribes to or copies another
+ *         registrant's entries in the OperatorFilterRegistry.
+ */
 abstract contract OperatorFilterer {
     error OperatorNotAllowed(address operator);
 
