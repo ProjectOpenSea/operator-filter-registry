@@ -2,18 +2,20 @@
 pragma solidity ^0.8.13;
 
 import {ERC721} from "openzeppelin-contracts/token/ERC721/ERC721.sol";
-import {DefaultOperatorFilterer} from "../DefaultOperatorFilterer.sol";
+import {RevokableOperatorFilterer} from "../RevokableOperatorFilterer.sol";
+import {RevokableDefaultOperatorFilterer} from "../RevokableDefaultOperatorFilterer.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 
 /**
  * @title  ExampleERC721
- * @notice This example contract is configured to use the DefaultOperatorFilterer, which automatically registers the
- *         token and subscribes it to OpenSea's curated filters.
+ * @notice This example contract is configured to use the RevokableDefaultOperatorFilterer, which automatically
+ *         registers the token and subscribes it to OpenSea's curated filters. The owner of the contract can
+ *         permanently revoke checks to the filter registry by calling revokeOperatorFilterRegistry.
  *         Adding the onlyAllowedOperator modifier to the transferFrom and both safeTransferFrom methods ensures that
  *         the msg.sender (operator) is allowed by the OperatorFilterRegistry. Adding the onlyAllowedOperatorApproval
  *         modifier to the approval methods ensures that owners do not approve operators that are not allowed.
  */
-abstract contract ExampleERC721 is ERC721("Example", "EXAMPLE"), DefaultOperatorFilterer, Ownable {
+abstract contract RevokableExampleERC721 is ERC721("Example", "EXAMPLE"), RevokableDefaultOperatorFilterer, Ownable {
     function setApprovalForAll(address operator, bool approved) public override onlyAllowedOperatorApproval(operator) {
         super.setApprovalForAll(operator, approved);
     }
@@ -36,5 +38,9 @@ abstract contract ExampleERC721 is ERC721("Example", "EXAMPLE"), DefaultOperator
         onlyAllowedOperator(from)
     {
         super.safeTransferFrom(from, to, tokenId, data);
+    }
+
+    function owner() public view virtual override (Ownable, RevokableOperatorFilterer) returns (address) {
+        return Ownable.owner();
     }
 }
