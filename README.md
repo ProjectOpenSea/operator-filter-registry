@@ -109,7 +109,9 @@ This method will toggle filtering on code hashes of operators given registrant. 
 
 ## `OperatorFilterer`
 
-This smart contract is meant to be inherited by token contracts so they can use the `onlyAllowedOperator` modifier on the `transferFrom` and `safeTransferFrom` methods.
+This smart contract is meant to be inherited by token contracts so they can use the following:
+- `onlyAllowedOperator` modifier for `transferFrom` and `safeTransferFrom` methods.
+- `onlyAllowedOperatorApproval` modifier for `approve` and `setApprovalForAll` methods.
 
 On construction, it takes three parameters:
 - `address registry`: the address of the `OperatorFilterRegistry` contract

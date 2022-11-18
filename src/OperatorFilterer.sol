@@ -7,6 +7,9 @@ import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
  * @title  OperatorFilterer
  * @notice Abstract contract whose constructor automatically registers and optionally subscribes to or copies another
  *         registrant's entries in the OperatorFilterRegistry.
+ * @dev    This smart contract is meant to be inherited by token contracts so they can use the following:
+ *         - `onlyAllowedOperator` modifier for `transferFrom` and `safeTransferFrom` methods.
+ *         - `onlyAllowedOperatorApproval` modifier for `approve` and `setApprovalForAll` methods.
  */
 abstract contract OperatorFilterer {
     error OperatorNotAllowed(address operator);
