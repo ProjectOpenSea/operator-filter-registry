@@ -83,6 +83,18 @@ Ethereum Mainnet
 </td></tr>
 
 <tr><td>Goerli</td></tr>
+<tr><td>Polygon</td></tr>
+<tr><td>Mumbai</td></tr>
+<tr><td>Optimism</td></tr>
+<tr><td>Optimism Goerli</td></tr>
+<tr><td>Arbitrum One</td></tr>
+<tr><td>Arbitrum Nova</td></tr>
+<tr><td>Arbitrum Goerli</td></tr>
+<tr><td>Avalanche</td></tr>
+<tr><td>Avalanche Fuji</td></tr>
+<tr><td>Klaytn</td></tr><tr><td>Baobab</td></tr>
+
+
 </table>
 
 ## Usage
