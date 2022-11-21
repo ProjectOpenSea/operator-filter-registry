@@ -15,8 +15,6 @@ abstract contract OperatorFilterer {
     error OperatorNotAllowed(address operator);
 
     address operatorFilterRegistry = 0x000000000000AAeB6D7670E522A718067333cd4E;
-    IOperatorFilterRegistry public constant OPERATOR_FILTER_REGISTRY =
-        IOperatorFilterRegistry(0x000000000000AAeB6D7670E522A718067333cd4E);
 
     constructor(address subscriptionOrRegistrantToCopy, bool subscribe) {
         // If an inheriting token contract is deployed to a network without the registry deployed, the modifier
