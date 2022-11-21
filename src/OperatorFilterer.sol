@@ -14,6 +14,7 @@ import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
 abstract contract OperatorFilterer {
     error OperatorNotAllowed(address operator);
 
+    address operatorFilterRegistry = 0x000000000000AAeB6D7670E522A718067333cd4E;
     IOperatorFilterRegistry public constant OPERATOR_FILTER_REGISTRY =
         IOperatorFilterRegistry(0x000000000000AAeB6D7670E522A718067333cd4E);
 
@@ -21,22 +22,30 @@ abstract contract OperatorFilterer {
         // If an inheriting token contract is deployed to a network without the registry deployed, the modifier
         // will not revert, but the contract will need to be registered with the registry once it is deployed in
         // order for the modifier to filter addresses.
-        if (address(OPERATOR_FILTER_REGISTRY).code.length > 0) {
+        if (operatorFilterRegistry.code.length > 0) {
             if (subscribe) {
-                OPERATOR_FILTER_REGISTRY.registerAndSubscribe(address(this), subscriptionOrRegistrantToCopy);
+                IOperatorFilterRegistry(operatorFilterRegistry).registerAndSubscribe(address(this), subscriptionOrRegistrantToCopy);
             } else {
                 if (subscriptionOrRegistrantToCopy != address(0)) {
-                    OPERATOR_FILTER_REGISTRY.registerAndCopyEntries(address(this), subscriptionOrRegistrantToCopy);
+                    IOperatorFilterRegistry(operatorFilterRegistry).registerAndCopyEntries(address(this), subscriptionOrRegistrantToCopy);
                 } else {
-                    OPERATOR_FILTER_REGISTRY.register(address(this));
+                    IOperatorFilterRegistry(operatorFilterRegistry).register(address(this));
                 }
             }
         }
     }
 
+    // Enables updating registry contract address
+    function _setOperatorFilterRegistry(address _operatorFilterRegistry)
+        internal
+        virtual
+    {
+        operatorFilterRegistry = _operatorFilterRegistry;
+    }
+
     modifier onlyAllowedOperator(address from) virtual {
         // Check registry code length to facilitate testing in environments without a deployed registry.
-        if (address(OPERATOR_FILTER_REGISTRY).code.length > 0) {
+        if (operatorFilterRegistry.code.length > 0) {
             // Allow spending tokens from addresses with balance
             // Note that this still allows listings and marketplaces with escrow to transfer tokens if transferred
             // from an EOA.
@@ -44,7 +53,7 @@ abstract contract OperatorFilterer {
                 _;
                 return;
             }
-            if (!OPERATOR_FILTER_REGISTRY.isOperatorAllowed(address(this), msg.sender)) {
+            if (!IOperatorFilterRegistry(operatorFilterRegistry).isOperatorAllowed(address(this), msg.sender)) {
                 revert OperatorNotAllowed(msg.sender);
             }
         }
@@ -53,8 +62,8 @@ abstract contract OperatorFilterer {
 
     modifier onlyAllowedOperatorApproval(address operator) virtual {
         // Check registry code length to facilitate testing in environments without a deployed registry.
-        if (address(OPERATOR_FILTER_REGISTRY).code.length > 0) {
-            if (!OPERATOR_FILTER_REGISTRY.isOperatorAllowed(address(this), operator)) {
+        if (operatorFilterRegistry.code.length > 0) {
+            if (!IOperatorFilterRegistry(operatorFilterRegistry).isOperatorAllowed(address(this), operator)) {
                 revert OperatorNotAllowed(operator);
             }
         }

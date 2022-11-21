@@ -14,6 +14,11 @@ import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
  *         modifier to the approval methods ensures that owners do not approve operators that are not allowed.
  */
 abstract contract ExampleERC721 is ERC721("Example", "EXAMPLE"), DefaultOperatorFilterer, Ownable {
+    
+    function setOperatorFilterRegistry(address operatorFilterRegistry) public onlyOwner {
+        _setOperatorFilterRegistry(operatorFilterRegistry);
+    }
+    
     function setApprovalForAll(address operator, bool approved) public override onlyAllowedOperatorApproval(operator) {
         super.setApprovalForAll(operator, approved);
     }
