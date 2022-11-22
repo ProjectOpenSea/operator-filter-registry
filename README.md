@@ -112,10 +112,10 @@ See the [ExampleERC721](src/example/ExampleERC721.sol) and [ExampleERC1155](src/
 It also supports "subscriptions," which allow a contract to delegate its operator filtering to another contract. This is useful for contracts that want to allow users to delegate their operator filtering to a trusted third party, who can continuously update the list of filtered operators and code hashes. Subscriptions may be cancelled at any time by the subscriber or its `Owner`.
 
 
-### updateOperatorAddress(address registrant, address operator, bool filter)
-This method will toggle filtering for an operator for a given registrant. If `filter` is `true`,  `isOperatorAllowed` will return `false`. If `filter` is `false`, `isOperatorAllowed` will return `true`. This can filter known addresses.
+### function updateOperator(address registrant, address operator, bool filtered)
+This method will toggle filtering for an operator for a given registrant. If `filtered` is `true`,  `isOperatorAllowed` will return `false`. If `filtered` is `false`, `isOperatorAllowed` will return `true`. This can filter known addresses.
 
-### updateOperatorCodeHash(address registrant, bytes32 codeHash, bool filter)
+### function updateCodeHash(address registrant, bytes32 codeHash, bool filtered)
 This method will toggle filtering on code hashes of operators given registrant. If an operator's `EXTCODEHASH` matches a filtered code hash, `isOperatorAllowed` will return `true`. Otherwise, `isOperatorAllowed` will return `false`. This can filter smart contract operators with different addresess but the same code.
 
 
