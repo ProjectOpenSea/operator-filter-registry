@@ -16,31 +16,10 @@ abstract contract RevokableOperatorFilterer is OperatorFilterer {
 
     bool private _isOperatorFilterRegistryRevoked;
 
-    modifier onlyAllowedOperator(address from) override {
-        // Check registry code length to facilitate testing in environments without a deployed registry.
-        if (!_isOperatorFilterRegistryRevoked && address(OPERATOR_FILTER_REGISTRY).code.length > 0) {
-            // Allow spending tokens from addresses with balance
-            // Note that this still allows listings and marketplaces with escrow to transfer tokens if transferred
-            // from an EOA.
-            if (from == msg.sender) {
-                _;
-                return;
-            }
-            if (!OPERATOR_FILTER_REGISTRY.isOperatorAllowed(address(this), msg.sender)) {
-                revert OperatorNotAllowed(msg.sender);
-            }
+    function _checkFilterOperator(address operator) internal view virtual override {
+        if (!_isOperatorFilterRegistryRevoked) {
+            super._checkFilterOperator(operator);
         }
-        _;
-    }
-
-    modifier onlyAllowedOperatorApproval(address operator) override {
-        // Check registry code length to facilitate testing in environments without a deployed registry.
-        if (!_isOperatorFilterRegistryRevoked && address(OPERATOR_FILTER_REGISTRY).code.length > 0) {
-            if (!OPERATOR_FILTER_REGISTRY.isOperatorAllowed(address(this), operator)) {
-                revert OperatorNotAllowed(operator);
-            }
-        }
-        _;
     }
 
     /**

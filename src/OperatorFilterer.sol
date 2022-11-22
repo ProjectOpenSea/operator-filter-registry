@@ -35,29 +35,26 @@ abstract contract OperatorFilterer {
     }
 
     modifier onlyAllowedOperator(address from) virtual {
-        // Check registry code length to facilitate testing in environments without a deployed registry.
-        if (address(OPERATOR_FILTER_REGISTRY).code.length > 0) {
-            // Allow spending tokens from addresses with balance
-            // Note that this still allows listings and marketplaces with escrow to transfer tokens if transferred
-            // from an EOA.
-            if (from == msg.sender) {
-                _;
-                return;
-            }
-            if (!OPERATOR_FILTER_REGISTRY.isOperatorAllowed(address(this), msg.sender)) {
-                revert OperatorNotAllowed(msg.sender);
-            }
+        // Allow spending tokens from addresses with balance
+        // Note that this still allows listings and marketplaces with escrow to transfer tokens if transferred
+        // from an EOA.
+        if (from != msg.sender) {
+            _checkFilterOperator(msg.sender);
         }
         _;
     }
 
     modifier onlyAllowedOperatorApproval(address operator) virtual {
+        _checkFilterOperator(operator);
+        _;
+    }
+    
+    function _checkFilterOperator(address operator) internal view virtual {
         // Check registry code length to facilitate testing in environments without a deployed registry.
         if (address(OPERATOR_FILTER_REGISTRY).code.length > 0) {
             if (!OPERATOR_FILTER_REGISTRY.isOperatorAllowed(address(this), operator)) {
                 revert OperatorNotAllowed(operator);
             }
         }
-        _;
     }
 }
