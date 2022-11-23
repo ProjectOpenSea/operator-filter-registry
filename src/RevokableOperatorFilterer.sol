@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {UpdateableOperatorFilterer} from "./UpdateableOperatorFilterer.sol";
+import {UpdatableOperatorFilterer} from "./UpdatableOperatorFilterer.sol";
+import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
 
 /**
  * @title  RevokableOperatorFilterer
@@ -11,16 +12,16 @@ import {UpdateableOperatorFilterer} from "./UpdateableOperatorFilterer.sol";
  *         OperatorFilterRegistry checks by passing the zero address to updateRegistryAddress. Once done, the registry
  *         address cannot be further updated.
  */
-abstract contract RevokableOperatorFilterer is UpdateableOperatorFilterer {
+abstract contract RevokableOperatorFilterer is UpdatableOperatorFilterer {
     error RegistryHasBeenRevoked();
-    error RegistryAddressCannotBeZeroAddress();
+    error InitialRegistryAddressCannotBeZeroAddress();
 
     constructor(address _registry, address subscriptionOrRegistrantToCopy, bool subscribe)
-        UpdateableOperatorFilterer(_registry, subscriptionOrRegistrantToCopy, subscribe)
+        UpdatableOperatorFilterer(_registry, subscriptionOrRegistrantToCopy, subscribe)
     {
         // don't allow creating a contract with a permanently revoked registry
         if (_registry == address(0)) {
-            revert RegistryAddressCannotBeZeroAddress();
+            revert InitialRegistryAddressCannotBeZeroAddress();
         }
     }
 
@@ -42,7 +43,8 @@ abstract contract RevokableOperatorFilterer is UpdateableOperatorFilterer {
         if (address(operatorFilterRegistry) == address(0)) {
             revert RegistryHasBeenRevoked();
         }
-        super.updateOperatorFilterRegistryAddress(newRegistry);
+
+        operatorFilterRegistry = IOperatorFilterRegistry(newRegistry);
     }
 
     function isOperatorFilterRegistryRevoked() public view returns (bool) {

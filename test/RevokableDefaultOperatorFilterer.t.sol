@@ -64,8 +64,4 @@ contract RevokableDefaultOperatorFiltererTest is BaseRegistryTest {
         assertTrue(filterer.filterTest(address(0)));
         vm.stopPrank();
     }
-
-    function testConstructor_zeroAddress() public {
-        
-    }
 }

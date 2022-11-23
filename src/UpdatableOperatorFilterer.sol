@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
 
 /**
- * @title  UpdateableOperatorFilterer
+ * @title  UpdatableOperatorFilterer
  * @notice Abstract contract whose constructor automatically registers and optionally subscribes to or copies another
  *         registrant's entries in the OperatorFilterRegistry. This contract allows the Owner to update the
  *         OperatorFilterRegistry address via updateOperatorFilterRegistryAddress, including to the zero address,
@@ -13,11 +13,9 @@ import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
  *         - `onlyAllowedOperator` modifier for `transferFrom` and `safeTransferFrom` methods.
  *         - `onlyAllowedOperatorApproval` modifier for `approve` and `setApprovalForAll` methods.
  */
-abstract contract UpdateableOperatorFilterer {
+abstract contract UpdatableOperatorFilterer {
     error OperatorNotAllowed(address operator);
     error OnlyOwner();
-
-    event OperatorFilterRegistryUpdated(address previousRegistryAddress, address newRegistryAddress);
 
     IOperatorFilterRegistry public operatorFilterRegistry;
 
@@ -63,13 +61,7 @@ abstract contract UpdateableOperatorFilterer {
         if (msg.sender != owner()) {
             revert OnlyOwner();
         }
-        _updateRegistryAddress(newRegistry);
-    }
-
-    function _updateRegistryAddress(address newRegistry) internal {
-        address oldRegistry = address(operatorFilterRegistry);
         operatorFilterRegistry = IOperatorFilterRegistry(newRegistry);
-        emit OperatorFilterRegistryUpdated(oldRegistry, newRegistry);
     }
 
     /**
