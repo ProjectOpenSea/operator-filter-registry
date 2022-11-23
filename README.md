@@ -144,40 +144,30 @@ contract MyNft is
 {
 ```
 
-Finally, override the ERC721 transfer methods... (add override modifiers as needed)
+Finally, override the ERC721 transfer and approval methods (modifiers are overridable as needed)
 
 ```
-    /**
-     * @dev implements operator-filter-registry blocklist filtering because https://opensea.io/blog/announcements/on-creator-fees/
-     */
-    function transferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) public payable override(ERC721A, IERC721A) onlyAllowedOperator {
+    function setApprovalForAll(address operator, bool approved) public override onlyAllowedOperatorApproval(operator) {
+        super.setApprovalForAll(operator, approved);
+    }
+
+    function approve(address operator, uint256 tokenId) public override onlyAllowedOperatorApproval(operator) {
+        super.approve(operator, tokenId);
+    }
+
+    function transferFrom(address from, address to, uint256 tokenId) public override onlyAllowedOperator(from) {
         super.transferFrom(from, to, tokenId);
     }
 
-    /**
-     * @dev implements operator-filter-registry blocklist filtering because https://opensea.io/blog/announcements/on-creator-fees/
-     */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) public payable override(ERC721A, IERC721A) onlyAllowedOperator {
+    function safeTransferFrom(address from, address to, uint256 tokenId) public override onlyAllowedOperator(from) {
         super.safeTransferFrom(from, to, tokenId);
     }
 
-    /**
-     * @dev implements operator-filter-registry blocklist filtering because https://opensea.io/blog/announcements/on-creator-fees/
-     */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) public payable override(ERC721A, IERC721A) onlyAllowedOperator {
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data)
+        public
+        override
+        onlyAllowedOperator(from)
+    {
         super.safeTransferFrom(from, to, tokenId, data);
     }
 ```
