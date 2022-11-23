@@ -83,11 +83,11 @@ Ethereum Mainnet
 <th>OpenSea Curated Subscription Address</th>
 </tr>
 
-<tr><td>Ethereum</td><td rowspan="14">
+<tr><td>Ethereum</td><td rowspan="20">
 
 [0x000000000000AAeB6D7670E522A718067333cd4E](https://etherscan.io/address/0x000000000000AAeB6D7670E522A718067333cd4E#code)
 
-</td><td rowspan="14">
+</td><td rowspan="20">
 
 0x3cc6CddA760b79bAfa08dF41ECFA224f810dCeB6
 
