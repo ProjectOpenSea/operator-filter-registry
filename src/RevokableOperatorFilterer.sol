@@ -16,6 +16,8 @@ abstract contract RevokableOperatorFilterer is UpdatableOperatorFilterer {
     error RegistryHasBeenRevoked();
     error InitialRegistryAddressCannotBeZeroAddress();
 
+    bool public isOperatorFilterRegistryRevoked;
+
     constructor(address _registry, address subscriptionOrRegistrantToCopy, bool subscribe)
         UpdatableOperatorFilterer(_registry, subscriptionOrRegistrantToCopy, subscribe)
     {
@@ -39,15 +41,28 @@ abstract contract RevokableOperatorFilterer is UpdatableOperatorFilterer {
         if (msg.sender != owner()) {
             revert OnlyOwner();
         }
-        // if registry address has been set to 0 (revoked), do not allow further updates
-        if (address(operatorFilterRegistry) == address(0)) {
+        // if registry has been revoked, do not allow further updates
+        if (isOperatorFilterRegistryRevoked) {
             revert RegistryHasBeenRevoked();
         }
 
         operatorFilterRegistry = IOperatorFilterRegistry(newRegistry);
     }
 
-    function isOperatorFilterRegistryRevoked() public view returns (bool) {
-        return address(operatorFilterRegistry) == address(0);
+    /**
+     * @notice Revoke the OperatorFilterRegistry address, permanently bypassing checks. OnlyOwner.
+     */
+    function revokeOperatorFilterRegistry() public {
+        if (msg.sender != owner()) {
+            revert OnlyOwner();
+        }
+        // if registry has been revoked, do not allow further updates
+        if (isOperatorFilterRegistryRevoked) {
+            revert RegistryHasBeenRevoked();
+        }
+
+        // set to zero address to bypass checks
+        operatorFilterRegistry = IOperatorFilterRegistry(address(0));
+        isOperatorFilterRegistryRevoked = true;
     }
 }

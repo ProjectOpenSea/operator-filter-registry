@@ -108,8 +108,24 @@ contract RevokableOperatorFiltererTest is BaseRegistryTest {
         assertTrue(filterer.testFilter(address(0)));
 
         // cannot update even if registry is zero address
+        // vm.expectRevert(abi.encodeWithSignature("RegistryHasBeenRevoked()"));
+        filterer.updateOperatorFilterRegistryAddress(address(registry));
+        vm.startPrank(filteredAddress);
+        vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
+        filterer.testFilter(address(0));
+        vm.stopPrank();
+
+        filterer.revokeOperatorFilterRegistry();
+        vm.prank(filteredAddress);
+        assertTrue(filterer.testFilter(address(0)));
+
+        assertEq(address(filterer.operatorFilterRegistry()), address(0));
+        assertTrue(filterer.isOperatorFilterRegistryRevoked());
+
         vm.expectRevert(abi.encodeWithSignature("RegistryHasBeenRevoked()"));
         filterer.updateOperatorFilterRegistryAddress(address(registry));
+        vm.expectRevert(abi.encodeWithSignature("RegistryHasBeenRevoked()"));
+        filterer.revokeOperatorFilterRegistry();
     }
 
     function testConstructor_revertOnZeroAddress() public {
