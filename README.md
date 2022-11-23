@@ -18,6 +18,12 @@ When filtering operators, use of this registry is not required, nor is it requir
 
 Contract owners may implement their own filtering outside of this registry, or they may use this registry to curate their own lists of filtered operators. However, there are certain contracts that are filtered by the default subscription, and must be filtered in order to be eligible for creator fee enforcement on OpenSea.
 
+## Note on [EIP-2981](https://eips.ethereum.org/EIPS/eip-2981)
+
+Implementing EIP-2981 is not sufficient for a token to be eligible for creator fees on OpenSea.
+
+While sometimes described as "on-chain," EIP-2981 only provides a method to determine what the appropriate creator fee should be for a sale. EIP-2981 does not provide any mechanism of on-chain enforcement of those fees.
+
 ## Filtered addresses
 
 Entries in this list are added according to the following criteria:
@@ -144,19 +150,21 @@ This `Ownable` smart contract is meant as a simple utility to enable subscriptio
 
 # Validation
 
-When the first token is minted on an NFT smart contract, OpenSea checks if the filtered operators on that network are allowed to transfer the token. If they are, OpenSea will mark the collection as ineligible for creator fees. Otherwise, OpenSea will enforce creator fees on the collection.
+When the first token is minted on an NFT smart contract, OpenSea checks if the filtered operators on that network (Ethereum Mainnet, Goerli, Polygon, etc.) are allowed to transfer the token. If they are, OpenSea will mark the collection as ineligible for creator fees. Otherwise, OpenSea will enforce creator fees on the collection.
 
-If at a later point, OpenSea detects orders being fulfilled by filtered operators, OpenSea will mark the collection as ineligible for creator fees.
+If at a later point, OpenSea detects orders being fulfilled by filtered operators, OpenSea will mark the collection as ineligible for creator fees going forward.
 
-The included [validation test](test/validation/Validation.t.sol) runs the same checks that OpenSea does when ingesting a collection.
+The included [validation test](test/validation/Validation.t.sol) runs the same checks that OpenSea does when first creating a collection page.
 
-The test can be configured to test deployed contracts on a network fork with a `.env` file following the [sample.env](sample.env). You may need to supply a custom [`[rpc_endpoints]`](https://book.getfoundry.sh/reference/config/testing#rpc_endpoints) in the `foundry.toml` file for forking to work properly.
+The test can be configured to test against deployed contracts on a network fork with a `.env` file following the [sample.env](sample.env). You may need to supply a custom [`[rpc_endpoints]`](https://book.getfoundry.sh/reference/config/testing#rpc_endpoints) in the `foundry.toml` file for forking to work properly.
 
 To run only the validation tests, run
 
 ```bash
 forge test --match-contract ValidationTest -vvv
 ```
+
+See the [Foundry project page](https://github.com/foundry-rs/foundry#installation) for Foundry installation instructions.
 
 # License
 
