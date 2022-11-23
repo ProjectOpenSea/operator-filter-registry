@@ -48,7 +48,7 @@ abstract contract OperatorFilterer {
         _checkFilterOperator(operator);
         _;
     }
-    
+
     function _checkFilterOperator(address operator) internal view virtual {
         // Check registry code length to facilitate testing in environments without a deployed registry.
         if (address(OPERATOR_FILTER_REGISTRY).code.length > 0) {

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {ERC1155} from "openzeppelin-contracts/token/ERC1155/ERC1155.sol";
-import {RevokableOperatorFilterer} from "../RevokableOperatorFilterer.sol";
+import {UpdatableOperatorFilterer} from "../UpdatableOperatorFilterer.sol";
 import {RevokableDefaultOperatorFilterer} from "../RevokableDefaultOperatorFilterer.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 
@@ -38,7 +38,7 @@ abstract contract RevokableExampleERC1155 is ERC1155(""), RevokableDefaultOperat
         super.safeBatchTransferFrom(from, to, ids, amounts, data);
     }
 
-    function owner() public view virtual override (Ownable, RevokableOperatorFilterer) returns (address) {
+    function owner() public view virtual override (Ownable, UpdatableOperatorFilterer) returns (address) {
         return Ownable.owner();
     }
 }

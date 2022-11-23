@@ -15,3 +15,5 @@ broadcast/
 # nodejs files
 node_modules
 yarn-error.log
+
+html/

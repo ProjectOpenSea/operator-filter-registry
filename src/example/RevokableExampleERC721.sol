@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {ERC721} from "openzeppelin-contracts/token/ERC721/ERC721.sol";
-import {RevokableOperatorFilterer} from "../RevokableOperatorFilterer.sol";
+import {UpdatableOperatorFilterer} from "../UpdatableOperatorFilterer.sol";
 import {RevokableDefaultOperatorFilterer} from "../RevokableDefaultOperatorFilterer.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 
@@ -40,7 +40,7 @@ abstract contract RevokableExampleERC721 is ERC721("Example", "EXAMPLE"), Revoka
         super.safeTransferFrom(from, to, tokenId, data);
     }
 
-    function owner() public view virtual override (Ownable, RevokableOperatorFilterer) returns (address) {
+    function owner() public view virtual override (Ownable, UpdatableOperatorFilterer) returns (address) {
         return Ownable.owner();
     }
 }

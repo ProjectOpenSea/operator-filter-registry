@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {RevokableDefaultOperatorFilterer} from "../src/RevokableDefaultOperatorFilterer.sol";
+import {RevokableDefaultOperatorFilterer} from "src/RevokableDefaultOperatorFilterer.sol";
+import {RevokableOperatorFilterer} from "src/RevokableOperatorFilterer.sol";
 import {BaseRegistryTest} from "./BaseRegistryTest.sol";
 import {RevokableDefaultFilterer} from "./helpers/RevokableDefaultFilterer.sol";
 
@@ -49,14 +50,17 @@ contract RevokableDefaultOperatorFiltererTest is BaseRegistryTest {
         vm.stopPrank();
 
         vm.startPrank(DEFAULT_SUBSCRIPTION);
-        filterer.revokeOperatorFilterRegistry();
-        assertTrue(filterer.isOperatorFilterRegistryRevoked());
+        filterer.updateOperatorFilterRegistryAddress(address(0));
+        assertFalse(filterer.isOperatorFilterRegistryRevoked());
         vm.stopPrank();
         vm.expectRevert(abi.encodeWithSignature("OnlyOwner()"));
-        filterer.revokeOperatorFilterRegistry();
+        filterer.updateOperatorFilterRegistryAddress(address(0));
+
         vm.startPrank(DEFAULT_SUBSCRIPTION);
-        vm.expectRevert(abi.encodeWithSignature("AlreadyRevoked()"));
         filterer.revokeOperatorFilterRegistry();
+
+        vm.expectRevert(abi.encodeWithSignature("RegistryHasBeenRevoked()"));
+        filterer.updateOperatorFilterRegistryAddress(address(0));
         vm.stopPrank();
 
         vm.startPrank(filteredAddress);
