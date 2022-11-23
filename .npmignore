@@ -4,3 +4,4 @@
 /test
 /.gas-snapshot
 /foundry.toml
+/sample.env
