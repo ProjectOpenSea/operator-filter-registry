@@ -1,5 +1,7 @@
 # Operator Filter Registry
 
+## Introduction
+
 This repository contains a number of tools to help token contracts manage the operators allowed to transfer tokens on behalf of users - including the smart contracts and delegates of marketplaces that do not respect creator fees.
 
 This is not a foolproof approach - but it makes bypassing creator fees less liquid and easy at scale.
@@ -106,6 +108,69 @@ Ethereum Mainnet
 Token contracts that wish to manage lists of filtered operators and restrict transfers from them may integrate with the registry easily with tokens using the [`OperatorFilterer`](src/OperatorFilterer.sol) and [`DefaultOperatorFilterer`](src/DefaultOperatorFilterer.sol) contracts. These contracts provide modifiers (`onlyAllowedOperator` and `onlyAllowedOperatorApproval`) which can be used on the token's transfer methods to restrict transfers from or approvals of filtered operators.
 
 See the [ExampleERC721](src/example/ExampleERC721.sol) and [ExampleERC1155](src/example/ExampleERC1155.sol) contracts for basic implementations that inherit the `DefaultOperatorFilterer`.
+
+## Getting started with NPM
+
+This package can be found on NPM to integrate with tools like hardhat.
+
+### Installing
+
+with npm
+
+```bash
+npm i operator-filter-registry
+```
+
+with yarn
+
+```bash
+yarn add operator-filter-registry
+```
+
+### Default usage
+
+Add to your smart contract in the import section:
+
+```
+import "operator-filter-registry/src/DefaultOperatorFilterer.sol";
+```
+
+Next extend from `DefaultOperatorFilterer`
+
+```
+contract MyNft is
+  DefaultOperatorFilterer,
+  // remaining inheritance here
+{
+```
+
+Finally, override the ERC721 transfer and approval methods (modifiers are overridable as needed)
+
+```
+    function setApprovalForAll(address operator, bool approved) public override onlyAllowedOperatorApproval(operator) {
+        super.setApprovalForAll(operator, approved);
+    }
+
+    function approve(address operator, uint256 tokenId) public override onlyAllowedOperatorApproval(operator) {
+        super.approve(operator, tokenId);
+    }
+
+    function transferFrom(address from, address to, uint256 tokenId) public override onlyAllowedOperator(from) {
+        super.transferFrom(from, to, tokenId);
+    }
+
+    function safeTransferFrom(address from, address to, uint256 tokenId) public override onlyAllowedOperator(from) {
+        super.safeTransferFrom(from, to, tokenId);
+    }
+
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data)
+        public
+        override
+        onlyAllowedOperator(from)
+    {
+        super.safeTransferFrom(from, to, tokenId, data);
+    }
+```
 
 # Smart Contracts
 
