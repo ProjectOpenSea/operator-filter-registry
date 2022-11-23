@@ -11,3 +11,7 @@ out/
 .env
 remappings.txt
 broadcast/
+
+# nodejs files
+node_modules
+yarn-error.log
