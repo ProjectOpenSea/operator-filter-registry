@@ -1,5 +1,9 @@
 # Operator Filter Registry
 
+## **Note on Grace Period for Non-Ethereum Chains**
+
+Currently, OpenSea only requires creator fee enforcement on Ethereum Mainnet and Goerli for collections to be eligible for creator fees. However, starting **January 2nd, 2023**, Opensea will begin validating creator fee enforcement on all supported EVM chains.
+
 ## Introduction
 
 This repository contains a number of tools to help token contracts manage the operators allowed to transfer tokens on behalf of users - including the smart contracts and delegates of marketplaces that do not respect creator fees.
@@ -99,7 +103,11 @@ Ethereum Mainnet
 <tr><td>Arbitrum Goerli</td></tr>
 <tr><td>Avalanche</td></tr>
 <tr><td>Avalanche Fuji</td></tr>
-<tr><td>Klaytn</td></tr><tr><td>Baobab</td></tr>
+<tr><td>Klaytn</td></tr>
+<tr><td>Baobab</td></tr>
+<tr><td>BSC</td></tr>
+<tr><td>BSC Testnet</td></tr>
+<tr><td>Gnosis</td></tr>
 
 </table>
 
@@ -108,6 +116,22 @@ Ethereum Mainnet
 Token contracts that wish to manage lists of filtered operators and restrict transfers from them may integrate with the registry easily with tokens using the [`OperatorFilterer`](src/OperatorFilterer.sol) and [`DefaultOperatorFilterer`](src/DefaultOperatorFilterer.sol) contracts. These contracts provide modifiers (`onlyAllowedOperator` and `onlyAllowedOperatorApproval`) which can be used on the token's transfer methods to restrict transfers from or approvals of filtered operators.
 
 See the [ExampleERC721](src/example/ExampleERC721.sol) and [ExampleERC1155](src/example/ExampleERC1155.sol) contracts for basic implementations that inherit the `DefaultOperatorFilterer`.
+
+## Getting Started with Foundry
+
+This package can be installed into a [Foundry](https://github.com/foundry-rs/foundry#installation) project with the following command
+
+```bash
+foundry install ProjectOpenSea/operator-filter-registry
+```
+
+With default remappings provided by `forge remappings`, the default operator filterer can be imported into your project with the following statement
+
+```solidity
+import "operator-filter-registry/DefaultOperatorFilterer.sol";
+```
+
+See NPM section below for further details.
 
 ## Getting started with NPM
 
@@ -131,7 +155,7 @@ yarn add operator-filter-registry
 
 Add to your smart contract in the import section:
 
-```
+```solidity
 import "operator-filter-registry/src/DefaultOperatorFilterer.sol";
 ```
 
