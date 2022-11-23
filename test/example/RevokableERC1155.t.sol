@@ -104,7 +104,7 @@ contract RevokeExampleERC1155Test is BaseRegistryTest {
         vm.prank(DEFAULT_SUBSCRIPTION);
         registry.updateOperator(address(DEFAULT_SUBSCRIPTION), alice, true);
 
-        example.revokeOperatorFilterRegistry();
+        example.updateOperatorFilterRegistryAddress(address(0));
 
         vm.prank(bob);
         example.setApprovalForAll(alice, true);

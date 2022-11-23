@@ -2,7 +2,6 @@
 pragma solidity ^0.8.13;
 
 import {RevokableOperatorFilterer} from "./RevokableOperatorFilterer.sol";
-import {OperatorFilterer} from "./OperatorFilterer.sol";
 
 /**
  * @title  RevokableDefaultOperatorFilterer
@@ -11,5 +10,5 @@ import {OperatorFilterer} from "./OperatorFilterer.sol";
 abstract contract RevokableDefaultOperatorFilterer is RevokableOperatorFilterer {
     address constant DEFAULT_SUBSCRIPTION = address(0x3cc6CddA760b79bAfa08dF41ECFA224f810dCeB6);
 
-    constructor() OperatorFilterer(DEFAULT_SUBSCRIPTION, true) {}
+    constructor() RevokableOperatorFilterer(0x000000000000AAeB6D7670E522A718067333cd4E, DEFAULT_SUBSCRIPTION, true) {}
 }
