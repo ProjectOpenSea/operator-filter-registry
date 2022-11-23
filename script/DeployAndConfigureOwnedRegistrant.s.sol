@@ -16,7 +16,7 @@ contract DeployRegistryAndConfigureOwnedRegistrant is ScriptBase {
         bytes memory creationCode = abi.encodePacked(type(OwnedRegistrant).creationCode, abi.encode(deployer));
         bytes32 salt = bytes32(uint256(uint160(deployer)) << 96);
         vm.startBroadcast(deployer);
-        OwnedRegistrant registrant = OwnedRegistrant(CREATE2_FACTORY.safeCreate2(salt, creationCode));
+        OwnedRegistrant registrant = OwnedRegistrant(IMMUTABLE_CREATE2_FACTORY.safeCreate2(salt, creationCode));
         registrant.acceptOwnership();
         registry.updateOperators(address(registrant), addressesToFilter, true);
     }

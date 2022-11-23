@@ -13,6 +13,6 @@ contract DeployRegistry is ScriptBase {
         // bytes32 salt = bytes32(0);
 
         vm.broadcast(deployer);
-        CREATE2_FACTORY.safeCreate2(salt, creationCode);
+        IMMUTABLE_CREATE2_FACTORY.safeCreate2(salt, creationCode);
     }
 }

@@ -6,24 +6,30 @@ This is not a foolproof approach - but it makes bypassing creator fees less liqu
 
 ## How it works
 
-Token smart contracts may register themselves (or be registered by their "owner") with the `OperatorFilterRegistry`. Token contracts or their "owner"s may then curate lists of operators (specific account addresses) and codehashes (smart contracts deployed with the same code) that should not be allowed to transfer tokens on behalf of users. 
+Token smart contracts may register themselves (or be registered by their "owner") with the `OperatorFilterRegistry`. Token contracts or their "owner"s may then curate lists of operators (specific account addresses) and codehashes (smart contracts deployed with the same code) that should not be allowed to transfer tokens on behalf of users.
 
 ## Creator Fee Enforcement
 
 OpenSea will enforce creator fees for smart contracts that make best efforts to filter transfers from operators known to not respect creator fees.
 
-This repository facilitates that process by providing smart contracts that interface with the registry automatically, including automatically subscribing to OpenSea's list of filtered operators. 
+This repository facilitates that process by providing smart contracts that interface with the registry automatically, including automatically subscribing to OpenSea's list of filtered operators.
 
 When filtering operators, use of this registry is not required, nor is it required for a token contract to "subscribe" to OpenSea's list within this registry. Subscriptions can be changed or removed at any time. Filtered operators and codehashes may likewise be added or removed at any time.
 
-Contract owners may implement their own filtering outside of this registry, or they may use this registry to curate their own lists of filtered operators. However, there are certain contracts that are filtered by the default subscription, and must be filtered in order to be eligible for creator fee enforcement on OpenSea. 
+Contract owners may implement their own filtering outside of this registry, or they may use this registry to curate their own lists of filtered operators. However, there are certain contracts that are filtered by the default subscription, and must be filtered in order to be eligible for creator fee enforcement on OpenSea.
 
+## Note on [EIP-2981](https://eips.ethereum.org/EIPS/eip-2981)
+
+Implementing EIP-2981 is not sufficient for a token to be eligible for creator fees on OpenSea.
+
+While sometimes described as "on-chain," EIP-2981 only provides a method to determine what the appropriate creator fee should be for a sale. EIP-2981 does not provide any mechanism of on-chain enforcement of those fees.
 
 ## Filtered addresses
 
 Entries in this list are added according to the following criteria:
-* If the application most commonly used to interface with the contract gives buyers and sellers the ability to bypass creator fees when a similar transaction for the same item would require creator fee payment on OpenSea.io
-* If the contract is facilitating the evasion of on-chain creator fee enforcement measures. For example, the contract uses a wrapper contact to bypass fee enforcement.
+
+-   If the application most commonly used to interface with the contract gives buyers and sellers the ability to bypass creator fees when a similar transaction for the same item would require creator fee payment on OpenSea.io
+-   If the contract is facilitating the evasion of on-chain creator fee enforcement measures. For example, the contract uses a wrapper contact to bypass fee enforcement.
 
 <table>
 <tr>
@@ -64,7 +70,6 @@ Ethereum Mainnet
 
 ## Deployments
 
-
 <table>
 <tr>
 <th>Network</th>
@@ -94,51 +99,72 @@ Ethereum Mainnet
 <tr><td>Avalanche Fuji</td></tr>
 <tr><td>Klaytn</td></tr><tr><td>Baobab</td></tr>
 
-
 </table>
 
 ## Usage
 
-Token contracts that wish to manage lists of filtered operators and restrict transfers from them may integrate with the registry easily with tokens using the [`OperatorFilterer`](src/OperatorFilterer.sol) and [`DefaultOperatorFilterer`](src/DefaultOperatorFilterer.sol) contracts. These contracts provide a modifier (`onlyAllowedOperator`) which can be used on the token's transfer methods to restrict transfers from filtered operators.
+Token contracts that wish to manage lists of filtered operators and restrict transfers from them may integrate with the registry easily with tokens using the [`OperatorFilterer`](src/OperatorFilterer.sol) and [`DefaultOperatorFilterer`](src/DefaultOperatorFilterer.sol) contracts. These contracts provide modifiers (`onlyAllowedOperator` and `onlyAllowedOperatorApproval`) which can be used on the token's transfer methods to restrict transfers from or approvals of filtered operators.
 
 See the [ExampleERC721](src/example/ExampleERC721.sol) and [ExampleERC1155](src/example/ExampleERC1155.sol) contracts for basic implementations that inherit the `DefaultOperatorFilterer`.
 
-
 # Smart Contracts
+
 ## `OperatorFilterRegistry`
 
 `OperatorFilterRegistry` lets a smart contract or its [EIP-173 `Owner`](https://eips.ethereum.org/EIPS/eip-173) register a list of addresses and code hashes to deny when `isOperatorBlocked` is called.
 
 It also supports "subscriptions," which allow a contract to delegate its operator filtering to another contract. This is useful for contracts that want to allow users to delegate their operator filtering to a trusted third party, who can continuously update the list of filtered operators and code hashes. Subscriptions may be cancelled at any time by the subscriber or its `Owner`.
 
-
 ### updateOperator(address registrant, address operator, bool filtered)
-This method will toggle filtering for an operator for a given registrant. If `filtered` is `true`,  `isOperatorAllowed` will return `false`. If `filtered` is `false`, `isOperatorAllowed` will return `true`. This can filter known addresses.
+
+This method will toggle filtering for an operator for a given registrant. If `filtered` is `true`, `isOperatorAllowed` will return `false`. If `filtered` is `false`, `isOperatorAllowed` will return `true`. This can filter known addresses.
 
 ### updateCodeHash(address registrant, bytes32 codeHash, bool filtered)
-This method will toggle filtering on code hashes of operators given registrant. If an operator's `EXTCODEHASH` matches a filtered code hash, `isOperatorAllowed` will return `true`. Otherwise, `isOperatorAllowed` will return `false`. This can filter smart contract operators with different addresess but the same code.
 
+This method will toggle filtering on code hashes of operators given registrant. If an operator's `EXTCODEHASH` matches a filtered code hash, `isOperatorAllowed` will return `true`. Otherwise, `isOperatorAllowed` will return `false`. This can filter smart contract operators with different addresess but the same code.
 
 ## `OperatorFilterer`
 
 This smart contract is meant to be inherited by token contracts so they can use the following:
-- `onlyAllowedOperator` modifier for `transferFrom` and `safeTransferFrom` methods.
-- `onlyAllowedOperatorApproval` modifier for `approve` and `setApprovalForAll` methods.
+
+-   `onlyAllowedOperator` modifier for `transferFrom` and `safeTransferFrom` methods.
+-   `onlyAllowedOperatorApproval` modifier for `approve` and `setApprovalForAll` methods.
 
 On construction, it takes three parameters:
-- `address registry`: the address of the `OperatorFilterRegistry` contract
-- `address subscriptionOrRegistrantToCopy`: the address of the registrant the contract will either subscribe to, or do a one-time copy of that registrant's filters. If the zero address is provided, no subscription or copies will be made.
-- `bool subscribe`: if true, subscribes to the previous address if it was not the zero address. If false, copies existing filtered addresses and codeHashes without subscribing to future updates.
+
+-   `address registry`: the address of the `OperatorFilterRegistry` contract
+-   `address subscriptionOrRegistrantToCopy`: the address of the registrant the contract will either subscribe to, or do a one-time copy of that registrant's filters. If the zero address is provided, no subscription or copies will be made.
+-   `bool subscribe`: if true, subscribes to the previous address if it was not the zero address. If false, copies existing filtered addresses and codeHashes without subscribing to future updates.
 
 ### `onlyAllowedOperator(address operator)`
+
 This modifier will revert if the `operator` or its code hash is filtered by the `OperatorFilterRegistry` contract.
+
 ## `DefaultOperatorFilterer`
 
 This smart contract extends `OperatorFilterer` and automatically configures the token contract that inherits it to subscribe to OpenSea's list of filtered operators and code hashes. This subscription can be updated at any time by the owner by calling `updateSubscription` on the `OperatorFilterRegistry` contract.
 
 ## `OwnedRegistrant`
 
-This `Ownable` smart contract is meant as a simple utility to enable subscription addresses that can easily be transferred to a new owner for administration. For example: an EOA curates a list of filtered operators and code hashes, and then transfers ownership of the `OwnedRegistrant` to a multisig wallet. 
+This `Ownable` smart contract is meant as a simple utility to enable subscription addresses that can easily be transferred to a new owner for administration. For example: an EOA curates a list of filtered operators and code hashes, and then transfers ownership of the `OwnedRegistrant` to a multisig wallet.
+
+# Validation
+
+When the first token is minted on an NFT smart contract, OpenSea checks if the filtered operators on that network (Ethereum Mainnet, Goerli, Polygon, etc.) are allowed to transfer the token. If they are, OpenSea will mark the collection as ineligible for creator fees. Otherwise, OpenSea will enforce creator fees on the collection.
+
+If at a later point, OpenSea detects orders being fulfilled by filtered operators, OpenSea will mark the collection as ineligible for creator fees going forward.
+
+The included [validation test](test/validation/Validation.t.sol) runs the same checks that OpenSea does when first creating a collection page.
+
+The test can be configured to test against deployed contracts on a network fork with a `.env` file following the [sample.env](sample.env). You may need to supply a custom [`[rpc_endpoints]`](https://book.getfoundry.sh/reference/config/testing#rpc_endpoints) in the `foundry.toml` file for forking to work properly.
+
+To run only the validation tests, run
+
+```bash
+forge test --match-contract ValidationTest -vvv
+```
+
+See the [Foundry project page](https://github.com/foundry-rs/foundry#installation) for Foundry installation instructions.
 
 # License
 
