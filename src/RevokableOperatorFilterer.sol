@@ -9,8 +9,10 @@ import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
  * @notice This contract is meant to allow contracts to permanently skip OperatorFilterRegistry checks if desired. The
  *         Registry itself has an "unregister" function, but if the contract is ownable, the owner can re-register at
  *         any point. As implemented, this abstract contract allows the contract owner to permanently skip the
- *         OperatorFilterRegistry checks by passing the zero address to updateRegistryAddress. Once done, the registry
+ *         OperatorFilterRegistry checks by calling revokeOperatorFilterRegistry. Once done, the registry
  *         address cannot be further updated.
+ *         Note that OpenSea will still disable creator fee enforcement if filtered operators begin fulfilling orders
+ *         on-chain, eg, if the registry is revoked or bypassed.
  */
 abstract contract RevokableOperatorFilterer is UpdatableOperatorFilterer {
     error RegistryHasBeenRevoked();
