@@ -26,7 +26,7 @@ contract ValidationTest is Test {
 
     function setUp() public virtual {
         // Fork network
-        try vm.envString("NETWORK_RPC_URL") returns (string memory envNetwork) {
+        try vm.envString("NETWORK") returns (string memory envNetwork) {
             vm.createSelectFork(stdChains[envNetwork].rpcUrl);
         } catch {
             // fallback to mainnet
