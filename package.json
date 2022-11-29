@@ -7,5 +7,12 @@
     "dependencies": {
         "@openzeppelin/contracts": "^4.7.3",
         "@openzeppelin/contracts-upgradeable": "^4.8.0"
-    }
+    },
+    "files": [
+        "node_modules",
+        "package.json",
+        "src",
+        "LICENSE",
+        "README.md"
+    ]
 }
