@@ -243,7 +243,7 @@ When the first token is minted on an NFT smart contract, OpenSea checks if the f
 
 If at a later point, OpenSea detects orders being fulfilled by filtered operators, OpenSea will mark the collection as ineligible for creator fees going forward.
 
-The included [validation test](test/validation/Validation.t.sol) runs the same checks that OpenSea does when first creating a collection page.
+The included [validation test](test/validation/Validation.t.sol) runs the same checks that OpenSea does when first creating a collection page, and can be extended with custom setup for your token contract.
 
 The test can be configured to test against deployed contracts on a network fork with a `.env` file following the [sample.env](sample.env). You may need to supply a custom [`[rpc_endpoints]`](https://book.getfoundry.sh/reference/config/testing#rpc_endpoints) in the `foundry.toml` file for forking to work properly.
 
