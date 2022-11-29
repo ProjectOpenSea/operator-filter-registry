@@ -122,7 +122,7 @@ See the [ExampleERC721](src/example/ExampleERC721.sol) and [ExampleERC1155](src/
 This package can be installed into a [Foundry](https://github.com/foundry-rs/foundry#installation) project with the following command
 
 ```bash
-foundry install ProjectOpenSea/operator-filter-registry
+forge install ProjectOpenSea/operator-filter-registry
 ```
 
 With default remappings provided by `forge remappings`, the default operator filterer can be imported into your project with the following statement
