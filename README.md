@@ -75,8 +75,32 @@ Ethereum Mainnet
 </tr>
 
 <tr>
-<td>SudoSwap LSSVMPairRouter</td>
-<td>0x2b2e8cda09bba9660dca5cb6233787738ad68329</td>
+<td>SudoSwap LSSVMPairEnumerableERC20</td>
+<td>0xD42638863462d2F21bb7D4275d7637eE5d5541eB</td>
+<td>Ethereum Mainnet</td>
+</tr>
+
+<tr>
+<td>SudoSwap LSSVMPairEnumerableETH</td>
+<td>0x08CE97807A81896E85841d74FB7E7B065ab3ef05</td>
+<td>Ethereum Mainnet</td>
+</tr>
+
+<tr>
+<td>SudoSwap LSSVMPairMissingEnumerableERC20</td>
+<td>0x92de3a1511EF22AbCf3526c302159882a4755B22</td>
+<td>Ethereum Mainnet</td>
+</tr>
+
+<tr>
+<td>SudoSwap LSSVMPairMissingEnumerableETH</td>
+<td>0xCd80C916B1194beB48aBF007D0b79a7238436D56</td>
+<td>Ethereum Mainnet</td>
+</tr>
+
+<tr>
+<td>SudoSwap LSSVMPairFactory</td>
+<td>0xb16c1342E617A5B6E4b631EB114483FDB289c0A4</td>
 <td>Ethereum Mainnet</td>
 </tr>
 
