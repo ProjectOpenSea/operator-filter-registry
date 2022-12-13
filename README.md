@@ -96,6 +96,12 @@ Ethereum Mainnet
 <td>Ethereum Mainnet</td>
 </tr>
 
+<tr>
+<td>NFTX NFTXMarketplaceZap</td>
+<td>0x0fc584529a2aefa997697fafacba5831fac0c22d</td>
+<td>Ethereum Mainnet</td>
+</tr>
+
 </table>
 
 ## Deployments
