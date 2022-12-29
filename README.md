@@ -199,7 +199,7 @@ import "operator-filter-registry/src/DefaultOperatorFilterer.sol";
 
 Next extend from `DefaultOperatorFilterer`
 
-```
+```solidity
 contract MyNft is
   DefaultOperatorFilterer,
   // remaining inheritance here
@@ -208,7 +208,7 @@ contract MyNft is
 
 Finally, override the ERC721 transfer and approval methods (modifiers are overridable as needed)
 
-```
+```solidity
     function setApprovalForAll(address operator, bool approved) public override onlyAllowedOperatorApproval(operator) {
         super.setApprovalForAll(operator, approved);
     }
