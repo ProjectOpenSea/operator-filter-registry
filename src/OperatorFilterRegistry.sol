@@ -56,20 +56,12 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
     function isOperatorAllowed(address registrant, address operator) external view returns (bool) {
         address registration = _registrations[registrant];
         if (registration != address(0)) {
-            EnumerableSet.AddressSet storage filteredOperatorsRef;
-            EnumerableSet.Bytes32Set storage filteredCodeHashesRef;
-
-            filteredOperatorsRef = _filteredOperators[registration];
-            filteredCodeHashesRef = _filteredCodeHashes[registration];
-
-            if (filteredOperatorsRef.contains(operator)) {
-                revert AddressFiltered(operator);
+            if(isOperatorFiltered(registration, operator)){
+                return false;
             }
             if (operator.code.length > 0) {
                 bytes32 codeHash = operator.codehash;
-                if (filteredCodeHashesRef.contains(codeHash)) {
-                    revert CodeHashFiltered(operator, codeHash);
-                }
+                return !isCodeHashFiltered(registration, codeHash);
             }
         }
         return true;
@@ -436,23 +428,17 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
     /**
      * @notice Returns true if operator is filtered by a given address or its subscription.
      */
-    function isOperatorFiltered(address registrant, address operator) external view returns (bool) {
+    function isOperatorFiltered(address registrant, address operator) public view returns (bool) {
         address registration = _registrations[registrant];
-        if (registration != registrant) {
-            return _filteredOperators[registration].contains(operator);
-        }
-        return _filteredOperators[registrant].contains(operator);
+        return _filteredOperators[registration].contains(operator);
     }
 
     /**
      * @notice Returns true if a codeHash is filtered by a given address or its subscription.
      */
-    function isCodeHashFiltered(address registrant, bytes32 codeHash) external view returns (bool) {
+    function isCodeHashFiltered(address registrant, bytes32 codeHash) public view returns (bool) {
         address registration = _registrations[registrant];
-        if (registration != registrant) {
-            return _filteredCodeHashes[registration].contains(codeHash);
-        }
-        return _filteredCodeHashes[registrant].contains(codeHash);
+        return _filteredCodeHashes[registration].contains(codeHash);
     }
 
     /**
