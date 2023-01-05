@@ -79,11 +79,18 @@ Ethereum Mainnet
 <table>
 <tr>
 <th>Network</th>
+<th>CORI Subscription TimelockController</th>
 <th>OperatorFilterRegistry</th>
-<th>OpenSea Curated Subscription Address</th>
+<th>CORI Curated Subscription Address</th>
 </tr>
 
-<tr><td>Ethereum</td><td rowspan="20">
+<tr><td>Ethereum</td>
+<td>
+
+0x178AD648e66815E1B01791eBBdbF7b2D7C5B1626
+
+</td>
+<td rowspan="20">
 
 [0x000000000000AAeB6D7670E522A718067333cd4E](https://etherscan.io/address/0x000000000000AAeB6D7670E522A718067333cd4E#code)
 
@@ -93,8 +100,17 @@ Ethereum Mainnet
 
 </td></tr>
 
-<tr><td>Goerli</td></tr>
-<tr><td>Polygon</td></tr>
+<tr>
+<td>Polygon</td>
+
+<td>
+0x87bCD4735CbCF9CE98ea2822fBf3F05F2ce10f96
+</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr><td>Goerli</td><td rowspan="20">0xe3A6CD067a1193b903143C36dA00557c9d95C41e</td></tr>
 <tr><td>Mumbai</td></tr>
 <tr><td>Optimism</td></tr>
 <tr><td>Optimism Goerli</td></tr>
@@ -110,6 +126,8 @@ Ethereum Mainnet
 <tr><td>Gnosis</td></tr>
 
 </table>
+
+To mitigate abuse of the CORI curated subscription of filtered operators and codehashes, the CORI curated subscription is owned by a `TimelockController`, which is in turn owned by a multi-signature wallet. Any update to CORI's list of filtered operators must be approved by at least two members of the Creator Ownership Research Institute, and is then subject to a minimum 24-hour delay before being executed. During this time, updates may be reviewed and revoked. 
 
 ## Usage
 
