@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
+import {Vm} from "forge-std/Vm.sol";
+import {Initializable} from "openzeppelin-contracts-upgradeable/proxy/utils/Initializable.sol";
+import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/access/OwnableUpgradeable.sol";
+
 import {UpdatableExampleERC721Upgradeable} from 
     "../../../src/example/upgradeable/UpdatableExampleERC721Upgradeable.sol";
 import {UpdatableOperatorFiltererUpgradeable} from
     "../../../src/upgradeable/UpdatableOperatorFiltererUpgradeable.sol";
 import {BaseRegistryTest} from "../../BaseRegistryTest.sol";
-
-import {Initializable} from "openzeppelin-contracts-upgradeable/proxy/utils/Initializable.sol";
-import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/access/OwnableUpgradeable.sol";
-import {Vm} from "forge-std/Vm.sol";
 
 contract TestableUpdatableExampleERC721Upgradeable is UpdatableExampleERC721Upgradeable {
     function mint(address to, uint256 tokenId) external {
