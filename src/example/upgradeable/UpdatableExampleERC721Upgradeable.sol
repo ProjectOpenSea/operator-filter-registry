@@ -9,6 +9,7 @@ import {UpdatableOperatorFiltererUpgradeable} from
 
 /**
  * @title  UpdatableExampleERC721Upgradeable
+ * @author qed.team, abarbatei, balajmarius
  * @notice This example contract is configured to use the UpdatableOperatorFiltererUpgradeable, which registers the
  *         token and subscribes it to a give register filter.
  *         Adding the onlyAllowedOperator modifier to the setApprovalForAll, approve, transferFrom, safeTransferFrom (both version) methods ensures that

@@ -7,6 +7,7 @@ import {IOperatorFilterRegistry} from "../IOperatorFilterRegistry.sol";
 
 /**
  * @title  UpdatableOperatorFiltererUpgradeable
+ * @author qed.team, abarbatei, balajmarius
  * @notice Abstract contract whose init function automatically registers and optionally subscribes to or copies another
  *         registrant's entries in the OperatorFilterRegistry. This contract allows the Owner to update the
  *         OperatorFilterRegistry address via updateOperatorFilterRegistryAddress, including to the zero address,
