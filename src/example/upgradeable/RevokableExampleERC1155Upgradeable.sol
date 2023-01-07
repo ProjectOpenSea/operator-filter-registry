@@ -2,9 +2,10 @@
 pragma solidity ^0.8.13;
 
 import {ERC1155Upgradeable} from "openzeppelin-contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
+import {ERC2981Upgradeable} from "openzeppelin-contracts-upgradeable/token/common/ERC2981Upgradeable.sol";
+import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {RevokableDefaultOperatorFiltererUpgradeable} from
     "../../upgradeable/RevokableDefaultOperatorFiltererUpgradeable.sol";
-import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {RevokableOperatorFiltererUpgradeable} from "../../upgradeable/RevokableOperatorFiltererUpgradeable.sol";
 
 /**
@@ -16,11 +17,13 @@ import {RevokableOperatorFiltererUpgradeable} from "../../upgradeable/RevokableO
  */
 abstract contract RevokableExampleERC1155Upgradeable is
     ERC1155Upgradeable,
+    ERC2981Upgradeable,
     RevokableDefaultOperatorFiltererUpgradeable,
     OwnableUpgradeable
 {
     function initialize() public initializer {
         __ERC1155_init("");
+        __ERC2981_init();
         __Ownable_init();
         __RevokableDefaultOperatorFilterer_init();
     }
@@ -55,5 +58,18 @@ abstract contract RevokableExampleERC1155Upgradeable is
         returns (address)
     {
         return OwnableUpgradeable.owner();
+    }
+
+    /**
+     * @dev See {IERC165-supportsInterface}.
+     */
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override (ERC1155Upgradeable, ERC2981Upgradeable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 }
