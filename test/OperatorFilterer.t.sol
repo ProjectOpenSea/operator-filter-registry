@@ -6,7 +6,7 @@ import {BaseRegistryTest} from "./BaseRegistryTest.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {Filterer} from "./helpers/Filterer.sol";
 import {UpdatableFilterer} from "./helpers/UpdatableFilterer.sol";
-import {OperatorFilterRegistryStub} from "./helpers/OperatorFilterRegistrySTub.sol";
+import {OperatorFilterRegistryStub} from "./helpers/OperatorFilterRegistryStub.sol";
 
 contract ConcreteOperatorFilterer is OperatorFilterer {
     constructor(address registrant, bool sub) OperatorFilterer(registrant, sub) {}

@@ -7,7 +7,7 @@ import {DefaultFilterer} from "./helpers/DefaultFilterer.sol";
 
 import {OperatorFilterer} from "../src/OperatorFilterer.sol";
 import {UpdatableFilterer} from "./helpers/UpdatableFilterer.sol";
-import {OperatorFilterRegistryStub} from "./helpers/OperatorFilterRegistrySTub.sol";
+import {OperatorFilterRegistryStub} from "./helpers/OperatorFilterRegistryStub.sol";
 
 contract DefaultOperatorFiltererTest is BaseRegistryTest {
     DefaultFilterer filterer;
