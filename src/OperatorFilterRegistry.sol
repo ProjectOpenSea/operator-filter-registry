@@ -27,7 +27,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
     mapping(address => EnumerableSet.AddressSet) private _subscribers;
 
     /**
-     * @notice restricts method caller to the address or EIP-173 "owner()"
+     * @notice Restricts method caller to the address or EIP-173 "owner()"
      */
     modifier onlyAddressOrOwner(address addr) {
         if (msg.sender != addr) {
@@ -523,7 +523,9 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
         return _filteredCodeHashes[registrant].at(index);
     }
 
-    /// @dev Convenience method to compute the code hash of an arbitrary contract
+    /**
+     * @dev Convenience method to compute the code hash of an arbitrary contract
+     */
     function codeHashOf(address a) external view returns (bytes32) {
         return a.codehash;
     }

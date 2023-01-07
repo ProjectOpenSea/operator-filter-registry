@@ -9,18 +9,21 @@ import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
  *         registrant's entries in the OperatorFilterRegistry. This contract allows the Owner to update the
  *         OperatorFilterRegistry address via updateOperatorFilterRegistryAddress, including to the zero address,
  *         which will bypass registry checks.
- *         Note that OpenSea will still disable creator fee enforcement if filtered operators begin fulfilling orders
+ *         Note that OpenSea will still disable creator earnings enforcement if filtered operators begin fulfilling orders
  *         on-chain, eg, if the registry is revoked or bypassed.
  * @dev    This smart contract is meant to be inherited by token contracts so they can use the following:
  *         - `onlyAllowedOperator` modifier for `transferFrom` and `safeTransferFrom` methods.
  *         - `onlyAllowedOperatorApproval` modifier for `approve` and `setApprovalForAll` methods.
  */
 abstract contract UpdatableOperatorFilterer {
+    /// @dev Emitted when an operator is not allowed.
     error OperatorNotAllowed(address operator);
+    /// @dev Emitted when someone other than the owner is trying to call an only owner function.
     error OnlyOwner();
 
     IOperatorFilterRegistry public operatorFilterRegistry;
 
+    /// @dev The constructor that is called when the contract is being deployed.
     constructor(address _registry, address subscriptionOrRegistrantToCopy, bool subscribe) {
         IOperatorFilterRegistry registry = IOperatorFilterRegistry(_registry);
         operatorFilterRegistry = registry;
@@ -40,6 +43,9 @@ abstract contract UpdatableOperatorFilterer {
         }
     }
 
+    /**
+     * @dev A helper function to check if the operator is allowed.
+     */
     modifier onlyAllowedOperator(address from) virtual {
         // Allow spending tokens from addresses with balance
         // Note that this still allows listings and marketplaces with escrow to transfer tokens if transferred
@@ -50,6 +56,9 @@ abstract contract UpdatableOperatorFilterer {
         _;
     }
 
+    /**
+     * @dev A helper function to check if the operator approval is allowed.
+     */
     modifier onlyAllowedOperatorApproval(address operator) virtual {
         _checkFilterOperator(operator);
         _;
@@ -67,10 +76,13 @@ abstract contract UpdatableOperatorFilterer {
     }
 
     /**
-     * @dev assume the contract has an owner, but leave specific Ownable implementation up to inheriting contract
+     * @dev Assume the contract has an owner, but leave specific Ownable implementation up to inheriting contract.
      */
     function owner() public view virtual returns (address);
 
+    /**
+     * @dev A helper function to check if the operator is allowed.
+     */
     function _checkFilterOperator(address operator) internal view virtual {
         IOperatorFilterRegistry registry = operatorFilterRegistry;
         // Check registry code length to facilitate testing in environments without a deployed registry.

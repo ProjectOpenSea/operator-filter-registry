@@ -17,16 +17,27 @@ abstract contract ExampleERC1155Upgradeable is
     DefaultOperatorFiltererUpgradeable,
     OwnableUpgradeable
 {
+    /**
+     * @dev Initializes the upgradeable contract.
+     */
     function initialize() public initializer {
         __ERC1155_init("");
         __Ownable_init();
         __DefaultOperatorFilterer_init();
     }
 
+    /**
+     * @dev See {IERC1155-setApprovalForAll}.
+     *      In this example the added modifier ensures that the operator is allowed by the OperatorFilterRegistry.
+     */
     function setApprovalForAll(address operator, bool approved) public override onlyAllowedOperatorApproval(operator) {
         super.setApprovalForAll(operator, approved);
     }
 
+    /**
+     * @dev See {IERC1155-safeTransferFrom}.
+     *      In this example the added modifier ensures that the operator is allowed by the OperatorFilterRegistry.
+     */
     function safeTransferFrom(address from, address to, uint256 tokenId, uint256 amount, bytes memory data)
         public
         override
@@ -35,6 +46,10 @@ abstract contract ExampleERC1155Upgradeable is
         super.safeTransferFrom(from, to, tokenId, amount, data);
     }
 
+    /**
+     * @dev See {IERC1155-safeBatchTransferFrom}.
+     *      In this example the added modifier ensures that the operator is allowed by the OperatorFilterRegistry.
+     */
     function safeBatchTransferFrom(
         address from,
         address to,

@@ -4,7 +4,16 @@ pragma solidity ^0.8.13;
 import {IOperatorFilterRegistry} from "../IOperatorFilterRegistry.sol";
 import {Initializable} from "openzeppelin-contracts-upgradeable/proxy/utils/Initializable.sol";
 
+/**
+ * @title  OperatorFiltererUpgradeable
+ * @notice Abstract contract whose constructor automatically registers and optionally subscribes to or copies another
+ *         registrant's entries in the OperatorFilterRegistry when the init function is called.
+ * @dev    This smart contract is meant to be inherited by token contracts so they can use the following:
+ *         - `onlyAllowedOperator` modifier for `transferFrom` and `safeTransferFrom` methods.
+ *         - `onlyAllowedOperatorApproval` modifier for `approve` and `setApprovalForAll` methods.
+ */
 abstract contract OperatorFiltererUpgradeable is Initializable {
+    /// @notice Emitted when an operator is not allowed.
     error OperatorNotAllowed(address operator);
 
     IOperatorFilterRegistry constant operatorFilterRegistry =
