@@ -5,12 +5,14 @@ import {OperatorFilterer} from "../src/OperatorFilterer.sol";
 import {BaseRegistryTest} from "./BaseRegistryTest.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {Filterer} from "./helpers/Filterer.sol";
+import {UpdatableFilterer} from "./helpers/UpdatableFilterer.sol";
+import {OperatorFilterRegistryStub} from "./helpers/OperatorFilterRegistrySTub.sol";
 
 contract ConcreteOperatorFilterer is OperatorFilterer {
     constructor(address registrant, bool sub) OperatorFilterer(registrant, sub) {}
 }
 
-contract OperatorFiltererTest is BaseRegistryTest {
+contract OperatorFiltererTest1 is BaseRegistryTest {
     Filterer filterer;
     address filteredAddress;
     address filteredCodeHashAddress;
@@ -80,5 +82,12 @@ contract OperatorFiltererTest is BaseRegistryTest {
         vm.etch(address(registry), "");
         Filterer filterer2 = new Filterer();
         assertTrue(filterer2.testFilter(notFiltered));
+    }
+
+    function testRevert_OperatorNotAllowed() public {
+        address stubRegistry = address(new OperatorFilterRegistryStub());
+        UpdatableFilterer updatableFilterer = new UpdatableFilterer(stubRegistry);
+        vm.expectRevert(abi.encodeWithSelector(OperatorFilterer.OperatorNotAllowed.selector, address(filteredAddress)));
+        updatableFilterer.checkFilterOperator(filteredAddress);
     }
 }

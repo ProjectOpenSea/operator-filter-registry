@@ -58,4 +58,13 @@ abstract contract OperatorFiltererUpgradeable is Initializable {
         }
         _;
     }
+
+    function _checkFilterOperator(address operator) internal view virtual {
+        // Check registry code length to facilitate testing in environments without a deployed registry.
+        if (address(operatorFilterRegistry).code.length > 0) {
+            if (!operatorFilterRegistry.isOperatorAllowed(address(this), operator)) {
+                revert OperatorNotAllowed(operator);
+            }
+        }
+    }
 }
