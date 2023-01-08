@@ -236,22 +236,26 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
         }
         EnumerableSet.AddressSet storage filteredOperatorsRef = _filteredOperators[registrant];
         uint256 operatorsLength = operators.length;
-        unchecked {
-            if (!filtered) {
-                for (uint256 i = 0; i < operatorsLength; ++i) {
-                    address operator = operators[i];
-                    bool removed = filteredOperatorsRef.remove(operator);
-                    if (!removed) {
-                        revert AddressNotFiltered(operator);
-                    }
+        if (!filtered) {
+            for (uint256 i = 0; i < operatorsLength;) {
+                address operator = operators[i];
+                bool removed = filteredOperatorsRef.remove(operator);
+                if (!removed) {
+                    revert AddressNotFiltered(operator);
                 }
-            } else {
-                for (uint256 i = 0; i < operatorsLength; ++i) {
-                    address operator = operators[i];
-                    bool added = filteredOperatorsRef.add(operator);
-                    if (!added) {
-                        revert AddressAlreadyFiltered(operator);
-                    }
+                unchecked {
+                    ++i;
+                }
+            }
+        } else {
+            for (uint256 i = 0; i < operatorsLength;) {
+                address operator = operators[i];
+                bool added = filteredOperatorsRef.add(operator);
+                if (!added) {
+                    revert AddressAlreadyFiltered(operator);
+                }
+                unchecked {
+                    ++i;
                 }
             }
         }
@@ -274,25 +278,29 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
         }
         EnumerableSet.Bytes32Set storage filteredCodeHashesRef = _filteredCodeHashes[registrant];
         uint256 codeHashesLength = codeHashes.length;
-        unchecked {
-            if (!filtered) {
-                for (uint256 i = 0; i < codeHashesLength; ++i) {
-                    bytes32 codeHash = codeHashes[i];
-                    bool removed = filteredCodeHashesRef.remove(codeHash);
-                    if (!removed) {
-                        revert CodeHashNotFiltered(codeHash);
-                    }
+        if (!filtered) {
+            for (uint256 i = 0; i < codeHashesLength;) {
+                bytes32 codeHash = codeHashes[i];
+                bool removed = filteredCodeHashesRef.remove(codeHash);
+                if (!removed) {
+                    revert CodeHashNotFiltered(codeHash);
                 }
-            } else {
-                for (uint256 i = 0; i < codeHashesLength; ++i) {
-                    bytes32 codeHash = codeHashes[i];
-                    if (codeHash == EOA_CODEHASH) {
-                        revert CannotFilterEOAs();
-                    }
-                    bool added = filteredCodeHashesRef.add(codeHash);
-                    if (!added) {
-                        revert CodeHashAlreadyFiltered(codeHash);
-                    }
+                unchecked {
+                    ++i;
+                }
+            }
+        } else {
+            for (uint256 i = 0; i < codeHashesLength;) {
+                bytes32 codeHash = codeHashes[i];
+                if (codeHash == EOA_CODEHASH) {
+                    revert CannotFilterEOAs();
+                }
+                bool added = filteredCodeHashesRef.add(codeHash);
+                if (!added) {
+                    revert CodeHashAlreadyFiltered(codeHash);
+                }
+                unchecked {
+                    ++i;
                 }
             }
         }
@@ -383,20 +391,24 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
         EnumerableSet.Bytes32Set storage filteredCodeHashesRef = _filteredCodeHashes[registrantToCopy];
         uint256 filteredOperatorsLength = filteredOperatorsRef.length();
         uint256 filteredCodeHashesLength = filteredCodeHashesRef.length();
-        unchecked {
-            for (uint256 i = 0; i < filteredOperatorsLength; ++i) {
-                address operator = filteredOperatorsRef.at(i);
-                bool added = _filteredOperators[registrant].add(operator);
-                if (added) {
-                    emit OperatorUpdated(registrant, operator, true);
-                }
+        for (uint256 i = 0; i < filteredOperatorsLength;) {
+            address operator = filteredOperatorsRef.at(i);
+            bool added = _filteredOperators[registrant].add(operator);
+            if (added) {
+                emit OperatorUpdated(registrant, operator, true);
             }
-            for (uint256 i = 0; i < filteredCodeHashesLength; ++i) {
-                bytes32 codehash = filteredCodeHashesRef.at(i);
-                bool added = _filteredCodeHashes[registrant].add(codehash);
-                if (added) {
-                    emit CodeHashUpdated(registrant, codehash, true);
-                }
+            unchecked {
+                ++i;
+            }
+        }
+        for (uint256 i = 0; i < filteredCodeHashesLength;) {
+            bytes32 codehash = filteredCodeHashesRef.at(i);
+            bool added = _filteredCodeHashes[registrant].add(codehash);
+            if (added) {
+                emit CodeHashUpdated(registrant, codehash, true);
+            }
+            unchecked {
+                ++i;
             }
         }
     }
