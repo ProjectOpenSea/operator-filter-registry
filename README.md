@@ -210,7 +210,7 @@ This method will toggle filtering for an operator for a given registrant. If `fi
 
 ### updateCodeHash(address registrant, bytes32 codeHash, bool filtered)
 
-This method will toggle filtering on code hashes of operators given registrant. If an operator's `EXTCODEHASH` matches a filtered code hash, `isOperatorAllowed` will return `true`. Otherwise, `isOperatorAllowed` will return `false`. This can filter smart contract operators with different addresess but the same code.
+This method will toggle filtering on code hashes of operators given registrant. If an operator's `EXTCODEHASH` matches a filtered code hash, `isOperatorAllowed` will return `true`. Otherwise, `isOperatorAllowed` will return `false`. This can filter smart contract operators with different addresses but the same code.
 
 ## `OperatorFilterer`
 
@@ -225,6 +225,8 @@ On construction, it takes three parameters:
 -   `address subscriptionOrRegistrantToCopy`: the address of the registrant the contract will either subscribe to, or do a one-time copy of that registrant's filters. If the zero address is provided, no subscription or copies will be made.
 -   `bool subscribe`: if true, subscribes to the previous address if it was not the zero address. If false, copies existing filtered addresses and codeHashes without subscribing to future updates.
 
+Please note that if your token contract does not provide an owner with [EIP-173](https://eips.ethereum.org/EIPS/eip-173), it must provide administration methods on the contract itself to interact with the registry otherwise the subscription will be locked to the options set during construction.
+
 ### `onlyAllowedOperator(address operator)`
 
 This modifier will revert if the `operator` or its code hash is filtered by the `OperatorFilterRegistry` contract.
@@ -232,6 +234,8 @@ This modifier will revert if the `operator` or its code hash is filtered by the 
 ## `DefaultOperatorFilterer`
 
 This smart contract extends `OperatorFilterer` and automatically configures the token contract that inherits it to subscribe to OpenSea's list of filtered operators and code hashes. This subscription can be updated at any time by the owner by calling `updateSubscription` on the `OperatorFilterRegistry` contract.
+
+Please note that if your token contract does not provide an owner with [EIP-173](https://eips.ethereum.org/EIPS/eip-173), it must provide administration methods on the contract itself to interact with the registry otherwise the subscription will be locked to the options set during construction.
 
 ## `OwnedRegistrant`
 
