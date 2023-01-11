@@ -189,6 +189,12 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
 
     /**
      * @notice Update a codeHash for a registered address - when filtered is true, the codeHash is filtered.
+     *         Note that this will allow adding the bytes32(0) codehash, which could result in unexpected behavior,
+     *         since calling `isCodeHashFiltered` will return true for bytes32(0), which is the codeHash of any
+     *         un-initialized account. Since un-initialized accounts have no code, the registry will not validate
+     *         that an un-initalized account's codeHash is not filtered. By the time an account is able to
+     *         act as an operator (an account is initialized or a smart contract exclusively in the context of its
+     *         constructor),  it will have a codeHash of EOA_CODEHASH, which cannot be filtered.
      */
     function updateCodeHash(address registrant, bytes32 codeHash, bool filtered)
         external
@@ -260,6 +266,12 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
 
     /**
      * @notice Update multiple codeHashes for a registered address - when filtered is true, the codeHashes will be filtered. Reverts on duplicates.
+     *         Note that this will allow adding the bytes32(0) codehash, which could result in unexpected behavior,
+     *         since calling `isCodeHashFiltered` will return true for bytes32(0), which is the codeHash of any
+     *         un-initialized account. Since un-initialized accounts have no code, the registry will not validate
+     *         that an un-initalized account's codeHash is not filtered. By the time an account is able to
+     *         act as an operator (an account is initialized or a smart contract exclusively in the context of its
+     *         constructor),  it will have a codeHash of EOA_CODEHASH, which cannot be filtered.
      */
     function updateCodeHashes(address registrant, bytes32[] calldata codeHashes, bool filtered)
         external
