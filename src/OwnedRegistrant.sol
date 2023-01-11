@@ -10,10 +10,10 @@ import {Ownable2Step} from "openzeppelin-contracts/access/Ownable2Step.sol";
  *         to facilitate a subscription whose ownership can be transferred.
  */
 contract OwnedRegistrant is Ownable2Step {
-    address constant registry = 0x000000000000AAeB6D7670E522A718067333cd4E;
+    address constant REGISTRY = 0x000000000000AAeB6D7670E522A718067333cd4E;
 
     constructor(address _owner) {
-        IOperatorFilterRegistry(registry).register(address(this));
+        IOperatorFilterRegistry(REGISTRY).register(address(this));
         transferOwnership(_owner);
     }
 }
