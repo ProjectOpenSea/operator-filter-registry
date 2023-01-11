@@ -56,18 +56,12 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
     function isOperatorAllowed(address registrant, address operator) external view returns (bool) {
         address registration = _registrations[registrant];
         if (registration != address(0)) {
-            EnumerableSet.AddressSet storage filteredOperatorsRef;
-            EnumerableSet.Bytes32Set storage filteredCodeHashesRef;
-
-            filteredOperatorsRef = _filteredOperators[registration];
-            filteredCodeHashesRef = _filteredCodeHashes[registration];
-
-            if (filteredOperatorsRef.contains(operator)) {
+            if (_filteredOperators[registration].contains(operator)) {
                 revert AddressFiltered(operator);
             }
-            if (operator.code.length > 0) {
-                bytes32 codeHash = operator.codehash;
-                if (filteredCodeHashesRef.contains(codeHash)) {
+            bytes32 codeHash = operator.codehash;
+            if (codeHash == EOA_CODEHASH || codeHash == bytes32(0)) {
+                if (_filteredCodeHashes[registration].contains(codeHash)) {
                     revert CodeHashFiltered(operator, codeHash);
                 }
             }
