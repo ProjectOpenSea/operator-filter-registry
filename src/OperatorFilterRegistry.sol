@@ -437,7 +437,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      * @notice Returns true if operator is filtered by a given address or its subscription.
      */
     function isOperatorFiltered(address registrant, address operator) external view returns (bool) {
-        return _filteredOperators[registrant].contains(operator);
+        return _filteredOperators[_registrations[registrant]].contains(operator);
     }
 
     /**
