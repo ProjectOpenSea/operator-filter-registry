@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
-
+import {CANONICAL_OPERATOR_FILTER_REGISTRY_ADDRESS} from "./lib/Constants.sol";
 /**
  * @title  OperatorFilterer
  * @notice Abstract contract whose constructor automatically registers and optionally subscribes to or copies another
@@ -11,11 +11,12 @@ import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
  *         - `onlyAllowedOperator` modifier for `transferFrom` and `safeTransferFrom` methods.
  *         - `onlyAllowedOperatorApproval` modifier for `approve` and `setApprovalForAll` methods.
  */
+
 abstract contract OperatorFilterer {
     error OperatorNotAllowed(address operator);
 
     IOperatorFilterRegistry public constant OPERATOR_FILTER_REGISTRY =
-        IOperatorFilterRegistry(0x000000000000AAeB6D7670E522A718067333cd4E);
+        IOperatorFilterRegistry(CANONICAL_OPERATOR_FILTER_REGISTRY_ADDRESS);
 
     constructor(address subscriptionOrRegistrantToCopy, bool subscribe) {
         // If an inheriting token contract is deployed to a network without the registry deployed, the modifier
