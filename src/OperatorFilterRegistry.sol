@@ -406,15 +406,14 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
     //////////////////
 
     /**
-     * @notice Get the subscription address of a given registrant, if any.
+     * @notice Get the subscription address of a given registrant, which may be itself if not subscribed.
      */
     function subscriptionOf(address registrant) external view returns (address subscription) {
         subscription = _registrations[registrant];
         if (subscription == address(0)) {
             revert NotRegistered(registrant);
-        } else if (subscription == registrant) {
-            subscription = address(0);
         }
+        return subscription;
     }
 
     /**

@@ -51,7 +51,7 @@ contract OperatorFilterRegistryTest is BaseRegistryTest {
         registry.register(address(this));
 
         assertTrue(registry.isRegistered(address(filterer)));
-        assertEq(registry.subscriptionOf(address(filterer)), address(0));
+        assertEq(registry.subscriptionOf(address(filterer)), address(filterer));
     }
 
     function testRegister_onlyAddressOrOwner() public {
@@ -538,9 +538,9 @@ contract OperatorFilterRegistryTest is BaseRegistryTest {
         emit SubscriptionUpdated(address(this), subscription, false);
         registry.unsubscribe(address(this), false);
 
-        assertEq(registry.subscriptionOf(address(this)), address(0));
+        assertEq(registry.subscriptionOf(address(this)), address(this));
         assertEq(registry.subscribers(subscription).length, 0);
-        assertEq(registry.subscriptionOf(address(this)), address(0));
+        assertEq(registry.subscriptionOf(address(this)), address(this));
     }
 
     function testUnsubscribe_notRegistered() public {
@@ -580,7 +580,7 @@ contract OperatorFilterRegistryTest is BaseRegistryTest {
         emit CodeHashUpdated(address(this), codeHash, true);
         registry.unsubscribe(address(this), true);
 
-        assertEq(registry.subscriptionOf(address(this)), address(0));
+        assertEq(registry.subscriptionOf(address(this)), address(this));
     }
 
     function testUnsubscribe_NotRegistered() public {
