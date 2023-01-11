@@ -49,6 +49,7 @@ abstract contract RevokableOperatorFilterer is UpdatableOperatorFilterer {
         }
 
         operatorFilterRegistry = IOperatorFilterRegistry(newRegistry);
+        emit OperatorFilterRegistryAddressUpdated(newRegistry);
     }
 
     /**

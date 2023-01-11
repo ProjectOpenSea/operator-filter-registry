@@ -19,6 +19,8 @@ abstract contract UpdatableOperatorFilterer {
     error OperatorNotAllowed(address operator);
     error OnlyOwner();
 
+    event OperatorFilterRegistryAddressUpdated(address newRegistry);
+
     IOperatorFilterRegistry public operatorFilterRegistry;
 
     constructor(address _registry, address subscriptionOrRegistrantToCopy, bool subscribe) {
@@ -64,6 +66,7 @@ abstract contract UpdatableOperatorFilterer {
             revert OnlyOwner();
         }
         operatorFilterRegistry = IOperatorFilterRegistry(newRegistry);
+        emit OperatorFilterRegistryAddressUpdated(newRegistry);
     }
 
     /**
