@@ -60,7 +60,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
                 revert AddressFiltered(operator);
             }
             bytes32 codeHash = operator.codehash;
-            if (codeHash == EOA_CODEHASH || codeHash == bytes32(0)) {
+            if (codeHash != EOA_CODEHASH && codeHash != bytes32(0)) {
                 if (_filteredCodeHashes[registration].contains(codeHash)) {
                     revert CodeHashFiltered(operator, codeHash);
                 }
