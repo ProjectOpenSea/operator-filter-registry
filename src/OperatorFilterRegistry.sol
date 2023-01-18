@@ -437,7 +437,8 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      * @notice Returns true if operator is filtered by a given address or its subscription.
      */
     function isOperatorFiltered(address registrant, address operator) external view returns (bool) {
-        return _filteredOperators[_registrations[registrant]].contains(operator);
+        address registration = _registrations[registrant];
+        return _filteredOperators[registration].contains(operator);
     }
 
     /**
@@ -445,10 +446,8 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      */
     function isCodeHashFiltered(address registrant, bytes32 codeHash) external view returns (bool) {
         address registration = _registrations[registrant];
-        if (registration != registrant) {
-            return _filteredCodeHashes[registration].contains(codeHash);
-        }
-        return _filteredCodeHashes[registrant].contains(codeHash);
+
+        return _filteredCodeHashes[registration].contains(codeHash);
     }
 
     /**
@@ -457,10 +456,8 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
     function isCodeHashOfFiltered(address registrant, address operatorWithCode) external view returns (bool) {
         bytes32 codeHash = operatorWithCode.codehash;
         address registration = _registrations[registrant];
-        if (registration != registrant) {
-            return _filteredCodeHashes[registration].contains(codeHash);
-        }
-        return _filteredCodeHashes[registrant].contains(codeHash);
+
+        return _filteredCodeHashes[registration].contains(codeHash);
     }
 
     /**
@@ -475,10 +472,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      */
     function filteredOperators(address registrant) external view returns (address[] memory) {
         address registration = _registrations[registrant];
-        if (registration != registrant) {
-            return _filteredOperators[registration].values();
-        }
-        return _filteredOperators[registrant].values();
+        return _filteredOperators[registration].values();
     }
 
     /**
@@ -487,10 +481,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      */
     function filteredCodeHashes(address registrant) external view returns (bytes32[] memory) {
         address registration = _registrations[registrant];
-        if (registration != registrant) {
-            return _filteredCodeHashes[registration].values();
-        }
-        return _filteredCodeHashes[registrant].values();
+        return _filteredCodeHashes[registration].values();
     }
 
     /**
@@ -500,10 +491,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      */
     function filteredOperatorAt(address registrant, uint256 index) external view returns (address) {
         address registration = _registrations[registrant];
-        if (registration != registrant) {
-            return _filteredOperators[registration].at(index);
-        }
-        return _filteredOperators[registrant].at(index);
+        return _filteredOperators[registration].at(index);
     }
 
     /**
@@ -513,10 +501,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      */
     function filteredCodeHashAt(address registrant, uint256 index) external view returns (bytes32) {
         address registration = _registrations[registrant];
-        if (registration != registrant) {
-            return _filteredCodeHashes[registration].at(index);
-        }
-        return _filteredCodeHashes[registrant].at(index);
+        return _filteredCodeHashes[registration].at(index);
     }
 
     /// @dev Convenience method to compute the code hash of an arbitrary contract
