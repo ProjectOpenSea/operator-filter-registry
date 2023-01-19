@@ -87,6 +87,8 @@ abstract contract UpdatableOperatorFilterer {
         IOperatorFilterRegistry registry = operatorFilterRegistry;
         // Check registry code length to facilitate testing in environments without a deployed registry.
         if (address(registry) != address(0) && address(registry).code.length > 0) {
+            // under normal circumstances, this function will revert rather than return false, but inheriting contracts
+            // may specify their own OperatorFilterRegistry implementations, which may behave differently
             if (!registry.isOperatorAllowed(address(this), operator)) {
                 revert OperatorNotAllowed(operator);
             }

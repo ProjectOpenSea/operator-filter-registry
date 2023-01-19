@@ -11,14 +11,11 @@ import {OperatorFiltererUpgradeable} from "./OperatorFiltererUpgradeable.sol";
  *         isOperatorFilterRegistryRevoked flag in order to permanently bypass the OperatorFilterRegistry checks.
  */
 abstract contract RevokableOperatorFiltererUpgradeable is OperatorFiltererUpgradeable {
-    /// @dev Emitted when someone other than the owner is trying to call an only owner function.
     error OnlyOwner();
-    /// @dev Emitted when the registration has already been revoked.
     error AlreadyRevoked();
 
     bool private _isOperatorFilterRegistryRevoked;
 
-    /// @dev The upgradeable initialize function that should be called when the contract is being upgraded.
     function __RevokableOperatorFilterer_init(address subscriptionOrRegistrantToCopy, bool subscribe) internal {
         OperatorFiltererUpgradeable.__OperatorFilterer_init(subscriptionOrRegistrantToCopy, subscribe);
     }
@@ -26,34 +23,16 @@ abstract contract RevokableOperatorFiltererUpgradeable is OperatorFiltererUpgrad
     /**
      * @dev A helper function to check if the operator is allowed.
      */
-    modifier onlyAllowedOperator(address from) override {
+    function _checkFilterOperator(address operator) internal view virtual override {
         // Check registry code length to facilitate testing in environments without a deployed registry.
         if (!_isOperatorFilterRegistryRevoked && address(operatorFilterRegistry).code.length > 0) {
-            // Allow spending tokens from addresses with balance
-            // Note that this still allows listings and marketplaces with escrow to transfer tokens if transferred
-            // from an EOA.
-            if (from == msg.sender) {
-                _;
-                return;
-            }
-            if (!operatorFilterRegistry.isOperatorAllowed(address(this), msg.sender)) {
-                revert OperatorNotAllowed(msg.sender);
-            }
-        }
-        _;
-    }
-
-    /**
-     * @dev A helper function to check if the operator approval is allowed.
-     */
-    modifier onlyAllowedOperatorApproval(address operator) override {
-        // Check registry code length to facilitate testing in environments without a deployed registry.
-        if (!_isOperatorFilterRegistryRevoked && address(operatorFilterRegistry).code.length > 0) {
+            // under normal circumstances, this function will revert rather than return false, but inheriting or
+            // upgraded contracts may specify their own OperatorFilterRegistry implementations, which may behave
+            // differently
             if (!operatorFilterRegistry.isOperatorAllowed(address(this), operator)) {
                 revert OperatorNotAllowed(operator);
             }
         }
-        _;
     }
 
     /**
@@ -74,7 +53,7 @@ abstract contract RevokableOperatorFiltererUpgradeable is OperatorFiltererUpgrad
     }
 
     /**
-     * @dev Assume the contract has an owner, but leave specific Ownable implementation up to inheriting contract.
+     * @dev assume the contract has an owner, but leave specific Ownable implementation up to inheriting contract
      */
     function owner() public view virtual returns (address);
 }

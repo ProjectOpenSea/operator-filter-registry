@@ -2,8 +2,9 @@
 pragma solidity ^0.8.13;
 
 import {ERC1155} from "openzeppelin-contracts/token/ERC1155/ERC1155.sol";
-import {DefaultOperatorFilterer} from "../DefaultOperatorFilterer.sol";
+import {ERC2981} from "openzeppelin-contracts/token/common/ERC2981.sol";
 import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
+import {DefaultOperatorFilterer} from "../DefaultOperatorFilterer.sol";
 
 /**
  * @title  ExampleERC1155
@@ -13,7 +14,7 @@ import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
  *         the msg.sender (operator) is allowed by the OperatorFilterRegistry. Adding the onlyAllowedOperatorApproval
  *         modifier to the setApprovalForAll method ensures that owners do not approve operators that are not allowed.
  */
-abstract contract ExampleERC1155 is ERC1155(""), DefaultOperatorFilterer, Ownable {
+abstract contract ExampleERC1155 is ERC1155(""), ERC2981, DefaultOperatorFilterer, Ownable {
     /**
      * @dev See {IERC1155-setApprovalForAll}.
      *      In this example the added modifier ensures that the operator is allowed by the OperatorFilterRegistry.
@@ -46,5 +47,12 @@ abstract contract ExampleERC1155 is ERC1155(""), DefaultOperatorFilterer, Ownabl
         bytes memory data
     ) public virtual override onlyAllowedOperator(from) {
         super.safeBatchTransferFrom(from, to, ids, amounts, data);
+    }
+
+    /**
+     * @dev See {IERC165-supportsInterface}.
+     */
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC1155, ERC2981) returns (bool) {
+        return super.supportsInterface(interfaceId);
     }
 }

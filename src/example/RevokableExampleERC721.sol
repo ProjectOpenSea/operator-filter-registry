@@ -2,9 +2,10 @@
 pragma solidity ^0.8.13;
 
 import {ERC721} from "openzeppelin-contracts/token/ERC721/ERC721.sol";
+import {ERC2981} from "openzeppelin-contracts/token/common/ERC2981.sol";
+import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 import {UpdatableOperatorFilterer} from "../UpdatableOperatorFilterer.sol";
 import {RevokableDefaultOperatorFilterer} from "../RevokableDefaultOperatorFilterer.sol";
-import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
 
 /**
  * @title  ExampleERC721
@@ -15,7 +16,12 @@ import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
  *         the msg.sender (operator) is allowed by the OperatorFilterRegistry. Adding the onlyAllowedOperatorApproval
  *         modifier to the approval methods ensures that owners do not approve operators that are not allowed.
  */
-abstract contract RevokableExampleERC721 is ERC721("Example", "EXAMPLE"), RevokableDefaultOperatorFilterer, Ownable {
+abstract contract RevokableExampleERC721 is
+    ERC721("Example", "EXAMPLE"),
+    ERC2981,
+    RevokableDefaultOperatorFilterer,
+    Ownable
+{
     /**
      * @dev See {IERC721-setApprovalForAll}.
      *      In this example the added modifier ensures that the operator is allowed by the OperatorFilterRegistry.
@@ -63,7 +69,14 @@ abstract contract RevokableExampleERC721 is ERC721("Example", "EXAMPLE"), Revoka
     /**
      * @dev Returns the owner of the ERC721 token contract.
      */
-    function owner() public view virtual override (Ownable, UpdatableOperatorFilterer) returns (address) {
+    function owner() public view virtual override(Ownable, UpdatableOperatorFilterer) returns (address) {
         return Ownable.owner();
+    }
+
+    /**
+     * @dev See {IERC165-supportsInterface}.
+     */
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, ERC2981) returns (bool) {
+        return super.supportsInterface(interfaceId);
     }
 }
