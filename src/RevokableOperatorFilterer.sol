@@ -11,15 +11,20 @@ import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
  *         any point. As implemented, this abstract contract allows the contract owner to permanently skip the
  *         OperatorFilterRegistry checks by calling revokeOperatorFilterRegistry. Once done, the registry
  *         address cannot be further updated.
- *         Note that OpenSea will still disable creator fee enforcement if filtered operators begin fulfilling orders
+ *         Note that OpenSea will still disable creator earnings enforcement if filtered operators begin fulfilling orders
  *         on-chain, eg, if the registry is revoked or bypassed.
  */
 abstract contract RevokableOperatorFilterer is UpdatableOperatorFilterer {
+    /// @dev Emitted when the registry has already been revoked.
     error RegistryHasBeenRevoked();
+    /// @dev Emitted when the initial registry address is attempted to be set to the zero address.
     error InitialRegistryAddressCannotBeZeroAddress();
+
+    event OperatorFilterRegistryRevoked();
 
     bool public isOperatorFilterRegistryRevoked;
 
+    /// @dev The constructor that is called when the contract is being deployed.
     constructor(address _registry, address subscriptionOrRegistrantToCopy, bool subscribe)
         UpdatableOperatorFilterer(_registry, subscriptionOrRegistrantToCopy, subscribe)
     {
@@ -29,6 +34,9 @@ abstract contract RevokableOperatorFilterer is UpdatableOperatorFilterer {
         }
     }
 
+    /**
+     * @dev A helper function to check if the operator is allowed.
+     */
     function _checkFilterOperator(address operator) internal view virtual override {
         if (address(operatorFilterRegistry) != address(0)) {
             super._checkFilterOperator(operator);
@@ -49,6 +57,7 @@ abstract contract RevokableOperatorFilterer is UpdatableOperatorFilterer {
         }
 
         operatorFilterRegistry = IOperatorFilterRegistry(newRegistry);
+        emit OperatorFilterRegistryAddressUpdated(newRegistry);
     }
 
     /**
@@ -66,5 +75,6 @@ abstract contract RevokableOperatorFilterer is UpdatableOperatorFilterer {
         // set to zero address to bypass checks
         operatorFilterRegistry = IOperatorFilterRegistry(address(0));
         isOperatorFilterRegistryRevoked = true;
+        emit OperatorFilterRegistryRevoked();
     }
 }

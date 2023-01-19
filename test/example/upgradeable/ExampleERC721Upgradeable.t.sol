@@ -4,6 +4,9 @@ pragma solidity ^0.8.13;
 import {ExampleERC721Upgradeable} from "../../../src/example/upgradeable/ExampleERC721Upgradeable.sol";
 import {BaseRegistryTest} from "../../BaseRegistryTest.sol";
 import {Initializable} from "openzeppelin-contracts-upgradeable/proxy/utils/Initializable.sol";
+import {IERC165} from "openzeppelin-contracts/interfaces/IERC165.sol";
+import {IERC721} from "openzeppelin-contracts/interfaces/IERC721.sol";
+import {IERC2981} from "openzeppelin-contracts/interfaces/IERC2981.sol";
 
 contract TestableExampleERC721 is ExampleERC721Upgradeable {
     function mint(address to, uint256 tokenId) external {
@@ -103,5 +106,11 @@ contract ExampleERC721UpgradeableTest is BaseRegistryTest, Initializable {
 
         vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, alice));
         example.approve(alice, 1);
+    }
+
+    function testSupportsInterface() public {
+        assertTrue(example.supportsInterface(type(IERC165).interfaceId));
+        assertTrue(example.supportsInterface(type(IERC721).interfaceId));
+        assertTrue(example.supportsInterface(type(IERC2981).interfaceId));
     }
 }

@@ -11,6 +11,7 @@ import {CANONICAL_OPERATOR_FILTER_REGISTRY_ADDRESS} from "./lib/Constants.sol";
  */
 
 contract OwnedRegistrant is Ownable2Step {
+    /// @dev The constructor that is called when the contract is being deployed.
     constructor(address _owner) {
         IOperatorFilterRegistry(CANONICAL_OPERATOR_FILTER_REGISTRY_ADDRESS).register(address(this));
         transferOwnership(_owner);
