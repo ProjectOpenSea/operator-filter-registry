@@ -35,15 +35,6 @@ abstract contract RevokableOperatorFilterer is UpdatableOperatorFilterer {
     }
 
     /**
-     * @dev A helper function to check if the operator is allowed.
-     */
-    function _checkFilterOperator(address operator) internal view virtual override {
-        if (address(operatorFilterRegistry) != address(0)) {
-            super._checkFilterOperator(operator);
-        }
-    }
-
-    /**
      * @notice Update the address that the contract will make OperatorFilter checks against. When set to the zero
      *         address, checks will be permanently bypassed, and the address cannot be updated again. OnlyOwner.
      */
