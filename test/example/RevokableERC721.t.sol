@@ -3,6 +3,9 @@ pragma solidity ^0.8.13;
 
 import {RevokableExampleERC721} from "../../src/example/RevokableExampleERC721.sol";
 import {BaseRegistryTest} from "../BaseRegistryTest.sol";
+import {IERC165} from "openzeppelin-contracts/interfaces/IERC165.sol";
+import {IERC721} from "openzeppelin-contracts/interfaces/IERC721.sol";
+import {IERC2981} from "openzeppelin-contracts/interfaces/IERC2981.sol";
 
 contract TestableExampleERC721 is RevokableExampleERC721 {
     function mint(address to, uint256 tokenId) external {
@@ -108,5 +111,11 @@ contract RevokableExampleERC721Test is BaseRegistryTest {
         example.setApprovalForAll(alice, true);
         vm.startPrank(alice);
         example.safeTransferFrom(bob, makeAddr("to"), 1);
+    }
+
+    function testSupportsInterface() public {
+        assertTrue(example.supportsInterface(type(IERC165).interfaceId));
+        assertTrue(example.supportsInterface(type(IERC721).interfaceId));
+        assertTrue(example.supportsInterface(type(IERC2981).interfaceId));
     }
 }
