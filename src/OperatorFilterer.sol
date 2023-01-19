@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
-
+import {CANONICAL_OPERATOR_FILTER_REGISTRY_ADDRESS} from "./lib/Constants.sol";
 /**
  * @title  OperatorFilterer
  * @notice Abstract contract whose constructor automatically registers and optionally subscribes to or copies another
@@ -14,12 +14,13 @@ import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
  *         administration methods on the contract itself to interact with the registry otherwise the subscription
  *         will be locked to the options set during construction.
  */
+
 abstract contract OperatorFilterer {
     /// @dev Emitted when an operator is not allowed.
     error OperatorNotAllowed(address operator);
 
     IOperatorFilterRegistry public constant OPERATOR_FILTER_REGISTRY =
-        IOperatorFilterRegistry(0x000000000000AAeB6D7670E522A718067333cd4E);
+        IOperatorFilterRegistry(CANONICAL_OPERATOR_FILTER_REGISTRY_ADDRESS);
 
     /// @dev The constructor that is called when the contract is being deployed.
     constructor(address subscriptionOrRegistrantToCopy, bool subscribe) {

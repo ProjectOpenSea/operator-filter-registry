@@ -2,6 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {RevokableOperatorFiltererUpgradeable} from "./RevokableOperatorFiltererUpgradeable.sol";
+import {CANONICAL_CORI_SUBSCRIPTION} from "../lib/Constants.sol";
 
 /**
  * @title  RevokableDefaultOperatorFiltererUpgradeable
@@ -11,11 +12,8 @@ import {RevokableOperatorFiltererUpgradeable} from "./RevokableOperatorFiltererU
  *         on-chain, eg, if the registry is revoked or bypassed.
  */
 abstract contract RevokableDefaultOperatorFiltererUpgradeable is RevokableOperatorFiltererUpgradeable {
-    /// @dev The default OpenSea subscription address
-    address constant DEFAULT_SUBSCRIPTION = address(0x3cc6CddA760b79bAfa08dF41ECFA224f810dCeB6);
-
     /// @dev The upgradeable initialize function that should be called when the contract is being upgraded.
     function __RevokableDefaultOperatorFilterer_init() internal onlyInitializing {
-        RevokableOperatorFiltererUpgradeable.__RevokableOperatorFilterer_init(DEFAULT_SUBSCRIPTION, true);
+        RevokableOperatorFiltererUpgradeable.__RevokableOperatorFilterer_init(CANONICAL_CORI_SUBSCRIPTION, true);
     }
 }
