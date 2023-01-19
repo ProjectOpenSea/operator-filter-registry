@@ -2,8 +2,9 @@
 pragma solidity ^0.8.13;
 
 import {ERC1155Upgradeable} from "openzeppelin-contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
-import {DefaultOperatorFiltererUpgradeable} from "../../upgradeable/DefaultOperatorFiltererUpgradeable.sol";
+import {ERC2981Upgradeable} from "openzeppelin-contracts-upgradeable/token/common/ERC2981Upgradeable.sol";
 import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {DefaultOperatorFiltererUpgradeable} from "../../upgradeable/DefaultOperatorFiltererUpgradeable.sol";
 
 /**
  * @title  ExampleERC1155Upgradeable
@@ -14,11 +15,13 @@ import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/access/Owna
  */
 abstract contract ExampleERC1155Upgradeable is
     ERC1155Upgradeable,
+    ERC2981Upgradeable,
     DefaultOperatorFiltererUpgradeable,
     OwnableUpgradeable
 {
     function initialize() public initializer {
         __ERC1155_init("");
+        __ERC2981_init();
         __Ownable_init();
         __DefaultOperatorFilterer_init();
     }
@@ -43,5 +46,18 @@ abstract contract ExampleERC1155Upgradeable is
         bytes memory data
     ) public virtual override onlyAllowedOperator(from) {
         super.safeBatchTransferFrom(from, to, ids, amounts, data);
+    }
+
+    /**
+     * @dev See {IERC165-supportsInterface}.
+     */
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override (ERC1155Upgradeable, ERC2981Upgradeable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 }

@@ -33,29 +33,29 @@ abstract contract OperatorFiltererUpgradeable is Initializable {
     }
 
     modifier onlyAllowedOperator(address from) virtual {
-        // Check registry code length to facilitate testing in environments without a deployed registry.
-        if (address(operatorFilterRegistry).code.length > 0) {
-            // Allow spending tokens from addresses with balance
-            // Note that this still allows listings and marketplaces with escrow to transfer tokens if transferred
-            // from an EOA.
-            if (from == msg.sender) {
-                _;
-                return;
-            }
-            if (!operatorFilterRegistry.isOperatorAllowed(address(this), msg.sender)) {
-                revert OperatorNotAllowed(msg.sender);
-            }
+        // Allow spending tokens from addresses with balance
+        // Note that this still allows listings and marketplaces with escrow to transfer tokens if transferred
+        // from an EOA.
+        if (from != msg.sender) {
+            _checkFilterOperator(msg.sender);
         }
         _;
     }
 
     modifier onlyAllowedOperatorApproval(address operator) virtual {
+        _checkFilterOperator(operator);
+        _;
+    }
+
+    function _checkFilterOperator(address operator) internal view virtual {
         // Check registry code length to facilitate testing in environments without a deployed registry.
         if (address(operatorFilterRegistry).code.length > 0) {
+            // under normal circumstances, this function will revert rather than return false, but inheriting or
+            // upgraded contracts may specify their own OperatorFilterRegistry implementations, which may behave
+            // differently
             if (!operatorFilterRegistry.isOperatorAllowed(address(this), operator)) {
                 revert OperatorNotAllowed(operator);
             }
         }
-        _;
     }
 }
