@@ -50,12 +50,12 @@ abstract contract RevokableOperatorFiltererUpgradeable is OperatorFiltererUpgrad
         // Check registry code length to facilitate testing in environments without a deployed registry.
         if (
             !RevokableOperatorFiltererUpgradeableStorage.layout()._isOperatorFilterRegistryRevoked
-                && address(operatorFilterRegistry).code.length > 0
+                && address(OPERATOR_FILTER_REGISTRY).code.length > 0
         ) {
             // under normal circumstances, this function will revert rather than return false, but inheriting or
             // upgraded contracts may specify their own OperatorFilterRegistry implementations, which may behave
             // differently
-            if (!operatorFilterRegistry.isOperatorAllowed(address(this), operator)) {
+            if (!OPERATOR_FILTER_REGISTRY.isOperatorAllowed(address(this), operator)) {
                 revert OperatorNotAllowed(operator);
             }
         }

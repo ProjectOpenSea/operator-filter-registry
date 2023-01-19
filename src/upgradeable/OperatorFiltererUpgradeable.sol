@@ -16,7 +16,7 @@ abstract contract OperatorFiltererUpgradeable is Initializable {
     /// @notice Emitted when an operator is not allowed.
     error OperatorNotAllowed(address operator);
 
-    IOperatorFilterRegistry constant operatorFilterRegistry =
+    IOperatorFilterRegistry constant OPERATOR_FILTER_REGISTRY =
         IOperatorFilterRegistry(0x000000000000AAeB6D7670E522A718067333cd4E);
 
     /// @dev The upgradeable initialize function that should be called when the contract is being upgraded.
@@ -27,15 +27,15 @@ abstract contract OperatorFiltererUpgradeable is Initializable {
         // If an inheriting token contract is deployed to a network without the registry deployed, the modifier
         // will not revert, but the contract will need to be registered with the registry once it is deployed in
         // order for the modifier to filter addresses.
-        if (address(operatorFilterRegistry).code.length > 0) {
-            if (!operatorFilterRegistry.isRegistered(address(this))) {
+        if (address(OPERATOR_FILTER_REGISTRY).code.length > 0) {
+            if (!OPERATOR_FILTER_REGISTRY.isRegistered(address(this))) {
                 if (subscribe) {
-                    operatorFilterRegistry.registerAndSubscribe(address(this), subscriptionOrRegistrantToCopy);
+                    OPERATOR_FILTER_REGISTRY.registerAndSubscribe(address(this), subscriptionOrRegistrantToCopy);
                 } else {
                     if (subscriptionOrRegistrantToCopy != address(0)) {
-                        operatorFilterRegistry.registerAndCopyEntries(address(this), subscriptionOrRegistrantToCopy);
+                        OPERATOR_FILTER_REGISTRY.registerAndCopyEntries(address(this), subscriptionOrRegistrantToCopy);
                     } else {
-                        operatorFilterRegistry.register(address(this));
+                        OPERATOR_FILTER_REGISTRY.register(address(this));
                     }
                 }
             }
@@ -68,11 +68,11 @@ abstract contract OperatorFiltererUpgradeable is Initializable {
      */
     function _checkFilterOperator(address operator) internal view virtual {
         // Check registry code length to facilitate testing in environments without a deployed registry.
-        if (address(operatorFilterRegistry).code.length > 0) {
+        if (address(OPERATOR_FILTER_REGISTRY).code.length > 0) {
             // under normal circumstances, this function will revert rather than return false, but inheriting or
             // upgraded contracts may specify their own OperatorFilterRegistry implementations, which may behave
             // differently
-            if (!operatorFilterRegistry.isOperatorAllowed(address(this), operator)) {
+            if (!OPERATOR_FILTER_REGISTRY.isOperatorAllowed(address(this), operator)) {
                 revert OperatorNotAllowed(operator);
             }
         }
