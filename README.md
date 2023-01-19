@@ -2,40 +2,40 @@
 
 ## **Note on Grace Period for Non-Ethereum Chains**
 
-Currently, OpenSea only requires creator fee enforcement on Ethereum Mainnet and Goerli for collections to be eligible for creator fees. However, starting **January 2nd, 2023**, Opensea will begin validating creator fee enforcement on all supported EVM chains.
+Currently, OpenSea only requires creator earnings enforcement on Ethereum Mainnet and Goerli for collections to be eligible for creator earnings. However, starting **January 2nd, 2023**, Opensea will begin validating creator earnings enforcement on all supported EVM chains.
 
 ## Introduction
 
-This repository contains a number of tools to help token contracts manage the operators allowed to transfer tokens on behalf of users - including the smart contracts and delegates of marketplaces that do not respect creator fees.
+This repository contains a number of tools to help token contracts manage the operators allowed to transfer tokens on behalf of users - including the smart contracts and delegates of marketplaces that do not respect creator earnings.
 
-This is not a foolproof approach - but it makes bypassing creator fees less liquid and easy at scale.
+This is not a foolproof approach - but it makes bypassing creator earnings less liquid and easy at scale.
 
 ## How it works
 
 Token smart contracts may register themselves (or be registered by their "owner") with the `OperatorFilterRegistry`. Token contracts or their "owner"s may then curate lists of operators (specific account addresses) and codehashes (smart contracts deployed with the same code) that should not be allowed to transfer tokens on behalf of users.
 
-## Creator Fee Enforcement
+## Creator Earnings Enforcement
 
-OpenSea will enforce creator fees for smart contracts that make best efforts to filter transfers from operators known to not respect creator fees.
+OpenSea will enforce creator earnings for smart contracts that make best efforts to filter transfers from operators known to not respect creator earnings.
 
 This repository facilitates that process by providing smart contracts that interface with the registry automatically, including automatically subscribing to OpenSea's list of filtered operators.
 
 When filtering operators, use of this registry is not required, nor is it required for a token contract to "subscribe" to OpenSea's list within this registry. Subscriptions can be changed or removed at any time. Filtered operators and codehashes may likewise be added or removed at any time.
 
-Contract owners may implement their own filtering outside of this registry, or they may use this registry to curate their own lists of filtered operators. However, there are certain contracts that are filtered by the default subscription, and must be filtered in order to be eligible for creator fee enforcement on OpenSea.
+Contract owners may implement their own filtering outside of this registry, or they may use this registry to curate their own lists of filtered operators. However, there are certain contracts that are filtered by the default subscription, and must be filtered in order to be eligible for creator earnings enforcement on OpenSea.
 
 ## Note on [EIP-2981](https://eips.ethereum.org/EIPS/eip-2981)
 
-Implementing EIP-2981 is not sufficient for a token to be eligible for creator fees on OpenSea.
+Implementing EIP-2981 is not sufficient for a token to be eligible for creator earnings on OpenSea.
 
-While sometimes described as "on-chain," EIP-2981 only provides a method to determine what the appropriate creator fee should be for a sale. EIP-2981 does not provide any mechanism of on-chain enforcement of those fees.
+While sometimes described as "on-chain," EIP-2981 only provides a method to determine what the appropriate creator earnings should be for a sale. EIP-2981 does not provide any mechanism of on-chain enforcement of those earnings.
 
 ## Filtered addresses
 
 Entries in this list are added according to the following criteria:
 
--   If the application most commonly used to interface with the contract gives buyers and sellers the ability to bypass creator fees when a similar transaction for the same item would require creator fee payment on OpenSea.io
--   If the contract is facilitating the evasion of on-chain creator fee enforcement measures. For example, the contract uses a wrapper contract to bypass fee enforcement.
+-   If the application most commonly used to interface with the contract gives buyers and sellers the ability to bypass creator earnings when a similar transaction for the same item would require creator earnings payment on OpenSea.io
+-   If the contract is facilitating the evasion of on-chain creator earnings enforcement measures. For example, the contract uses a wrapper contract to bypass earnings enforcement.
 
 <table>
 <tr>
@@ -228,7 +228,7 @@ This method will toggle filtering for an operator for a given registrant. If `fi
 
 ### updateCodeHash(address registrant, bytes32 codeHash, bool filtered)
 
-This method will toggle filtering on code hashes of operators given registrant. If an operator's `EXTCODEHASH` matches a filtered code hash, `isOperatorAllowed` will return `true`. Otherwise, `isOperatorAllowed` will return `false`. This can filter smart contract operators with different addresess but the same code.
+This method will toggle filtering on code hashes of operators given registrant. If an operator's `EXTCODEHASH` matches a filtered code hash, `isOperatorAllowed` will return `true`. Otherwise, `isOperatorAllowed` will return `false`. This can filter smart contract operators with different addresses but the same code.
 
 ## `OperatorFilterer`
 
@@ -243,6 +243,8 @@ On construction, it takes three parameters:
 -   `address subscriptionOrRegistrantToCopy`: the address of the registrant the contract will either subscribe to, or do a one-time copy of that registrant's filters. If the zero address is provided, no subscription or copies will be made.
 -   `bool subscribe`: if true, subscribes to the previous address if it was not the zero address. If false, copies existing filtered addresses and codeHashes without subscribing to future updates.
 
+Please note that if your token contract does not provide an owner with [EIP-173](https://eips.ethereum.org/EIPS/eip-173), it must provide administration methods on the contract itself to interact with the registry otherwise the subscription will be locked to the options set during construction.
+
 ### `onlyAllowedOperator(address operator)`
 
 This modifier will revert if the `operator` or its code hash is filtered by the `OperatorFilterRegistry` contract.
@@ -251,15 +253,17 @@ This modifier will revert if the `operator` or its code hash is filtered by the 
 
 This smart contract extends `OperatorFilterer` and automatically configures the token contract that inherits it to subscribe to OpenSea's list of filtered operators and code hashes. This subscription can be updated at any time by the owner by calling `updateSubscription` on the `OperatorFilterRegistry` contract.
 
+Please note that if your token contract does not provide an owner with [EIP-173](https://eips.ethereum.org/EIPS/eip-173), it must provide administration methods on the contract itself to interact with the registry otherwise the subscription will be locked to the options set during construction.
+
 ## `OwnedRegistrant`
 
 This `Ownable` smart contract is meant as a simple utility to enable subscription addresses that can easily be transferred to a new owner for administration. For example: an EOA curates a list of filtered operators and code hashes, and then transfers ownership of the `OwnedRegistrant` to a multisig wallet.
 
 # Validation
 
-When the first token is minted on an NFT smart contract, OpenSea checks if the filtered operators on that network (Ethereum Mainnet, Goerli, Polygon, etc.) are allowed to transfer the token. If they are, OpenSea will mark the collection as ineligible for creator fees. Otherwise, OpenSea will enforce creator fees on the collection.
+When the first token is minted on an NFT smart contract, OpenSea checks if the filtered operators on that network (Ethereum Mainnet, Goerli, Polygon, etc.) are allowed to transfer the token. If they are, OpenSea will mark the collection as ineligible for creator earnings. Otherwise, OpenSea will enforce creator earnings on the collection.
 
-If at a later point, OpenSea detects orders being fulfilled by filtered operators, OpenSea will mark the collection as ineligible for creator fees going forward.
+If at a later point, OpenSea detects orders being fulfilled by filtered operators, OpenSea will mark the collection as ineligible for creator earnings going forward.
 
 The included [validation test](test/validation/Validation.t.sol) runs the same checks that OpenSea does when first creating a collection page, and can be extended with custom setup for your token contract.
 
