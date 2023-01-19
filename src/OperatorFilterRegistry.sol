@@ -23,7 +23,10 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
 
     mapping(address => EnumerableSet.AddressSet) private _filteredOperators;
     mapping(address => EnumerableSet.Bytes32Set) private _filteredCodeHashes;
-    mapping(address => address) private _registrations;
+
+    /// @dev an address is "registered" when it has an entry in _subscriptions; a "subscription" equal to the same
+    /// address means the address controls its own filtered operators and codehashes.
+    mapping(address => address) private _subscriptions;
     mapping(address => EnumerableSet.AddressSet) private _subscribers;
 
     /**
@@ -54,20 +57,14 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      *         true if supplied registrant address is not registered.
      */
     function isOperatorAllowed(address registrant, address operator) external view returns (bool) {
-        address registration = _registrations[registrant];
+        address registration = _subscriptions[registrant];
         if (registration != address(0)) {
-            EnumerableSet.AddressSet storage filteredOperatorsRef;
-            EnumerableSet.Bytes32Set storage filteredCodeHashesRef;
-
-            filteredOperatorsRef = _filteredOperators[registration];
-            filteredCodeHashesRef = _filteredCodeHashes[registration];
-
-            if (filteredOperatorsRef.contains(operator)) {
+            if (_filteredOperators[registration].contains(operator)) {
                 revert AddressFiltered(operator);
             }
-            if (operator.code.length > 0) {
-                bytes32 codeHash = operator.codehash;
-                if (filteredCodeHashesRef.contains(codeHash)) {
+            bytes32 codeHash = operator.codehash;
+            if (codeHash != EOA_CODEHASH && codeHash != bytes32(0)) {
+                if (_filteredCodeHashes[registration].contains(codeHash)) {
                     revert CodeHashFiltered(operator, codeHash);
                 }
             }
@@ -83,10 +80,10 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      * @notice Registers an address with the registry. May be called by address itself or by EIP-173 owner.
      */
     function register(address registrant) external onlyAddressOrOwner(registrant) {
-        if (_registrations[registrant] != address(0)) {
+        if (_subscriptions[registrant] != address(0)) {
             revert AlreadyRegistered();
         }
-        _registrations[registrant] = registrant;
+        _subscriptions[registrant] = registrant;
         emit RegistrationUpdated(registrant, true);
     }
 
@@ -96,7 +93,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      *         Also note that any subscriptions to this registrant will still be active and follow the existing filtered addresses and codehashes.
      */
     function unregister(address registrant) external onlyAddressOrOwner(registrant) {
-        address registration = _registrations[registrant];
+        address registration = _subscriptions[registrant];
         if (registration == address(0)) {
             revert NotRegistered(registrant);
         }
@@ -104,7 +101,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
             _subscribers[registration].remove(registrant);
             emit SubscriptionUpdated(registrant, registration, false);
         }
-        _registrations[registrant] = address(0);
+        _subscriptions[registrant] = address(0);
         emit RegistrationUpdated(registrant, false);
     }
 
@@ -112,14 +109,14 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      * @notice Registers an address with the registry and "subscribes" to another address's filtered operators and codeHashes.
      */
     function registerAndSubscribe(address registrant, address subscription) external onlyAddressOrOwner(registrant) {
-        address registration = _registrations[registrant];
+        address registration = _subscriptions[registrant];
         if (registration != address(0)) {
             revert AlreadyRegistered();
         }
         if (registrant == subscription) {
             revert CannotSubscribeToSelf();
         }
-        address subscriptionRegistration = _registrations[subscription];
+        address subscriptionRegistration = _subscriptions[subscription];
         if (subscriptionRegistration == address(0)) {
             revert NotRegistered(subscription);
         }
@@ -127,7 +124,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
             revert CannotSubscribeToRegistrantWithSubscription(subscription);
         }
 
-        _registrations[registrant] = subscription;
+        _subscriptions[registrant] = subscription;
         _subscribers[subscription].add(registrant);
         emit RegistrationUpdated(registrant, true);
         emit SubscriptionUpdated(registrant, subscription, true);
@@ -144,15 +141,15 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
         if (registrantToCopy == registrant) {
             revert CannotCopyFromSelf();
         }
-        address registration = _registrations[registrant];
+        address registration = _subscriptions[registrant];
         if (registration != address(0)) {
             revert AlreadyRegistered();
         }
-        address registrantRegistration = _registrations[registrantToCopy];
+        address registrantRegistration = _subscriptions[registrantToCopy];
         if (registrantRegistration == address(0)) {
             revert NotRegistered(registrantToCopy);
         }
-        _registrations[registrant] = registrant;
+        _subscriptions[registrant] = registrant;
         emit RegistrationUpdated(registrant, true);
         _copyEntries(registrant, registrantToCopy);
     }
@@ -164,7 +161,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
         external
         onlyAddressOrOwner(registrant)
     {
-        address registration = _registrations[registrant];
+        address registration = _subscriptions[registrant];
         if (registration == address(0)) {
             revert NotRegistered(registrant);
         }
@@ -194,10 +191,10 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
         external
         onlyAddressOrOwner(registrant)
     {
-        if (codeHash == EOA_CODEHASH) {
+        if (codeHash == EOA_CODEHASH || codeHash == 0) {
             revert CannotFilterEOAs();
         }
-        address registration = _registrations[registrant];
+        address registration = _subscriptions[registrant];
         if (registration == address(0)) {
             revert NotRegistered(registrant);
         }
@@ -227,7 +224,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
         external
         onlyAddressOrOwner(registrant)
     {
-        address registration = _registrations[registrant];
+        address registration = _subscriptions[registrant];
         if (registration == address(0)) {
             revert NotRegistered(registrant);
         }
@@ -265,7 +262,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
         external
         onlyAddressOrOwner(registrant)
     {
-        address registration = _registrations[registrant];
+        address registration = _subscriptions[registrant];
         if (registration == address(0)) {
             revert NotRegistered(registrant);
         }
@@ -286,7 +283,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
             } else {
                 for (uint256 i = 0; i < codeHashesLength; ++i) {
                     bytes32 codeHash = codeHashes[i];
-                    if (codeHash == EOA_CODEHASH) {
+                    if (codeHash == EOA_CODEHASH || codeHash == 0) {
                         revert CannotFilterEOAs();
                     }
                     bool added = filteredCodeHashesRef.add(codeHash);
@@ -313,14 +310,14 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
         if (newSubscription == address(0)) {
             revert CannotSubscribeToZeroAddress();
         }
-        address registration = _registrations[registrant];
+        address registration = _subscriptions[registrant];
         if (registration == address(0)) {
             revert NotRegistered(registrant);
         }
         if (registration == newSubscription) {
             revert AlreadySubscribed(newSubscription);
         }
-        address newSubscriptionRegistration = _registrations[newSubscription];
+        address newSubscriptionRegistration = _subscriptions[newSubscription];
         if (newSubscriptionRegistration == address(0)) {
             revert NotRegistered(newSubscription);
         }
@@ -332,7 +329,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
             _subscribers[registration].remove(registrant);
             emit SubscriptionUpdated(registrant, registration, false);
         }
-        _registrations[registrant] = newSubscription;
+        _subscriptions[registrant] = newSubscription;
         _subscribers[newSubscription].add(registrant);
         emit SubscriptionUpdated(registrant, newSubscription, true);
     }
@@ -341,7 +338,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      * @notice Unsubscribe an address from its current subscribed registrant, and optionally copy its filtered operators and codeHashes.
      */
     function unsubscribe(address registrant, bool copyExistingEntries) external onlyAddressOrOwner(registrant) {
-        address registration = _registrations[registrant];
+        address registration = _subscriptions[registrant];
         if (registration == address(0)) {
             revert NotRegistered(registrant);
         }
@@ -349,7 +346,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
             revert NotSubscribed();
         }
         _subscribers[registration].remove(registrant);
-        _registrations[registrant] = registrant;
+        _subscriptions[registrant] = registrant;
         emit SubscriptionUpdated(registrant, registration, false);
         if (copyExistingEntries) {
             _copyEntries(registrant, registration);
@@ -363,14 +360,14 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
         if (registrant == registrantToCopy) {
             revert CannotCopyFromSelf();
         }
-        address registration = _registrations[registrant];
+        address registration = _subscriptions[registrant];
         if (registration == address(0)) {
             revert NotRegistered(registrant);
         }
         if (registration != registrant) {
             revert CannotUpdateWhileSubscribed(registration);
         }
-        address registrantRegistration = _registrations[registrantToCopy];
+        address registrantRegistration = _subscriptions[registrantToCopy];
         if (registrantRegistration == address(0)) {
             revert NotRegistered(registrantToCopy);
         }
@@ -381,17 +378,17 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
     function _copyEntries(address registrant, address registrantToCopy) private {
         EnumerableSet.AddressSet storage filteredOperatorsRef = _filteredOperators[registrantToCopy];
         EnumerableSet.Bytes32Set storage filteredCodeHashesRef = _filteredCodeHashes[registrantToCopy];
-        uint256 filteredOperatorsLength = filteredOperatorsRef.length();
-        uint256 filteredCodeHashesLength = filteredCodeHashesRef.length();
+        uint256 filteredOperators_length = filteredOperatorsRef.length();
+        uint256 filteredCodeHashes_length = filteredCodeHashesRef.length();
         unchecked {
-            for (uint256 i = 0; i < filteredOperatorsLength; ++i) {
+            for (uint256 i = 0; i < filteredOperators_length; ++i) {
                 address operator = filteredOperatorsRef.at(i);
                 bool added = _filteredOperators[registrant].add(operator);
                 if (added) {
                     emit OperatorUpdated(registrant, operator, true);
                 }
             }
-            for (uint256 i = 0; i < filteredCodeHashesLength; ++i) {
+            for (uint256 i = 0; i < filteredCodeHashes_length; ++i) {
                 bytes32 codehash = filteredCodeHashesRef.at(i);
                 bool added = _filteredCodeHashes[registrant].add(codehash);
                 if (added) {
@@ -406,15 +403,14 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
     //////////////////
 
     /**
-     * @notice Get the subscription address of a given registrant, if any.
+     * @notice Get the subscription address of a given registrant, which may be itself if not subscribed.
      */
     function subscriptionOf(address registrant) external view returns (address subscription) {
-        subscription = _registrations[registrant];
+        subscription = _subscriptions[registrant];
         if (subscription == address(0)) {
             revert NotRegistered(registrant);
-        } else if (subscription == registrant) {
-            subscription = address(0);
         }
+        return subscription;
     }
 
     /**
@@ -434,10 +430,17 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
     }
 
     /**
+     * @notice Returns the number of subscribers for a given registrant.
+     */
+    function subscribersLength(address registrant) external view returns (uint256) {
+        return _subscribers[registrant].length();
+    }
+
+    /**
      * @notice Returns true if operator is filtered by a given address or its subscription.
      */
     function isOperatorFiltered(address registrant, address operator) external view returns (bool) {
-        address registration = _registrations[registrant];
+        address registration = _subscriptions[registrant];
         return _filteredOperators[registration].contains(operator);
     }
 
@@ -445,8 +448,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      * @notice Returns true if a codeHash is filtered by a given address or its subscription.
      */
     function isCodeHashFiltered(address registrant, bytes32 codeHash) external view returns (bool) {
-        address registration = _registrations[registrant];
-
+        address registration = _subscriptions[registrant];
         return _filteredCodeHashes[registration].contains(codeHash);
     }
 
@@ -455,8 +457,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      */
     function isCodeHashOfFiltered(address registrant, address operatorWithCode) external view returns (bool) {
         bytes32 codeHash = operatorWithCode.codehash;
-        address registration = _registrations[registrant];
-
+        address registration = _subscriptions[registrant];
         return _filteredCodeHashes[registration].contains(codeHash);
     }
 
@@ -464,15 +465,23 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      * @notice Returns true if an address has registered
      */
     function isRegistered(address registrant) external view returns (bool) {
-        return _registrations[registrant] != address(0);
+        return _subscriptions[registrant] != address(0);
     }
 
     /**
      * @notice Returns a list of filtered operators for a given address or its subscription.
      */
     function filteredOperators(address registrant) external view returns (address[] memory) {
-        address registration = _registrations[registrant];
+        address registration = _subscriptions[registrant];
         return _filteredOperators[registration].values();
+    }
+
+    /**
+     * @notice Returns the filtered operators length for a given registrant.
+     */
+    function filteredOperatorsLength(address registrant) external view returns (uint256) {
+        address registration = _subscriptions[registrant];
+        return _filteredOperators[registration].length();
     }
 
     /**
@@ -480,8 +489,16 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      *         Note that order is not guaranteed as updates are made.
      */
     function filteredCodeHashes(address registrant) external view returns (bytes32[] memory) {
-        address registration = _registrations[registrant];
+        address registration = _subscriptions[registrant];
         return _filteredCodeHashes[registration].values();
+    }
+
+    /**
+     * @notice Returns the filtered codeHashes length of a given registrant.
+     */
+    function filteredCodeHashesLength(address registrant) external view returns (uint256) {
+        address registration = _subscriptions[registrant];
+        return _filteredCodeHashes[registration].length();
     }
 
     /**
@@ -490,7 +507,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      *         Note that order is not guaranteed as updates are made.
      */
     function filteredOperatorAt(address registrant, uint256 index) external view returns (address) {
-        address registration = _registrations[registrant];
+        address registration = _subscriptions[registrant];
         return _filteredOperators[registration].at(index);
     }
 
@@ -500,7 +517,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      *         Note that order is not guaranteed as updates are made.
      */
     function filteredCodeHashAt(address registrant, uint256 index) external view returns (bytes32) {
-        address registration = _registrations[registrant];
+        address registration = _subscriptions[registrant];
         return _filteredCodeHashes[registration].at(index);
     }
 
