@@ -197,7 +197,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
         external
         onlyAddressOrOwner(registrant)
     {
-        if (codeHash == EOA_CODEHASH) {
+        if (codeHash == EOA_CODEHASH || codeHash == 0) {
             revert CannotFilterEOAs();
         }
         address registration = _subscriptions[registrant];
@@ -289,7 +289,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
             } else {
                 for (uint256 i = 0; i < codeHashesLength; ++i) {
                     bytes32 codeHash = codeHashes[i];
-                    if (codeHash == EOA_CODEHASH) {
+                    if (codeHash == EOA_CODEHASH || codeHash == 0) {
                         revert CannotFilterEOAs();
                     }
                     bool added = filteredCodeHashesRef.add(codeHash);
@@ -384,17 +384,17 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
     function _copyEntries(address registrant, address registrantToCopy) private {
         EnumerableSet.AddressSet storage filteredOperatorsRef = _filteredOperators[registrantToCopy];
         EnumerableSet.Bytes32Set storage filteredCodeHashesRef = _filteredCodeHashes[registrantToCopy];
-        uint256 filteredOperatorsLength = filteredOperatorsRef.length();
-        uint256 filteredCodeHashesLength = filteredCodeHashesRef.length();
+        uint256 filteredOperators_length = filteredOperatorsRef.length();
+        uint256 filteredCodeHashes_length = filteredCodeHashesRef.length();
         unchecked {
-            for (uint256 i = 0; i < filteredOperatorsLength; ++i) {
+            for (uint256 i = 0; i < filteredOperators_length; ++i) {
                 address operator = filteredOperatorsRef.at(i);
                 bool added = _filteredOperators[registrant].add(operator);
                 if (added) {
                     emit OperatorUpdated(registrant, operator, true);
                 }
             }
-            for (uint256 i = 0; i < filteredCodeHashesLength; ++i) {
+            for (uint256 i = 0; i < filteredCodeHashes_length; ++i) {
                 bytes32 codehash = filteredCodeHashesRef.at(i);
                 bool added = _filteredCodeHashes[registrant].add(codehash);
                 if (added) {
@@ -433,6 +433,13 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
      */
     function subscriberAt(address registrant, uint256 index) external view returns (address) {
         return _subscribers[registrant].at(index);
+    }
+
+    /**
+     * @notice Returns the number of subscribers for a given registrant.
+     */
+    function subscribersLength(address registrant) external view returns (uint256) {
+        return _subscribers[registrant].length();
     }
 
     /**
@@ -488,6 +495,17 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
     }
 
     /**
+     * @notice Returns the filtered operators length for a given registrant.
+     */
+    function filteredOperatorsLength(address registrant) external view returns (uint256) {
+        address registration = _subscriptions[registrant];
+        if (registration != registrant) {
+            return _filteredOperators[registration].length();
+        }
+        return _filteredOperators[registrant].length();
+    }
+
+    /**
      * @notice Returns the set of filtered codeHashes for a given address or its subscription.
      *         Note that order is not guaranteed as updates are made.
      */
@@ -497,6 +515,17 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
             return _filteredCodeHashes[registration].values();
         }
         return _filteredCodeHashes[registrant].values();
+    }
+
+    /**
+     * @notice Returns the filtered codeHashes length of a given registrant.
+     */
+    function filteredCodeHashesLength(address registrant) external view returns (uint256) {
+        address registration = _subscriptions[registrant];
+        if (registration != registrant) {
+            return _filteredCodeHashes[registration].length();
+        }
+        return _filteredCodeHashes[registrant].length();
     }
 
     /**
