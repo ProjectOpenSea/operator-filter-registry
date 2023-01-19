@@ -10,4 +10,8 @@ contract Filterer is OperatorFilterer, Ownable {
     function testFilter(address from) public view onlyAllowedOperator(from) returns (bool) {
         return true;
     }
+
+    function checkFilterOperator(address operator) public view {
+        _checkFilterOperator(operator);
+    }
 }
