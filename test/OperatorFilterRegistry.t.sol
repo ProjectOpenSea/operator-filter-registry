@@ -76,6 +76,7 @@ contract OperatorFilterRegistryTest is BaseRegistryTest {
         emit SubscriptionUpdated(address(this), subscription, true);
         registry.registerAndSubscribe(address(this), subscription);
         assertEq(registry.subscribers(subscription).length, 1);
+        assertEq(registry.subscribersLength(subscription), 1);
         assertEq(registry.subscribers(subscription)[0], address(this));
         assertEq(registry.subscriberAt(subscription, 0), address(this));
     }
@@ -127,6 +128,7 @@ contract OperatorFilterRegistryTest is BaseRegistryTest {
         registry.copyEntriesOf(address(filterer), address(this));
 
         assertEq(registry.subscribers(address(this)).length, 0);
+        assertEq(registry.subscribersLength(address(this)), 0);
         assertTrue(registry.isRegistered(address(filterer)));
         assertEq(registry.filteredOperatorAt(address(filterer), 0), makeAddr("operator"));
         assertEq(registry.filteredCodeHashAt(address(filterer), 0), bytes32(bytes4(0xdeadbeef)));
@@ -442,6 +444,7 @@ contract OperatorFilterRegistryTest is BaseRegistryTest {
 
         assertEq(registry.subscriptionOf(address(this)), subscription);
         assertEq(registry.subscribers(subscription).length, 1);
+        assertEq(registry.subscribersLength(subscription), 1);
         assertEq(registry.subscribers(subscription)[0], address(this));
         assertEq(registry.subscriberAt(subscription, 0), address(this));
     }
@@ -510,7 +513,9 @@ contract OperatorFilterRegistryTest is BaseRegistryTest {
 
         assertEq(registry.subscriptionOf(address(this)), newSubscription);
         assertEq(registry.subscribers(oldSubscription).length, 0);
+        assertEq(registry.subscribersLength(oldSubscription), 0);
         assertEq(registry.subscribers(newSubscription).length, 1);
+        assertEq(registry.subscribersLength(newSubscription), 1);
         assertEq(registry.subscribers(newSubscription)[0], address(this));
         assertEq(registry.subscriberAt(newSubscription, 0), address(this));
     }
@@ -540,6 +545,7 @@ contract OperatorFilterRegistryTest is BaseRegistryTest {
 
         assertEq(registry.subscriptionOf(address(this)), address(0));
         assertEq(registry.subscribers(subscription).length, 0);
+        assertEq(registry.subscribersLength(subscription), 0);
         assertEq(registry.subscriptionOf(address(this)), address(0));
     }
 
@@ -620,12 +626,14 @@ contract OperatorFilterRegistryTest is BaseRegistryTest {
         registry.copyEntriesOf(address(this), subscription);
 
         assertEq(registry.filteredOperators(address(this)).length, 2);
+        assertEq(registry.filteredOperatorsLength(address(this)), 2);
         assertEq(registry.filteredOperators(address(this))[0], duplicateOperator);
         assertEq(registry.filteredOperatorAt(address(this), 0), duplicateOperator);
         assertEq(registry.filteredOperators(address(this))[1], operator);
         assertEq(registry.filteredOperatorAt(address(this), 1), operator);
 
         assertEq(registry.filteredCodeHashes(address(this)).length, 2);
+        assertEq(registry.filteredCodeHashesLength(address(this)), 2);
         assertEq(registry.filteredCodeHashes(address(this))[0], duplicateCodeHash);
         assertEq(registry.filteredCodeHashAt(address(this), 0), duplicateCodeHash);
         assertEq(registry.filteredCodeHashes(address(this))[1], codeHash);
@@ -749,6 +757,7 @@ contract OperatorFilterRegistryTest is BaseRegistryTest {
         vm.stopPrank();
         registry.registerAndSubscribe(address(this), subscription);
         assertEq(registry.filteredOperators(address(this)).length, 1);
+        assertEq(registry.filteredOperatorsLength(address(this)), 1);
         assertEq(registry.filteredOperators(address(this))[0], operator);
         assertEq(registry.filteredOperatorAt(address(this), 0), operator);
     }
@@ -765,6 +774,7 @@ contract OperatorFilterRegistryTest is BaseRegistryTest {
         vm.stopPrank();
         registry.registerAndSubscribe(address(this), subscription);
         assertEq(registry.filteredCodeHashes(address(this)).length, 1);
+        assertEq(registry.filteredCodeHashesLength(address(this)), 1);
         assertEq(registry.filteredCodeHashes(address(this))[0], codeHash);
         assertEq(registry.filteredCodeHashAt(address(this), 0), codeHash);
     }
@@ -855,6 +865,7 @@ contract OperatorFilterRegistryTest is BaseRegistryTest {
         registry.unregister(address(this));
         assertFalse(registry.isRegistered(address(this)));
         assertEq(registry.subscribers(subscription).length, 0);
+        assertEq(registry.subscribersLength(subscription), 0);
     }
 
     function testSubscriptionOf_notRegistered() public {

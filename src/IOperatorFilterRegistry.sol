@@ -15,13 +15,16 @@ interface IOperatorFilterRegistry {
     function unsubscribe(address registrant, bool copyExistingEntries) external;
     function subscriptionOf(address addr) external returns (address registrant);
     function subscribers(address registrant) external returns (address[] memory);
+    function subscribersLength(address registrant) external returns (uint256);
     function subscriberAt(address registrant, uint256 index) external returns (address);
     function copyEntriesOf(address registrant, address registrantToCopy) external;
     function isOperatorFiltered(address registrant, address operator) external returns (bool);
     function isCodeHashOfFiltered(address registrant, address operatorWithCode) external returns (bool);
     function isCodeHashFiltered(address registrant, bytes32 codeHash) external returns (bool);
     function filteredOperators(address addr) external returns (address[] memory);
+    function filteredOperatorsLength(address registrant) external returns (uint256);
     function filteredCodeHashes(address addr) external returns (bytes32[] memory);
+    function filteredCodeHashesLength(address registrant) external returns (uint256);
     function filteredOperatorAt(address registrant, uint256 index) external returns (address);
     function filteredCodeHashAt(address registrant, uint256 index) external returns (bytes32);
     function isRegistered(address addr) external returns (bool);
