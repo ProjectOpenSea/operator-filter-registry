@@ -194,7 +194,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
         external
         onlyAddressOrOwner(registrant)
     {
-        if (codeHash == EOA_CODEHASH) {
+        if (codeHash == EOA_CODEHASH || codeHash == 0) {
             revert CannotFilterEOAs();
         }
         address registration = _registrations[registrant];
@@ -286,7 +286,7 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
             } else {
                 for (uint256 i = 0; i < codeHashesLength; ++i) {
                     bytes32 codeHash = codeHashes[i];
-                    if (codeHash == EOA_CODEHASH) {
+                    if (codeHash == EOA_CODEHASH || codeHash == 0) {
                         revert CannotFilterEOAs();
                     }
                     bool added = filteredCodeHashesRef.add(codeHash);
