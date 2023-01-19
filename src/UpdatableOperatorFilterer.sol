@@ -21,6 +21,8 @@ abstract contract UpdatableOperatorFilterer {
     /// @dev Emitted when someone other than the owner is trying to call an only owner function.
     error OnlyOwner();
 
+    event OperatorFilterRegistryAddressUpdated(address newRegistry);
+
     IOperatorFilterRegistry public operatorFilterRegistry;
 
     /// @dev The constructor that is called when the contract is being deployed.
@@ -73,6 +75,7 @@ abstract contract UpdatableOperatorFilterer {
             revert OnlyOwner();
         }
         operatorFilterRegistry = IOperatorFilterRegistry(newRegistry);
+        emit OperatorFilterRegistryAddressUpdated(newRegistry);
     }
 
     /**

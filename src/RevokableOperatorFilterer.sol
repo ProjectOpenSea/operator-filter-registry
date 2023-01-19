@@ -20,6 +20,8 @@ abstract contract RevokableOperatorFilterer is UpdatableOperatorFilterer {
     /// @dev Emitted when the initial registry address is attempted to be set to the zero address.
     error InitialRegistryAddressCannotBeZeroAddress();
 
+    event OperatorFilterRegistryRevoked();
+
     bool public isOperatorFilterRegistryRevoked;
 
     /// @dev The constructor that is called when the contract is being deployed.
@@ -55,6 +57,7 @@ abstract contract RevokableOperatorFilterer is UpdatableOperatorFilterer {
         }
 
         operatorFilterRegistry = IOperatorFilterRegistry(newRegistry);
+        emit OperatorFilterRegistryAddressUpdated(newRegistry);
     }
 
     /**
@@ -72,5 +75,6 @@ abstract contract RevokableOperatorFilterer is UpdatableOperatorFilterer {
         // set to zero address to bypass checks
         operatorFilterRegistry = IOperatorFilterRegistry(address(0));
         isOperatorFilterRegistryRevoked = true;
+        emit OperatorFilterRegistryRevoked();
     }
 }

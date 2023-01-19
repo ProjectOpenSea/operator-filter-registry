@@ -39,6 +39,8 @@ abstract contract RevokableOperatorFiltererUpgradeable is OperatorFiltererUpgrad
     error OnlyOwner();
     error AlreadyRevoked();
 
+    event OperatorFilterRegistryRevoked();
+
     function __RevokableOperatorFilterer_init(address subscriptionOrRegistrantToCopy, bool subscribe) internal {
         OperatorFiltererUpgradeable.__OperatorFilterer_init(subscriptionOrRegistrantToCopy, subscribe);
     }
@@ -72,6 +74,7 @@ abstract contract RevokableOperatorFiltererUpgradeable is OperatorFiltererUpgrad
             revert AlreadyRevoked();
         }
         RevokableOperatorFiltererUpgradeableStorage.layout()._isOperatorFilterRegistryRevoked = true;
+        emit OperatorFilterRegistryRevoked();
     }
 
     function isOperatorFilterRegistryRevoked() public view returns (bool) {
