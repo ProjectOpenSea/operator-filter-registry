@@ -55,12 +55,16 @@ contract RevokableDefaultOperatorFiltererTest is BaseRegistryTest {
         vm.stopPrank();
         vm.expectRevert(abi.encodeWithSignature("OnlyOwner()"));
         filterer.updateOperatorFilterRegistryAddress(address(0));
+        vm.expectRevert(abi.encodeWithSignature("OnlyOwner()"));
+        filterer.revokeOperatorFilterRegistry();
 
         vm.startPrank(DEFAULT_SUBSCRIPTION);
         filterer.revokeOperatorFilterRegistry();
 
         vm.expectRevert(abi.encodeWithSignature("RegistryHasBeenRevoked()"));
         filterer.updateOperatorFilterRegistryAddress(address(0));
+        vm.expectRevert(abi.encodeWithSignature("RegistryHasBeenRevoked()"));
+        filterer.revokeOperatorFilterRegistry();
         vm.stopPrank();
 
         vm.startPrank(filteredAddress);
