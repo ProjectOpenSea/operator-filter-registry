@@ -8,7 +8,9 @@ import {OperatorFilterer} from "./OperatorFilterer.sol";
  * @notice Inherits from OperatorFilterer and automatically subscribes to the default OpenSea subscription.
  */
 abstract contract DefaultOperatorFilterer is OperatorFilterer {
+    /// @dev The default OpenSea subscription address
     address constant DEFAULT_SUBSCRIPTION = address(0x3cc6CddA760b79bAfa08dF41ECFA224f810dCeB6);
 
+    /// @dev The constructor that is called when the contract is being deployed.
     constructor() OperatorFilterer(DEFAULT_SUBSCRIPTION, true) {}
 }

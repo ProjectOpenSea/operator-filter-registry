@@ -20,6 +20,9 @@ abstract contract RevokableOperatorFiltererUpgradeable is OperatorFiltererUpgrad
         OperatorFiltererUpgradeable.__OperatorFilterer_init(subscriptionOrRegistrantToCopy, subscribe);
     }
 
+    /**
+     * @dev A helper function to check if the operator is allowed.
+     */
     function _checkFilterOperator(address operator) internal view virtual override {
         // Check registry code length to facilitate testing in environments without a deployed registry.
         if (!_isOperatorFilterRegistryRevoked && address(operatorFilterRegistry).code.length > 0) {

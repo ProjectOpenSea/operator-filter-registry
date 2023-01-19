@@ -12,11 +12,13 @@ import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
  *         - `onlyAllowedOperatorApproval` modifier for `approve` and `setApprovalForAll` methods.
  */
 abstract contract OperatorFilterer {
+    /// @dev Emitted when an operator is not allowed.
     error OperatorNotAllowed(address operator);
 
     IOperatorFilterRegistry public constant OPERATOR_FILTER_REGISTRY =
         IOperatorFilterRegistry(0x000000000000AAeB6D7670E522A718067333cd4E);
 
+    /// @dev The constructor that is called when the contract is being deployed.
     constructor(address subscriptionOrRegistrantToCopy, bool subscribe) {
         // If an inheriting token contract is deployed to a network without the registry deployed, the modifier
         // will not revert, but the contract will need to be registered with the registry once it is deployed in
@@ -34,6 +36,9 @@ abstract contract OperatorFilterer {
         }
     }
 
+    /**
+     * @dev A helper function to check if an operator is allowed.
+     */
     modifier onlyAllowedOperator(address from) virtual {
         // Allow spending tokens from addresses with balance
         // Note that this still allows listings and marketplaces with escrow to transfer tokens if transferred
@@ -44,11 +49,17 @@ abstract contract OperatorFilterer {
         _;
     }
 
+    /**
+     * @dev A helper function to check if an operator approval is allowed.
+     */
     modifier onlyAllowedOperatorApproval(address operator) virtual {
         _checkFilterOperator(operator);
         _;
     }
 
+    /**
+     * @dev A helper function to check if an operator is allowed.
+     */
     function _checkFilterOperator(address operator) internal view virtual {
         // Check registry code length to facilitate testing in environments without a deployed registry.
         if (address(OPERATOR_FILTER_REGISTRY).code.length > 0) {

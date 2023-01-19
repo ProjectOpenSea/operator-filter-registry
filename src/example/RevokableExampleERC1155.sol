@@ -17,10 +17,18 @@ import {RevokableDefaultOperatorFilterer} from "../RevokableDefaultOperatorFilte
  *         modifier to the setApprovalForAll method ensures that owners do not approve operators that are not allowed.
  */
 abstract contract RevokableExampleERC1155 is ERC1155(""), ERC2981, RevokableDefaultOperatorFilterer, Ownable {
+    /**
+     * @dev See {IERC1155-setApprovalForAll}.
+     *      In this example the added modifier ensures that the operator is allowed by the OperatorFilterRegistry.
+     */
     function setApprovalForAll(address operator, bool approved) public override onlyAllowedOperatorApproval(operator) {
         super.setApprovalForAll(operator, approved);
     }
 
+    /**
+     * @dev See {IERC1155-safeTransferFrom}.
+     *      In this example the added modifier ensures that the operator is allowed by the OperatorFilterRegistry.
+     */
     function safeTransferFrom(address from, address to, uint256 tokenId, uint256 amount, bytes memory data)
         public
         override
@@ -29,6 +37,10 @@ abstract contract RevokableExampleERC1155 is ERC1155(""), ERC2981, RevokableDefa
         super.safeTransferFrom(from, to, tokenId, amount, data);
     }
 
+    /**
+     * @dev See {IERC1155-safeBatchTransferFrom}.
+     *      In this example the added modifier ensures that the operator is allowed by the OperatorFilterRegistry.
+     */
     function safeBatchTransferFrom(
         address from,
         address to,
@@ -39,14 +51,17 @@ abstract contract RevokableExampleERC1155 is ERC1155(""), ERC2981, RevokableDefa
         super.safeBatchTransferFrom(from, to, ids, amounts, data);
     }
 
-    function owner() public view virtual override (Ownable, UpdatableOperatorFilterer) returns (address) {
+    /**
+     * @dev Returns the owner of the ERC1155 token contract.
+     */
+    function owner() public view virtual override(Ownable, UpdatableOperatorFilterer) returns (address) {
         return Ownable.owner();
     }
 
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId) public view virtual override (ERC1155, ERC2981) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC1155, ERC2981) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }
