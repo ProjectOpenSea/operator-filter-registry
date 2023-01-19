@@ -52,6 +52,10 @@ contract OperatorFilterRegistry is IOperatorFilterRegistry, OperatorFilterRegist
     /**
      * @notice Returns true if operator is not filtered for a given token, either by address or codeHash. Also returns
      *         true if supplied registrant address is not registered.
+     *         Note that this method will *revert* if an operator or its codehash is filtered with an error that is
+     *         more informational than a false boolean, so smart contracts that query this method for informational
+     *         purposes will need to wrap in a try/catch or perform a low-level staticcall in order to handle the case
+     *         that an operator is filtered.
      */
     function isOperatorAllowed(address registrant, address operator) external view returns (bool) {
         address registration = _registrations[registrant];
