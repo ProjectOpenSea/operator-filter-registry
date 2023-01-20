@@ -312,6 +312,10 @@ forge test --match-contract ValidationTest -vvv
 
 See the [Foundry project page](https://github.com/foundry-rs/foundry#installation) for Foundry installation instructions.
 
+# Audit
+
+The contracts in this repository have been audited by [OpenZeppelin](https://openzeppelin.com/). You may read the final audit report [here](audit/OpenSea%20Operator%20Filteer%20Audit%20Report.pdf).
+
 # License
 
 [MIT](LICENSE) Copyright 2022 Ozone Networks, Inc.
