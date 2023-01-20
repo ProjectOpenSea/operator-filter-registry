@@ -14,4 +14,8 @@ contract UpdatableFilterer is UpdatableOperatorFilterer, Ownable {
     function owner() public view override (Ownable, UpdatableOperatorFilterer) returns (address) {
         return Ownable.owner();
     }
+
+    function checkFilterOperator(address operator) public view {
+        _checkFilterOperator(operator);
+    }
 }
