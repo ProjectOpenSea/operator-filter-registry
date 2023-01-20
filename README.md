@@ -1,8 +1,10 @@
 # Operator Filter Registry
 
-## **Note on Grace Period for Non-Ethereum Chains**
+## **Note on Grace Period**
 
-Currently, OpenSea only requires creator earnings enforcement on Ethereum Mainnet and Goerli for collections to be eligible for creator earnings. However, starting **January 2nd, 2023**, Opensea will begin validating creator earnings enforcement on all supported EVM chains.
+Starting **January 2nd, 2023**, Opensea will begin validating creator fee enforcement for new collections on all supported EVM chains. After January 2nd, 2023, if OpenSea is unable to validate enforcement, OpenSea will make creator fees **optional** for that collection. Older collections will continue to have their fees enforced on OpenSea, **including on Ethereum Mainnet** (previously, enforcement was already required on Ethereum Mainnet).
+
+You may read more on [OpenSea's Twitter](https://twitter.com/opensea/status/1600913295300792321).
 
 ## Introduction
 
@@ -31,6 +33,9 @@ Implementing EIP-2981 is not sufficient for a token to be eligible for creator e
 While sometimes described as "on-chain," EIP-2981 only provides a method to determine what the appropriate creator earnings should be for a sale. EIP-2981 does not provide any mechanism of on-chain enforcement of those earnings.
 
 ## Filtered addresses
+
+
+Ownership of this list [has been transferred](https://etherscan.io/tx/0xf15e8ac08a333b2e4f884250ace94baccf7ba8908c119736d9cc8f063183a496/advanced#eventlog) to the [Creator Ownership Research Institute](https://corinstitute.co/) to administer. You may read more on [OpenSea's Twitter](https://twitter.com/opensea/status/1600913295300792321).
 
 Entries in this list are added according to the following criteria:
 
@@ -67,8 +72,38 @@ Ethereum Mainnet
 </tr>
 
 <tr>
-<td>SudoSwap LSSVMPairRouter</td>
-<td>0x2b2e8cda09bba9660dca5cb6233787738ad68329</td>
+<td>SudoSwap LSSVMPairEnumerableERC20</td>
+<td>0xD42638863462d2F21bb7D4275d7637eE5d5541eB</td>
+<td>Ethereum Mainnet</td>
+</tr>
+
+<tr>
+<td>SudoSwap LSSVMPairEnumerableETH</td>
+<td>0x08CE97807A81896E85841d74FB7E7B065ab3ef05</td>
+<td>Ethereum Mainnet</td>
+</tr>
+
+<tr>
+<td>SudoSwap LSSVMPairMissingEnumerableERC20</td>
+<td>0x92de3a1511EF22AbCf3526c302159882a4755B22</td>
+<td>Ethereum Mainnet</td>
+</tr>
+
+<tr>
+<td>SudoSwap LSSVMPairMissingEnumerableETH</td>
+<td>0xCd80C916B1194beB48aBF007D0b79a7238436D56</td>
+<td>Ethereum Mainnet</td>
+</tr>
+
+<tr>
+<td>SudoSwap LSSVMPairFactory</td>
+<td>0xb16c1342E617A5B6E4b631EB114483FDB289c0A4</td>
+<td>Ethereum Mainnet</td>
+</tr>
+
+<tr>
+<td>NFTX NFTXMarketplaceZap</td>
+<td>0x0fc584529a2aefa997697fafacba5831fac0c22d</td>
 <td>Ethereum Mainnet</td>
 </tr>
 
