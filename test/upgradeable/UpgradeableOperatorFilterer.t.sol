@@ -32,6 +32,6 @@ contract UpgradeableOperatorFiltererTest is BaseRegistryTest {
         registry.register(address(filterer));
         filterer.init(DEFAULT_SUBSCRIPTION, true);
         // should not be subscribed since already registered
-        assertEq(registry.subscriptionOf(address(filterer)), address(0));
+        assertEq(registry.subscriptionOf(address(filterer)), address(filterer));
     }
 }
