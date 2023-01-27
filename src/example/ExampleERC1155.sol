@@ -24,29 +24,18 @@ abstract contract ExampleERC1155 is ERC1155(""), ERC2981, DefaultOperatorFiltere
     }
 
     /**
-     * @dev See {IERC1155-safeTransferFrom}.
-     *      In this example the added modifier ensures that the operator is allowed by the OperatorFilterRegistry.
+     * @dev See {ERC1155-_beforeTokenTransfer}.
+     *      In this example the added modifier ensures that the operator is allowed by the OperatorFilterRegistry before any token transfer.
      */
-    function safeTransferFrom(address from, address to, uint256 tokenId, uint256 amount, bytes memory data)
-        public
-        override
-        onlyAllowedOperator(from)
-    {
-        super.safeTransferFrom(from, to, tokenId, amount, data);
-    }
-
-    /**
-     * @dev See {IERC1155-safeBatchTransferFrom}.
-     *      In this example the added modifier ensures that the operator is allowed by the OperatorFilterRegistry.
-     */
-    function safeBatchTransferFrom(
+    function _beforeTokenTransfer(
+        address operator,
         address from,
         address to,
         uint256[] memory ids,
         uint256[] memory amounts,
         bytes memory data
-    ) public virtual override onlyAllowedOperator(from) {
-        super.safeBatchTransferFrom(from, to, ids, amounts, data);
+    ) internal virtual override onlyAllowedOperator(from) {
+        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
 
     /**

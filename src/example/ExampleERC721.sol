@@ -32,31 +32,16 @@ abstract contract ExampleERC721 is ERC721("Example", "EXAMPLE"), ERC2981, Defaul
     }
 
     /**
-     * @dev See {IERC721-transferFrom}.
-     *      In this example the added modifier ensures that the operator is allowed by the OperatorFilterRegistry.
+     * @dev See {IERC721-_beforeTokenTransfer}.
+     *      In this example the added modifier ensures that the operator is allowed by the OperatorFilterRegistry before any token transfer.
      */
-    function transferFrom(address from, address to, uint256 tokenId) public override onlyAllowedOperator(from) {
-        super.transferFrom(from, to, tokenId);
-    }
-
-    /**
-     * @dev See {IERC721-safeTransferFrom}.
-     *      In this example the added modifier ensures that the operator is allowed by the OperatorFilterRegistry.
-     */
-    function safeTransferFrom(address from, address to, uint256 tokenId) public override onlyAllowedOperator(from) {
-        super.safeTransferFrom(from, to, tokenId);
-    }
-
-    /**
-     * @dev See {IERC721-safeTransferFrom}.
-     *      In this example the added modifier ensures that the operator is allowed by the OperatorFilterRegistry.
-     */
-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data)
-        public
-        override
-        onlyAllowedOperator(from)
-    {
-        super.safeTransferFrom(from, to, tokenId, data);
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 firstTokenId,
+        uint256 batchSize
+    ) internal virtual override onlyAllowedOperatorApproval(from) {
+        super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
     }
 
     /**
