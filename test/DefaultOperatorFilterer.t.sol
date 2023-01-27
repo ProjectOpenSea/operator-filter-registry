@@ -39,11 +39,11 @@ contract DefaultOperatorFiltererTest is BaseRegistryTest {
         assertTrue(filterer.filterTest(notFiltered));
         vm.startPrank(filteredAddress);
         vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
-        filterer.filterTest(address(0));
+        filterer.filterTest(address(0x1));
         vm.stopPrank();
         vm.startPrank(filteredCodeHashAddress);
         vm.expectRevert(abi.encodeWithSelector(CodeHashFiltered.selector, filteredCodeHashAddress, filteredCodeHash));
-        filterer.filterTest(address(0));
+        filterer.filterTest(address(0x1));
     }
 
     function testRevert_OperatorNotAllowed() public {

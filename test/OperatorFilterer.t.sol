@@ -36,11 +36,11 @@ contract OperatorFiltererTest1 is BaseRegistryTest {
         assertTrue(filterer.testFilter(notFiltered));
         vm.startPrank(filteredAddress);
         vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
-        filterer.testFilter(address(0));
+        filterer.testFilter(address(0x1));
         vm.stopPrank();
         vm.startPrank(filteredCodeHashAddress);
         vm.expectRevert(abi.encodeWithSelector(CodeHashFiltered.selector, filteredCodeHashAddress, filteredCodeHash));
-        filterer.testFilter(address(0));
+        filterer.testFilter(address(0x1));
     }
 
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
