@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
 import {CANONICAL_OPERATOR_FILTER_REGISTRY_ADDRESS} from "./lib/Constants.sol";
+
 /**
  * @title  OperatorFilterer
  * @notice Abstract contract whose constructor automatically registers and optionally subscribes to or copies another
@@ -47,7 +48,9 @@ abstract contract OperatorFilterer {
         // Allow spending tokens from addresses with balance
         // Note that this still allows listings and marketplaces with escrow to transfer tokens if transferred
         // from an EOA.
-        if (from != msg.sender) {
+        // Note: this does not check filterers on mint as a gas optimization since
+        // unapproved marketplaces cannot mint unless intentionally setup by the token author.
+        if (from != msg.sender && from != address(0)) {
             _checkFilterOperator(msg.sender);
         }
         _;

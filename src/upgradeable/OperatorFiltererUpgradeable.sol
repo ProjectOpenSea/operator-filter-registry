@@ -49,7 +49,9 @@ abstract contract OperatorFiltererUpgradeable is Initializable {
         // Allow spending tokens from addresses with balance
         // Note that this still allows listings and marketplaces with escrow to transfer tokens if transferred
         // from an EOA.
-        if (from != msg.sender) {
+        // Note: this does not check filterers on mint as a gas optimization since
+        // unapproved marketplaces cannot mint unless intentionally setup by the token author.
+        if (from != msg.sender && from != address(0)) {
             _checkFilterOperator(msg.sender);
         }
         _;
