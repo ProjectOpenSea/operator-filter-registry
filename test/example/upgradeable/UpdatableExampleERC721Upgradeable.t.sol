@@ -11,13 +11,17 @@ import {UpdatableOperatorFiltererUpgradeable} from
     "../../../src/upgradeable/UpdatableOperatorFiltererUpgradeable.sol";
 import {BaseRegistryTest} from "../../BaseRegistryTest.sol";
 
+import {OperatorFilterRegistryStub} from "../../helpers/OperatorFilterRegistryStub.sol";
+
+import {OperatorFilterer} from "../../../src/OperatorFilterer.sol";
+
 contract TestableUpdatableExampleERC721Upgradeable is UpdatableExampleERC721Upgradeable {
     function mint(address to, uint256 tokenId) external {
         _mint(to, tokenId);
     }
 }
 
-contract UpdatableExampleERC721UpgradeableForUpgradableTest is BaseRegistryTest, Initializable {
+contract UpdatableERC721UpgradeableForUpgradableTest is BaseRegistryTest, Initializable {
     TestableUpdatableExampleERC721Upgradeable example;
     address filteredAddress;
     address constant DEFAULT_SUBSCRIPTION = address(0x3cc6CddA760b79bAfa08dF41ECFA224f810dCeB6);
@@ -123,6 +127,10 @@ contract ConcreteUpdatableOperatorFiltererUpgradable is UpdatableOperatorFiltere
         return true;
     }
 
+    function checkFilterOperator(address operator) public view {
+        _checkFilterOperator(operator);
+    }
+
     function owner()
         public
         view
@@ -134,7 +142,7 @@ contract ConcreteUpdatableOperatorFiltererUpgradable is UpdatableOperatorFiltere
     }
 }
 
-contract UpdatableExampleERC721UpgradeableForUpdatableTest is BaseRegistryTest {
+contract UpdatableERC721UpgradeableForUpdatableTest is BaseRegistryTest {
     ConcreteUpdatableOperatorFiltererUpgradable filterer;
     address filteredAddress;
     address filteredCodeHashAddress;
@@ -256,5 +264,13 @@ contract UpdatableExampleERC721UpgradeableForUpdatableTest is BaseRegistryTest {
         vm.startPrank(filteredAddress);
         vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
         filterer.testFilter(address(0));
+    }
+
+    function testRevert_OperatorNotAllowed() public {
+        address stubRegistry = address(new OperatorFilterRegistryStub());
+        ConcreteUpdatableOperatorFiltererUpgradable updatableFilterer = new ConcreteUpdatableOperatorFiltererUpgradable();
+        updatableFilterer.initialize(stubRegistry, address(0), false);
+        vm.expectRevert(abi.encodeWithSelector(OperatorFilterer.OperatorNotAllowed.selector, address(filteredAddress)));
+        updatableFilterer.checkFilterOperator(filteredAddress);
     }
 }
