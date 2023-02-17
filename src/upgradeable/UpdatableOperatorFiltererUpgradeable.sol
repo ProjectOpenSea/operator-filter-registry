@@ -15,7 +15,7 @@ import {IOperatorFilterRegistry} from "../IOperatorFilterRegistry.sol";
 library UpdatableOperatorFiltererUpgradeableStorage {
     struct Layout {
         /// @dev Address of the opensea filter register contract
-        IOperatorFilterRegistry _operatorFilterRegistry;
+        address _operatorFilterRegistry;
     }
 
     /// @dev The EIP-1967 specific storage slot for the layout
@@ -68,18 +68,19 @@ abstract contract UpdatableOperatorFiltererUpgradeable is Initializable {
         internal
         onlyInitializing
     {
-        UpdatableOperatorFiltererUpgradeableStorage.layout()._operatorFilterRegistry = IOperatorFilterRegistry(_registry);        
+        UpdatableOperatorFiltererUpgradeableStorage.layout()._operatorFilterRegistry = _registry; 
+        IOperatorFilterRegistry registry = IOperatorFilterRegistry(_registry);
         // If an inheriting token contract is deployed to a network without the registry deployed, the modifier
         // will not revert, but the contract will need to be registered with the registry once it is deployed in
         // order for the modifier to filter addresses.
-        if (address(UpdatableOperatorFiltererUpgradeableStorage.layout()._operatorFilterRegistry).code.length > 0) {
+        if (address(registry).code.length > 0) {
             if (subscribe) {
-                UpdatableOperatorFiltererUpgradeableStorage.layout()._operatorFilterRegistry.registerAndSubscribe(address(this), subscriptionOrRegistrantToCopy);
+                registry.registerAndSubscribe(address(this), subscriptionOrRegistrantToCopy);
             } else {
                 if (subscriptionOrRegistrantToCopy != address(0)) {
-                    UpdatableOperatorFiltererUpgradeableStorage.layout()._operatorFilterRegistry.registerAndCopyEntries(address(this), subscriptionOrRegistrantToCopy);
+                    registry.registerAndCopyEntries(address(this), subscriptionOrRegistrantToCopy);
                 } else {
-                    UpdatableOperatorFiltererUpgradeableStorage.layout()._operatorFilterRegistry.register(address(this));
+                    registry.register(address(this));
                 }
             }
         }
@@ -116,7 +117,7 @@ abstract contract UpdatableOperatorFiltererUpgradeable is Initializable {
         if (msg.sender != owner()) {
             revert OnlyOwner();
         }
-        UpdatableOperatorFiltererUpgradeableStorage.layout()._operatorFilterRegistry = IOperatorFilterRegistry(newRegistry);
+        UpdatableOperatorFiltererUpgradeableStorage.layout()._operatorFilterRegistry = newRegistry;
         emit OperatorFilterRegistryAddressUpdated(newRegistry);
     }
 
@@ -136,7 +137,7 @@ abstract contract UpdatableOperatorFiltererUpgradeable is Initializable {
      * @dev A helper function to check if the operator is allowed
      */
     function _checkFilterOperator(address operator) internal view virtual {
-        IOperatorFilterRegistry registry = UpdatableOperatorFiltererUpgradeableStorage.layout()._operatorFilterRegistry;
+        IOperatorFilterRegistry registry = IOperatorFilterRegistry(UpdatableOperatorFiltererUpgradeableStorage.layout()._operatorFilterRegistry);
         // Check registry code length to facilitate testing in environments without a deployed registry.
         if (address(registry) != address(0) && address(registry).code.length > 0) {
             // under normal circumstances, this function will revert rather than return false, but inheriting or
