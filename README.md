@@ -1,11 +1,5 @@
 # Operator Filter Registry
 
-## **Note on Grace Period**
-
-Starting **January 2nd, 2023**, Opensea will begin validating creator fee enforcement for new collections on all supported EVM chains. After January 2nd, 2023, if OpenSea is unable to validate enforcement, OpenSea will make creator fees **optional** for that collection. Older collections will continue to have their fees enforced on OpenSea, **including on Ethereum Mainnet** (previously, enforcement was already required on Ethereum Mainnet).
-
-You may read more on [OpenSea's Twitter](https://twitter.com/opensea/status/1600913295300792321).
-
 ## Introduction
 
 This repository contains a number of tools to help token contracts manage the operators allowed to transfer tokens on behalf of users - including the smart contracts and delegates of marketplaces that do not respect creator earnings.
