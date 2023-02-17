@@ -5,6 +5,8 @@ import {UpdatableOperatorFilterer} from "../src/UpdatableOperatorFilterer.sol";
 import {BaseRegistryTest} from "./BaseRegistryTest.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {UpdatableFilterer} from "./helpers/UpdatableFilterer.sol";
+import {OperatorFilterer} from "../src/OperatorFilterer.sol";
+import {OperatorFilterRegistryStub} from "./helpers/OperatorFilterRegistryStub.sol";
 
 contract ConcreteUpdatableOperatorFilterer is UpdatableOperatorFilterer {
     address _owner;
@@ -112,5 +114,12 @@ contract UpdatableOperatorFiltererTest is BaseRegistryTest {
         vm.startPrank(filteredAddress);
         vm.expectRevert(abi.encodeWithSelector(AddressFiltered.selector, filteredAddress));
         filterer.testFilter(address(0));
+    }
+
+    function testRevert_OperatorNotAllowed() public {
+        address stubRegistry = address(new OperatorFilterRegistryStub());
+        UpdatableFilterer updatableFilterer = new UpdatableFilterer(stubRegistry);
+        vm.expectRevert(abi.encodeWithSelector(OperatorFilterer.OperatorNotAllowed.selector, address(filteredAddress)));
+        updatableFilterer.checkFilterOperator(filteredAddress);
     }
 }

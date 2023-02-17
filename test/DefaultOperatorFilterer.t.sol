@@ -5,6 +5,10 @@ import {DefaultOperatorFilterer} from "../src/DefaultOperatorFilterer.sol";
 import {BaseRegistryTest} from "./BaseRegistryTest.sol";
 import {DefaultFilterer} from "./helpers/DefaultFilterer.sol";
 
+import {OperatorFilterer} from "../src/OperatorFilterer.sol";
+import {UpdatableFilterer} from "./helpers/UpdatableFilterer.sol";
+import {OperatorFilterRegistryStub} from "./helpers/OperatorFilterRegistryStub.sol";
+
 contract DefaultOperatorFiltererTest is BaseRegistryTest {
     DefaultFilterer filterer;
     address filteredAddress;
@@ -40,5 +44,12 @@ contract DefaultOperatorFiltererTest is BaseRegistryTest {
         vm.startPrank(filteredCodeHashAddress);
         vm.expectRevert(abi.encodeWithSelector(CodeHashFiltered.selector, filteredCodeHashAddress, filteredCodeHash));
         filterer.filterTest(address(0));
+    }
+
+    function testRevert_OperatorNotAllowed() public {
+        address stubRegistry = address(new OperatorFilterRegistryStub());
+        UpdatableFilterer updatableFilterer = new UpdatableFilterer(stubRegistry);
+        vm.expectRevert(abi.encodeWithSelector(OperatorFilterer.OperatorNotAllowed.selector, address(filteredAddress)));
+        updatableFilterer.checkFilterOperator(filteredAddress);
     }
 }
