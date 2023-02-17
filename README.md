@@ -44,16 +44,6 @@ Entries in this list are added according to the following criteria:
 </tr>
 
 <tr>
-<td>Blur.io ExecutionDelegate</td>
-<td >
-0x00000000000111AbE46ff893f3B2fdF1F759a8A8
-</td>
-<td >
-Ethereum Mainnet
-</td>
-</tr>
-
-<tr>
 <td>LooksRare TransferManagerERC721</td>
 <td>0xf42aa99F011A1fA7CDA90E5E98b277E306BcA83e</td>
 <td>Ethereum Mainnet</td>
