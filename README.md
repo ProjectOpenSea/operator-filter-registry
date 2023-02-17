@@ -1,11 +1,5 @@
 # Operator Filter Registry
 
-## **Note on Grace Period**
-
-Starting **January 2nd, 2023**, Opensea will begin validating creator fee enforcement for new collections on all supported EVM chains. After January 2nd, 2023, if OpenSea is unable to validate enforcement, OpenSea will make creator fees **optional** for that collection. Older collections will continue to have their fees enforced on OpenSea, **including on Ethereum Mainnet** (previously, enforcement was already required on Ethereum Mainnet).
-
-You may read more on [OpenSea's Twitter](https://twitter.com/opensea/status/1600913295300792321).
-
 ## Introduction
 
 This repository contains a number of tools to help token contracts manage the operators allowed to transfer tokens on behalf of users - including the smart contracts and delegates of marketplaces that do not respect creator earnings.
@@ -34,9 +28,6 @@ While sometimes described as "on-chain," EIP-2981 only provides a method to dete
 
 ## Filtered addresses
 
-
-Ownership of this list [has been transferred](https://etherscan.io/tx/0xf15e8ac08a333b2e4f884250ace94baccf7ba8908c119736d9cc8f063183a496/advanced#eventlog) to the [Creator Ownership Research Institute](https://corinstitute.co/) to administer. You may read more on [OpenSea's Twitter](https://twitter.com/opensea/status/1600913295300792321).
-
 Entries in this list are added according to the following criteria:
 
 -   If the application most commonly used to interface with the contract gives buyers and sellers the ability to bypass creator earnings when a similar transaction for the same item would require creator earnings payment on OpenSea.io
@@ -47,16 +38,6 @@ Entries in this list are added according to the following criteria:
 <th>Name</th>
 <th>Address</th>
 <th>Network</th>
-</tr>
-
-<tr>
-<td>Blur.io ExecutionDelegate</td>
-<td >
-0x00000000000111AbE46ff893f3B2fdF1F759a8A8
-</td>
-<td >
-Ethereum Mainnet
-</td>
 </tr>
 
 <tr>
