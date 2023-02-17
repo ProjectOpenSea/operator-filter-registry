@@ -28,9 +28,6 @@ While sometimes described as "on-chain," EIP-2981 only provides a method to dete
 
 ## Filtered addresses
 
-
-Ownership of this list [has been transferred](https://etherscan.io/tx/0xf15e8ac08a333b2e4f884250ace94baccf7ba8908c119736d9cc8f063183a496/advanced#eventlog) to the [Creator Ownership Research Institute](https://corinstitute.co/) to administer. You may read more on [OpenSea's Twitter](https://twitter.com/opensea/status/1600913295300792321).
-
 Entries in this list are added according to the following criteria:
 
 -   If the application most commonly used to interface with the contract gives buyers and sellers the ability to bypass creator earnings when a similar transaction for the same item would require creator earnings payment on OpenSea.io
