@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {Initializable} from "openzeppelin-contracts-upgradeable/proxy/utils/Initializable.sol";
-
+import {OperatorFiltererUpgradeable} from "./OperatorFiltererUpgradeable.sol";
 import {IOperatorFilterRegistry} from "../IOperatorFilterRegistry.sol";
-
 
 /**
  * @title  Upgradeable storage layout for UpdatableOperatorFiltererUpgradeable.
@@ -19,7 +17,8 @@ library UpdatableOperatorFiltererUpgradeableStorage {
     }
 
     /// @dev The EIP-1967 specific storage slot for the layout
-    bytes32 internal constant STORAGE_SLOT = bytes32(uint256(keccak256(bytes("UpdatableOperatorFiltererUpgradeable.contracts.storage"))) - 1);
+    bytes32 internal constant STORAGE_SLOT =
+        bytes32(uint256(keccak256(bytes("UpdatableOperatorFiltererUpgradeable.contracts.storage"))) - 1);
 
     /// @dev The layout of the storage.
     function layout() internal pure returns (Layout storage l) {
@@ -44,12 +43,9 @@ library UpdatableOperatorFiltererUpgradeableStorage {
  *         - `onlyAllowedOperatorApproval` modifier for `approve` and `setApprovalForAll` methods.
  *         Use updateOperatorFilterRegistryAddress function to change registry address if needed
  */
-abstract contract UpdatableOperatorFiltererUpgradeable is Initializable {
-
+abstract contract UpdatableOperatorFiltererUpgradeable is OperatorFiltererUpgradeable {
     using UpdatableOperatorFiltererUpgradeableStorage for UpdatableOperatorFiltererUpgradeableStorage.Layout;
 
-    /// @notice Emitted when an operator is not allowed.
-    error OperatorNotAllowed(address operator);
     /// @notice Emitted when someone other than the owner is trying to call an only owner function.
     error OnlyOwner();
 
@@ -64,11 +60,12 @@ abstract contract UpdatableOperatorFiltererUpgradeable is Initializable {
      *                                       imitating/copying blocked addresses and codehashes
      * @param subscribe If to subscribe to the subscriptionOrRegistrantToCopy address or just copy entries from it
      */
-    function __UpdatableOperatorFiltererUpgradeable_init(address _registry, address subscriptionOrRegistrantToCopy, bool subscribe) 
-        internal
-        onlyInitializing
-    {
-        UpdatableOperatorFiltererUpgradeableStorage.layout()._operatorFilterRegistry = _registry; 
+    function __UpdatableOperatorFiltererUpgradeable_init(
+        address _registry,
+        address subscriptionOrRegistrantToCopy,
+        bool subscribe
+    ) internal onlyInitializing {
+        UpdatableOperatorFiltererUpgradeableStorage.layout()._operatorFilterRegistry = _registry;
         IOperatorFilterRegistry registry = IOperatorFilterRegistry(_registry);
         // If an inheriting token contract is deployed to a network without the registry deployed, the modifier
         // will not revert, but the contract will need to be registered with the registry once it is deployed in
@@ -84,27 +81,6 @@ abstract contract UpdatableOperatorFiltererUpgradeable is Initializable {
                 }
             }
         }
-    }
-
-    /**
-     * @dev A helper modifier to check if the operator is allowed.
-     */
-    modifier onlyAllowedOperator(address from) virtual {
-        // Allow spending tokens from addresses with balance
-        // Note that this still allows listings and marketplaces with escrow to transfer tokens if transferred
-        // from an EOA.
-        if (from != msg.sender) {
-            _checkFilterOperator(msg.sender);
-        }
-        _;
-    }
-
-    /**
-     * @dev A helper modifier to check if the operator approval is allowed.
-     */
-    modifier onlyAllowedOperatorApproval(address operator) virtual {
-        _checkFilterOperator(operator);
-        _;
     }
 
     /**
@@ -136,8 +112,9 @@ abstract contract UpdatableOperatorFiltererUpgradeable is Initializable {
     /**
      * @dev A helper function to check if the operator is allowed
      */
-    function _checkFilterOperator(address operator) internal view virtual {
-        IOperatorFilterRegistry registry = IOperatorFilterRegistry(UpdatableOperatorFiltererUpgradeableStorage.layout()._operatorFilterRegistry);
+    function _checkFilterOperator(address operator) internal view virtual override {
+        IOperatorFilterRegistry registry =
+            IOperatorFilterRegistry(UpdatableOperatorFiltererUpgradeableStorage.layout()._operatorFilterRegistry);
         // Check registry code length to facilitate testing in environments without a deployed registry.
         if (address(registry) != address(0) && address(registry).code.length > 0) {
             // under normal circumstances, this function will revert rather than return false, but inheriting or
