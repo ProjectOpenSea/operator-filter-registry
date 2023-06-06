@@ -8,7 +8,9 @@ remappings = [
     'openzeppelin-contracts/=lib/openzeppelin-contracts/contracts',
     'openzeppelin-contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts',
 ]
-
+# for compatibility with token contracts deployed with 0.8.20 on Ethereum mainnet
+# should not affect local compilation and simulation of non-Shanghai chains
+evm_version = 'shanghai'
 
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
