@@ -2,7 +2,8 @@ name: test
 
 on: [push, pull_request]
 
-env:
+env:      
+  ETHEREUM_RPC_URL: ${{ secrets.ETHEREUM_RPC_URL }}
   FOUNDRY_PROFILE: ci
 
 jobs:
@@ -32,3 +33,4 @@ jobs:
         run: |
           forge test -vvv
         id: test
+
