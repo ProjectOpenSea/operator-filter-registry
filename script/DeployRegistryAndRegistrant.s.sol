@@ -22,7 +22,7 @@ contract DeployRegistryAndRegistrant is ScriptBase {
         for (uint256 i; i < chains.length; i++) {
             string memory chain = chains[i];
             console2.log(chain);
-            vm.createSelectFork(stdChains[chain].rpcUrl);
+            vm.createSelectFork(getChain(chain).rpcUrl);
             vm.startBroadcast(deployer);
             IMMUTABLE_CREATE2_FACTORY.safeCreate2(salt, creationCode);
             OwnedRegistrant registrant =

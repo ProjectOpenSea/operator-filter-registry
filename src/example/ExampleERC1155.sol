@@ -53,6 +53,6 @@ abstract contract ExampleERC1155 is ERC1155(""), ERC2981, DefaultOperatorFiltere
      * @dev See {IERC165-supportsInterface}.
      */
     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC1155, ERC2981) returns (bool) {
-        return super.supportsInterface(interfaceId);
+        return ERC1155.supportsInterface(interfaceId) || ERC2981.supportsInterface(interfaceId);
     }
 }

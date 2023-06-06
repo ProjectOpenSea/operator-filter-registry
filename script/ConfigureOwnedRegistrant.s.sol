@@ -18,7 +18,7 @@ contract ConfigureOwnedRegistrant is ScriptBase {
         string[] memory chains = vm.envString("CHAINS", ",");
         for (uint256 i = 0; i < chains.length; i++) {
             string memory chain = chains[i];
-            vm.createSelectFork(stdChains[chain].rpcUrl);
+            vm.createSelectFork(getChain(chain).rpcUrl);
             vm.startBroadcast(deployer);
             registry.updateOperators(address(registrant), add, true);
             registry.updateOperators(address(registrant), remove, false);
