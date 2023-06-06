@@ -70,7 +70,7 @@ abstract contract ExampleERC1155Upgradeable is
         public
         view
         virtual
-        override (ERC1155Upgradeable, ERC2981Upgradeable)
+        override(ERC1155Upgradeable, ERC2981Upgradeable)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);

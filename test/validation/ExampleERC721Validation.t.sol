@@ -14,9 +14,9 @@ contract ExampleERC721ValidationTest is ValidationTest {
         tokenId = 1;
 
         // Fork mainnet
-        vm.createSelectFork(stdChains["mainnet"].rpcUrl);
+        vm.createSelectFork(getChain("mainnet").rpcUrl);
         filteredOperators =
-            IOperatorFilterRegistry(CANONICAL_OPERATOR_FILTER_REGISTRY).filteredOperators(CANONICAL_OPENSEA_REGISTRANT);
+            IOperatorFilterRegistry(CANONICAL_OPERATOR_FILTER_REGISTRY).filteredOperators(CANONICAL_REGISTRANT);
         TestableExampleERC721 nftContract = new TestableExampleERC721();
         nftContract.mint(owner, tokenId);
         contractAddress = address(nftContract);

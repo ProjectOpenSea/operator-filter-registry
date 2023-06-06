@@ -88,62 +88,15 @@ Entries in this list are added according to the following criteria:
 <td>Ethereum Mainnet</td>
 </tr>
 
+<tr>
+<td>Looksrare V2 TransferManager</td>
+<td>0x000000000060C4Ca14CfC4325359062ace33Fe3D</td>
+<td>Ethereum Mainnet</td>
+</tr>
+
 </table>
 
 ## Deployments
-
-<table>
-<tr>
-<th>Network</th>
-<th>CORI Subscription TimelockController</th>
-<th>OperatorFilterRegistry</th>
-<th>CORI Curated Subscription Address</th>
-</tr>
-
-<tr><td>Ethereum</td>
-<td>
-
-0x178AD648e66815E1B01791eBBdbF7b2D7C5B1626
-
-</td>
-<td rowspan="20">
-
-[0x000000000000AAeB6D7670E522A718067333cd4E](https://etherscan.io/address/0x000000000000AAeB6D7670E522A718067333cd4E#code)
-
-</td><td rowspan="20">
-
-0x3cc6CddA760b79bAfa08dF41ECFA224f810dCeB6
-
-</td></tr>
-
-<tr>
-<td>Polygon</td>
-
-<td>
-0x87bCD4735CbCF9CE98ea2822fBf3F05F2ce10f96
-</td>
-<td></td>
-<td></td>
-</tr>
-
-<tr><td>Goerli</td><td rowspan="20">0xe3A6CD067a1193b903143C36dA00557c9d95C41e</td></tr>
-<tr><td>Mumbai</td></tr>
-<tr><td>Optimism</td></tr>
-<tr><td>Optimism Goerli</td></tr>
-<tr><td>Arbitrum One</td></tr>
-<tr><td>Arbitrum Nova</td></tr>
-<tr><td>Arbitrum Goerli</td></tr>
-<tr><td>Avalanche</td></tr>
-<tr><td>Avalanche Fuji</td></tr>
-<tr><td>Klaytn</td></tr>
-<tr><td>Baobab</td></tr>
-<tr><td>BSC</td></tr>
-<tr><td>BSC Testnet</td></tr>
-<tr><td>Gnosis</td></tr>
-
-</table>
-
-To mitigate abuse of the CORI curated subscription of filtered operators and codehashes, the CORI curated subscription is owned by a `TimelockController`, which is in turn owned by a multi-signature wallet. Any update to CORI's list of filtered operators must be approved by at least two members of the Creator Ownership Research Institute, and is then subject to a minimum 24-hour delay before being executed. During this time, updates may be reviewed and revoked. 
 
 ## Usage
 

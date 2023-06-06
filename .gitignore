@@ -9,6 +9,9 @@ out/
 
 # Dotenv file
 .env
+# Dotfiles generally
+.*
+
 remappings.txt
 broadcast/
 

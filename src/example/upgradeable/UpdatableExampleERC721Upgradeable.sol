@@ -4,8 +4,7 @@ pragma solidity ^0.8.13;
 import {ERC721Upgradeable} from "openzeppelin-contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-import {UpdatableOperatorFiltererUpgradeable} from
-    "../../upgradeable/UpdatableOperatorFiltererUpgradeable.sol";
+import {UpdatableOperatorFiltererUpgradeable} from "../../upgradeable/UpdatableOperatorFiltererUpgradeable.sol";
 
 /**
  * @title  UpdatableExampleERC721Upgradeable
@@ -54,7 +53,7 @@ abstract contract UpdatableExampleERC721Upgradeable is
         public
         view
         virtual
-        override (OwnableUpgradeable, UpdatableOperatorFiltererUpgradeable)
+        override(OwnableUpgradeable, UpdatableOperatorFiltererUpgradeable)
         returns (address)
     {
         return OwnableUpgradeable.owner();

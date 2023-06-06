@@ -5,10 +5,8 @@ import {Vm} from "forge-std/Vm.sol";
 import {Initializable} from "openzeppelin-contracts-upgradeable/proxy/utils/Initializable.sol";
 import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-import {UpdatableExampleERC721Upgradeable} from 
-    "../../../src/example/upgradeable/UpdatableExampleERC721Upgradeable.sol";
-import {UpdatableOperatorFiltererUpgradeable} from
-    "../../../src/upgradeable/UpdatableOperatorFiltererUpgradeable.sol";
+import {UpdatableExampleERC721Upgradeable} from "../../../src/example/upgradeable/UpdatableExampleERC721Upgradeable.sol";
+import {UpdatableOperatorFiltererUpgradeable} from "../../../src/upgradeable/UpdatableOperatorFiltererUpgradeable.sol";
 import {BaseRegistryTest} from "../../BaseRegistryTest.sol";
 
 import {OperatorFilterRegistryStub} from "../../helpers/OperatorFilterRegistryStub.sol";
@@ -31,7 +29,7 @@ contract UpdatableERC721UpgradeableForUpgradableTest is BaseRegistryTest, Initia
 
         vm.startPrank(DEFAULT_SUBSCRIPTION);
         registry.register(DEFAULT_SUBSCRIPTION);
-        
+
         filteredAddress = makeAddr("filtered address");
         registry.updateOperator(address(DEFAULT_SUBSCRIPTION), filteredAddress, true);
         vm.stopPrank();
@@ -115,9 +113,7 @@ contract UpdatableERC721UpgradeableForUpgradableTest is BaseRegistryTest, Initia
     }
 }
 
-
 contract ConcreteUpdatableOperatorFiltererUpgradable is UpdatableOperatorFiltererUpgradeable, OwnableUpgradeable {
-    
     function initialize(address registry, address registrant, bool sub) public initializer {
         __Ownable_init();
         __UpdatableOperatorFiltererUpgradeable_init(registry, registrant, sub);
@@ -135,7 +131,7 @@ contract ConcreteUpdatableOperatorFiltererUpgradable is UpdatableOperatorFiltere
         public
         view
         virtual
-        override (OwnableUpgradeable, UpdatableOperatorFiltererUpgradeable)
+        override(OwnableUpgradeable, UpdatableOperatorFiltererUpgradeable)
         returns (address)
     {
         return OwnableUpgradeable.owner();
@@ -186,7 +182,6 @@ contract UpdatableERC721UpgradeableForUpdatableTest is BaseRegistryTest {
         assertEq(logs[1].topics[0], keccak256("RegistrationUpdated(address,bool)"));
         assertEq(address(uint160(uint256(logs[1].topics[1]))), address(filterer2));
         assertEq(logs[2].topics[0], keccak256("Initialized(uint8)"));
-        
     }
 
     function testConstructor_copy() public {
@@ -220,7 +215,7 @@ contract UpdatableERC721UpgradeableForUpdatableTest is BaseRegistryTest {
         emit RegistrationUpdated(deployed, true);
         vm.expectEmit(true, true, true, false, address(registry));
         emit SubscriptionUpdated(deployed, address(filterer), true);
-        
+
         vm.recordLogs();
         ConcreteUpdatableOperatorFiltererUpgradable filterer2 = new ConcreteUpdatableOperatorFiltererUpgradable();
         filterer2.initialize(address(registry), address(filterer), true);
@@ -268,7 +263,8 @@ contract UpdatableERC721UpgradeableForUpdatableTest is BaseRegistryTest {
 
     function testRevert_OperatorNotAllowed() public {
         address stubRegistry = address(new OperatorFilterRegistryStub());
-        ConcreteUpdatableOperatorFiltererUpgradable updatableFilterer = new ConcreteUpdatableOperatorFiltererUpgradable();
+        ConcreteUpdatableOperatorFiltererUpgradable updatableFilterer =
+            new ConcreteUpdatableOperatorFiltererUpgradable();
         updatableFilterer.initialize(stubRegistry, address(0), false);
         vm.expectRevert(abi.encodeWithSelector(OperatorFilterer.OperatorNotAllowed.selector, address(filteredAddress)));
         updatableFilterer.checkFilterOperator(filteredAddress);
