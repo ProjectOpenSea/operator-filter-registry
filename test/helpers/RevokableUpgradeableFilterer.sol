@@ -19,7 +19,7 @@ contract RevokableUpgradeableFilterer is RevokableOperatorFiltererUpgradeable, O
         __OperatorFilterer_init(subscription, subscribe);
     }
 
-    function owner() public view override (Ownable, RevokableOperatorFiltererUpgradeable) returns (address) {
+    function owner() public view override(Ownable, RevokableOperatorFiltererUpgradeable) returns (address) {
         return Ownable.owner();
     }
 }

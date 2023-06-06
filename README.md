@@ -88,6 +88,12 @@ Entries in this list are added according to the following criteria:
 <td>Ethereum Mainnet</td>
 </tr>
 
+<tr>
+<td>Looksrare V2 TransferManager</td>
+<td>0x000000000060C4Ca14CfC4325359062ace33Fe3D</td>
+<td>Ethereum Mainnet</td>
+</tr>
+
 </table>
 
 ## Deployments
