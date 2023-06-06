@@ -7,6 +7,8 @@ solc = '0.8.17'
 remappings = [
     'openzeppelin-contracts/=lib/openzeppelin-contracts/contracts',
     'openzeppelin-contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts',
+    'forge-std/=lib/forge-std/src/',
+    'ds-test/=lib/ds-test/src/',
 ]
 # for compatibility with token contracts deployed with 0.8.20 on Ethereum mainnet
 # should not affect local compilation and simulation of non-Shanghai chains
